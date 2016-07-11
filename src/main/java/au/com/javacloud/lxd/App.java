@@ -2,32 +2,112 @@ package au.com.javacloud.lxd;
 
 import org.apache.log4j.Logger;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import au.com.javacloud.lxd.model.Container;
+import au.com.javacloud.lxd.model.Image;
 import au.com.javacloud.lxd.util.LinuxUtil;
 
-public class App {
+public class App implements LXDAPI {
 
 	private static final Logger LOG = Logger.getLogger(App.class);
+
+	private List<Container> containerList = new ArrayList<Container>();
+	private Map<String,Container> containerMap = new HashMap<String, Container>();
+
+	private List<Image> imageList = new ArrayList<Image>();
+	private Map<String,Image> imageMap = new HashMap<String, Image>();
+
+	public List<Container> getContainers() {
+		if (!containerList.isEmpty()) {
+			return containerList;
+		}
+		try {
+			reloadContainerCache();
+			return containerList;
+		} catch (Exception e) {
+			LOG.error(e,e);
+		}
+		return Collections.emptyList();
+	}
+
+	public void reloadContainerCache() throws IOException, InterruptedException {
+		Container[] containers = LinuxUtil.executeLinuxCmdWithResultJsonObject("lxc list --format json", Container[].class);
+		for (Container container : containers) {
+			LOG.debug("container=" + container);
+			containerMap.put(container.getName(),container);
+			containerList.add(container);
+		}
+	}
+
+	public Container getContainer(String name) {
+		getContainers();
+		return containerMap.get(name);
+	}
+
+	public void deleteContainer(String name) {
+		// TODO : Implement
+	}
+
+	public void reloadImageCache() throws IOException, InterruptedException {
+		List<String> imageDataList = LinuxUtil.executeLinuxCmdWithResultLines("lxc image list | grep -v +");
+		for (String imageData : imageDataList) {
+			LOG.debug("imageData=" + imageData);
+			try {
+				Image image = Image.parse(imageData);
+				if (image!=null) {
+					imageMap.put(image.getFingerprint(), image);
+					imageMap.put(image.getAlias(), image);
+					imageList.add(image);
+				}
+			} catch (Exception e) {
+				LOG.error(e,e);
+			}
+		}
+	}
+
+	public List<Image> getImages() {
+		if (!imageList.isEmpty()) {
+			return imageList;
+		}
+		try {
+			reloadImageCache();
+			return imageList;
+		} catch (Exception e) {
+			LOG.error(e,e);
+		}
+		return Collections.emptyList();
+	}
+
+	public Image getImage(String nameOrId) {
+		getImages();
+		return imageMap.get(nameOrId);
+	}
+
+	public void deleteImage(Image image) {
+		// TODO: Implement
+	}
 
 	public static void main(String[] args) {
 		LOG.info("LXC START");
 		try {
-			String result = LinuxUtil.executeLinuxCmd("echo david");
-			LOG.info("result="+result);
-			int lines = LinuxUtil.getLinesCountForFile(new File("pom.xml"));
-			LOG.info("lines="+lines);
-			List<String> linesList = LinuxUtil.getLastNFileLines(new File("pom.xml"),5);
-			LOG.info("linesList="+linesList);
-			Container[] containers = LinuxUtil.executeLinuxCmdWithResultJsonObject("lxc list --format json", Container[].class);
+			App app = new App();
+			List<Container> containers = app.getContainers();
+			LOG.info("containers=" + containers.size());
 			for (Container container : containers) {
 				LOG.info("container=" + container);
+			}
+			List<Image> images = app.getImages();
+			LOG.info("");
+			LOG.info("images=" + images.size());
+			for (Image image : images) {
+				LOG.info("image=" + image);
 			}
 		}
 		catch (Exception e) {
