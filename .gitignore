@@ -1,1 +1,8 @@
 target/**
+.classpath
+.project
+.settings
+jlxd.iml
+jlxd.ipr
+jlxd.iws
+
