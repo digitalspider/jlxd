@@ -1,4 +1,4 @@
-package au.com.javacloud;
+package au.com.javacloud.lxd;
 
 import org.apache.log4j.Logger;
 
