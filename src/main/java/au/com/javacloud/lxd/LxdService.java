@@ -14,6 +14,9 @@ public interface LxdService {
     public List<Container> getContainers();
     public Container getContainer(String name);
     public void deleteContainer(String name);
+    public void startContainer(String name);
+    public void stopContainer(String name);
+    public void launchContainer(String newContainerName, String imageNameOrId);
 
     public void reloadImageCache() throws IOException, InterruptedException;
     public List<Image> getImages();

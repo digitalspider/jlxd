@@ -104,30 +104,38 @@ public class LxdServiceImpl implements LxdService {
 		// TODO: Implement
 	}
 
+	public void startContainer(String name) {
+		// TODO: Implement
+	}
+
+	public void stopContainer(String name) {
+		// TODO: Implement
+	}
+
+	public void launchContainer(String newContainerName, String imageNameOrId) {
+		// TODO: Implement
+	}
+
 	public static void main(String[] args) {
 		LOG.info("LXC START");
 		try {
 			LxdService service = new LxdServiceImpl();
-			List<Container> containers = service.getContainers();
-			LOG.info("containers=" + containers.size());
-			for (Container container : containers) {
-				LOG.info("container=" + container);
-			}
-			List<Image> images = service.getImages();
-			LOG.info("");
-			LOG.info("images=" + images.size());
-			for (Image image : images) {
-				LOG.info("image=" + image);
-			}
+//			List<Container> containers = service.getContainers();
+//			LOG.info("containers=" + containers.size());
+//			for (Container container : containers) {
+//				LOG.info("container=" + container);
+//			}
+//			List<Image> images = service.getImages();
+//			LOG.info("");
+//			LOG.info("images=" + images.size());
+//			for (Image image : images) {
+//				LOG.info("image=" + image);
+//			}
 
-			/*
-			Container container = LXDUtil.executeCurlGetCmd(LxdCall.CONTAINER_GET, "www");
-			LOG.info("container=" + container);
-			List<Container> containers = LXDUtil.executeCurlGetListCmd(LxdCall.CONTAINER_GET);
-			for (Container container : containers) {
-				LOG.info("container=" + container);
+			Container container = service.getContainer("www");
+			if (container != null) {
+				LXDUtil.executeCurlPutCmd(LxdCall.STATE_PUT_STOP, "www");
 			}
-			*/
 		} catch (Exception e) {
 			LOG.error(e, e);
 		}
