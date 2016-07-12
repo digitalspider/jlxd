@@ -44,7 +44,7 @@ public class Operation {
 
     @Override
     public String toString() {
-        return "PostState{" +
+        return "Operation{" +
                 "id='" + id + '\'' +
                 ", classType='" + classType + '\'' +
                 ", createdDate='" + createdDate + '\'' +

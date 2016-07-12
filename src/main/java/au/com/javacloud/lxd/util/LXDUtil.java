@@ -3,10 +3,12 @@ package au.com.javacloud.lxd.util;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 
 import au.com.javacloud.lxd.model.response.ContainerResponse;
+import au.com.javacloud.lxd.model.response.ListOperationResponse;
 import au.com.javacloud.lxd.model.response.StateResponse;
 import au.com.javacloud.lxd.model.response.ImageResponse;
 import au.com.javacloud.lxd.model.response.ListResponse;
@@ -87,12 +89,24 @@ public class LXDUtil {
 	 * Execute the base curl command to get a list of "LXD Objects" e.g. Containers, Images, Profiles, etc
 	 */
 	public static <T> List<T> executeCurlGetListCmd(LxdCall lxdCall) throws IOException, InterruptedException {
-		AbstractResponse response = LinuxUtil.executeLinuxCmdWithResultJsonObject(CURL_URL_BASE + " " + lxdCall.command, ListResponse.class);
+		Class responseClassType = ListResponse.class;
+		if (lxdCall.equals(LxdCall.GET_OPERATION)) {
+			responseClassType = ListOperationResponse.class;
+		}
+		AbstractResponse response = (AbstractResponse) LinuxUtil.executeLinuxCmdWithResultJsonObject(CURL_URL_BASE + " " + lxdCall.command, responseClassType);
 		List<T> results = new ArrayList<T>();
 		if (response != null) {
 			LOG.debug("statusCode=" + response.getStatusCode());
 			if (STATUS_CODE_SUCCESS.equals(response.getStatusCode())) {
-				List<String> stringNames = (List<String>) response.getMetadata();
+				List<String> stringNames = new ArrayList<String>();
+				if (lxdCall.equals(LxdCall.GET_OPERATION)) {
+					Map<String,List<String>> responses = (Map<String, List<String>>) response.getMetadata();
+					for (List<String> values : responses.values()) {
+						stringNames.addAll(values);
+					}
+				} else {
+					stringNames = (List<String>) response.getMetadata();
+				}
 				for (String stringName : stringNames) {
 					int index = stringName.lastIndexOf("/");
 					String id = stringName.substring(index + 1);
