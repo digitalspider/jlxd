@@ -9,7 +9,7 @@ import au.com.javacloud.lxd.model.Image;
 /**
  * Created by david on 12/07/16.
  */
-public interface LXDAPI {
+public interface LxdService {
     public void reloadContainerCache() throws IOException, InterruptedException;
     public List<Container> getContainers();
     public Container getContainer(String name);

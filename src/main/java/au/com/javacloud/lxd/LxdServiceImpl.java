@@ -15,9 +15,9 @@ import au.com.javacloud.lxd.util.LXDUtil;
 import au.com.javacloud.lxd.util.LXDUtil.LxdCall;
 import au.com.javacloud.lxd.util.LinuxUtil;
 
-public class App implements LXDAPI {
+public class LxdServiceImpl implements LxdService {
 
-	private static final Logger LOG = Logger.getLogger(App.class);
+	private static final Logger LOG = Logger.getLogger(LxdServiceImpl.class);
 
 	private List<Container> containerList = new ArrayList<Container>();
 	private Map<String, Container> containerMap = new HashMap<String, Container>();
@@ -107,13 +107,13 @@ public class App implements LXDAPI {
 		LOG.info("LXC START");
 		try {
 			/*
-			App app = new App();
-			List<Container> containers = app.getContainers();
+			LxdService service = new LxdServiceImpl();
+			List<Container> containers = service.getContainers();
 			LOG.info("containers=" + containers.size());
 			for (Container container : containers) {
 				LOG.info("container=" + container);
 			}
-			List<Image> images = app.getImages();
+			List<Image> images = service.getImages();
 			LOG.info("");
 			LOG.info("images=" + images.size());
 			for (Image image : images) {
