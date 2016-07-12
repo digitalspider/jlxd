@@ -1,13 +1,14 @@
 package au.com.javacloud.lxd.model;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Properties;
 
 /**
  * Created by david on 11/07/16.
  */
 public class Image {
-	private String alias;
+	private List<Alias> aliases;
 	private String fingerprint;
 	private boolean publicImage;
 	private String description;
@@ -22,57 +23,43 @@ public class Image {
 	public static final String DELIM = "\\|";
 	public static final String DATEFORMAT = "xxx"; // TODO
 
+	public class Alias {
+		private String name;
+		private String description;
+
+		@Override
+		public String toString() {
+			return name + "(" + description + ")";
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+	}
+
 	@Override
 	public String toString() {
-		return "alias=" + alias + " fingerprint=" + fingerprint + " public=" + publicImage + " desc=" + description + " arch=" + architecture + " size=" + size + " uploadedDate=" + uploadedDate;
+		return "aliases=" + aliases + " fingerprint=" + fingerprint + " public=" + publicImage + " desc=" + description + " arch=" + architecture + " size=" + size + " uploadedDate=" + uploadedDate;
 	}
 
-	public static Image parse(String input) throws Exception {
-		if (input == null || input.trim().length() == 0) {
-			return null;
-		}
-		String[] imageParts = input.split(DELIM);
-		if (imageParts.length != 8) {
-			throw new Exception("Expected 8 columns, named ALIAS, FINGERPRINT, DESC, PUBLIC, " + "ARCH, SIZE, UPLOAD DATE. Got " + imageParts.length);
-		}
-		Image image = new Image();
-		for (int i = 0; i < imageParts.length; i++) {
-			String imagePart = imageParts[i].trim();
-			// Header column
-			if (imagePart.contains("ALIAS")) {
-				return null;
-			}
-			switch (i) {
-			case 1:
-				image.alias = imagePart;
-				break;
-			case 2:
-				image.fingerprint = imagePart;
-				break;
-			case 3:
-				image.publicImage = Boolean.parseBoolean(imagePart);
-				break;
-			case 4:
-				image.description = imagePart;
-				break;
-			case 5:
-				image.architecture = imagePart;
-				break;
-			case 6:
-				image.size = imagePart;
-				break;
-			//case 7: image.uploadedDate = Date.parse(imagePart); break; // TODO
-			}
-		}
-		return image;
+	public List<Alias> getAliases() {
+		return aliases;
 	}
 
-	public String getAlias() {
-		return alias;
-	}
-
-	public void setAlias(String alias) {
-		this.alias = alias;
+	public void setAliases(List<Alias> aliases) {
+		this.aliases = aliases;
 	}
 
 	public String getFingerprint() {
@@ -155,3 +142,4 @@ public class Image {
 		this.autoupdate = autoupdate;
 	}
 }
+

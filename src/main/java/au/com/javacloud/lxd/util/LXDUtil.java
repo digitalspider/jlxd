@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
+
 import au.com.javacloud.lxd.model.response.ContainerResponse;
 import au.com.javacloud.lxd.model.response.ImageResponse;
 import au.com.javacloud.lxd.model.response.ListResponse;
@@ -12,6 +14,8 @@ import au.com.javacloud.lxd.model.response.ResponseBase;
 public class LXDUtil {
 
 	public static final String CURL_URL_BASE = "curl -s --unix-socket /var/lib/lxd/unix.socket";
+
+	public static final Logger LOG = Logger.getLogger(LXDUtil.class);
 
 	public static final String URL_CONTAINER_GET = "a/1.0/containers";
 	public static final String URL_IMAGE_GET = "a/1.0/images";
@@ -36,33 +40,40 @@ public class LXDUtil {
 	}
 
 	/**
-	 * NOT YET TESTED!
+	 * Execute the curl command to get a single "LXD Object" e.g. Container, Image, Profile, etc
 	 */
 	public static <T> T executeCurlGetCmd(LxdCall lxdCall, String id) throws IOException, InterruptedException {
 		ResponseBase response = LinuxUtil.executeLinuxCmdWithResultJsonObject(CURL_URL_BASE + " " + lxdCall.command + "/" + id, lxdCall.classType);
-		if (response != null && response.getStatusCode().equals(STATUS_CODE_200)) {
-			return (T) response.getMetadata();
+		if (response != null) {
+			LOG.debug("statusCode=" + response.getStatusCode());
+			if (STATUS_CODE_200.equals(response.getStatusCode())) {
+				return (T) response.getMetadata();
+			}
 		}
 		return null;
 	}
 
 	/**
-	 * NOT YET TESTED!
+	 * Execute the base curl command to get a list of "LXD Objects" e.g. Containers, Images, Profiles, etc
 	 */
-	public static <T> List<T> executeCurlGetListCmd(LxdCall lxdCall) throws IOException, InterruptedException, InstantiationException, IllegalAccessException {
+	public static <T> List<T> executeCurlGetListCmd(LxdCall lxdCall) throws IOException, InterruptedException {
 		ResponseBase response = LinuxUtil.executeLinuxCmdWithResultJsonObject(CURL_URL_BASE + " " + lxdCall.command, ListResponse.class);
 		List<T> results = new ArrayList<T>();
-		if (response != null && response.getStatusCode().equals(STATUS_CODE_200)) {
-			List<String> stringNames = (List<String>) response.getMetadata();
-			for (String stringName : stringNames) {
-				int index = stringName.lastIndexOf("/");
-				String id = stringName.substring(index);
-				T instance = executeCurlGetCmd(lxdCall, id);
-				if (instance != null) {
-					results.add(instance);
+		if (response != null) {
+			LOG.debug("statusCode=" + response.getStatusCode());
+			if (STATUS_CODE_200.equals(response.getStatusCode())) {
+				List<String> stringNames = (List<String>) response.getMetadata();
+				for (String stringName : stringNames) {
+					int index = stringName.lastIndexOf("/");
+					String id = stringName.substring(index + 1);
+					T instance = executeCurlGetCmd(lxdCall, id);
+					if (instance != null) {
+						results.add(instance);
+					}
 				}
 			}
 		}
 		return results;
 	}
 }
+

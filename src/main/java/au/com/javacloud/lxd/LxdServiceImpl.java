@@ -11,9 +11,9 @@ import org.apache.log4j.Logger;
 
 import au.com.javacloud.lxd.model.Container;
 import au.com.javacloud.lxd.model.Image;
+import au.com.javacloud.lxd.model.Image.Alias;
 import au.com.javacloud.lxd.util.LXDUtil;
 import au.com.javacloud.lxd.util.LXDUtil.LxdCall;
-import au.com.javacloud.lxd.util.LinuxUtil;
 
 public class LxdServiceImpl implements LxdService {
 
@@ -41,7 +41,9 @@ public class LxdServiceImpl implements LxdService {
 
 	@Override
 	public void reloadContainerCache() throws IOException, InterruptedException {
-		Container[] containers = LinuxUtil.executeLinuxCmdWithResultJsonObject("lxc list --format json", Container[].class);
+		containerMap.clear();
+		containerList.clear();
+		List<Container> containers = LXDUtil.executeCurlGetListCmd(LxdCall.CONTAINER_GET);
 		for (Container container : containers) {
 			LOG.debug("container=" + container);
 			containerMap.put(container.getName(), container);
@@ -62,18 +64,17 @@ public class LxdServiceImpl implements LxdService {
 
 	@Override
 	public void reloadImageCache() throws IOException, InterruptedException {
-		List<String> imageDataList = LinuxUtil.executeLinuxCmdWithResultLines("lxc image list | grep -v +");
-		for (String imageData : imageDataList) {
-			LOG.debug("imageData=" + imageData);
-			try {
-				Image image = Image.parse(imageData);
-				if (image != null) {
-					imageMap.put(image.getFingerprint(), image);
-					imageMap.put(image.getAlias(), image);
-					imageList.add(image);
-				}
-			} catch (Exception e) {
-				LOG.error(e, e);
+		imageMap.clear();
+		imageList.clear();
+		List<Image> images = LXDUtil.executeCurlGetListCmd(LxdCall.IMAGE_GET);
+		for (Image image : images) {
+			LOG.debug("image=" + image);
+			imageMap.put(image.getFingerprint(), image);
+			imageList.add(image);
+
+			// Add all aliases to the map
+			for (Alias alias : image.getAliases()) {
+				imageMap.put(alias.getName(), image);
 			}
 		}
 	}
@@ -106,7 +107,6 @@ public class LxdServiceImpl implements LxdService {
 	public static void main(String[] args) {
 		LOG.info("LXC START");
 		try {
-			/*
 			LxdService service = new LxdServiceImpl();
 			List<Container> containers = service.getContainers();
 			LOG.info("containers=" + containers.size());
@@ -119,11 +119,15 @@ public class LxdServiceImpl implements LxdService {
 			for (Image image : images) {
 				LOG.info("image=" + image);
 			}
-			*/
+
+			/*
+			Container container = LXDUtil.executeCurlGetCmd(LxdCall.CONTAINER_GET, "www");
+			LOG.info("container=" + container);
 			List<Container> containers = LXDUtil.executeCurlGetListCmd(LxdCall.CONTAINER_GET);
 			for (Container container : containers) {
 				LOG.info("container=" + container);
 			}
+			*/
 		} catch (Exception e) {
 			LOG.error(e, e);
 		}
@@ -131,3 +135,4 @@ public class LxdServiceImpl implements LxdService {
 	}
 
 }
+
