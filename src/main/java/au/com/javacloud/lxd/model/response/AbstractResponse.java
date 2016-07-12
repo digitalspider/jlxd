@@ -2,7 +2,10 @@ package au.com.javacloud.lxd.model.response;
 
 import com.google.gson.annotations.SerializedName;
 
-public abstract class ResponseBase {
+/**
+ * Created by david.vittor on 12/07/16.
+ */
+public abstract class AbstractResponse {
 	private String type;
 	private String status;
 	@SerializedName("status_code")

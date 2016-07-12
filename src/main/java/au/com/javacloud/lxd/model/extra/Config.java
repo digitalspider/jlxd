@@ -3,7 +3,7 @@ package au.com.javacloud.lxd.model.extra;
 import com.google.gson.annotations.SerializedName;
 
 /**
- * Created by david on 12/07/16.
+ * Created by david.vittor on 12/07/16.
  */
 public class Config {
 	@SerializedName("volatile.base_image")

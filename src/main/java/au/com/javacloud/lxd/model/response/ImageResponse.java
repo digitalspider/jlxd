@@ -2,7 +2,10 @@ package au.com.javacloud.lxd.model.response;
 
 import au.com.javacloud.lxd.model.Image;
 
-public class ImageResponse extends ResponseBase {
+/**
+ * Created by david.vittor on 12/07/16.
+ */
+public class ImageResponse extends AbstractResponse {
 	private Image metadata;
 
 	@Override

@@ -5,10 +5,9 @@ import java.util.Date;
 import com.google.gson.annotations.SerializedName;
 
 import au.com.javacloud.lxd.model.extra.Config;
-import au.com.javacloud.lxd.model.extra.State;
 
 /**
- * Created by david on 11/07/16.
+ * Created by david.vittor on 11/07/16.
  *
  * JSON format is:
  * 

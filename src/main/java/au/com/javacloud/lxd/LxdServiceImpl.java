@@ -12,9 +12,14 @@ import org.apache.log4j.Logger;
 import au.com.javacloud.lxd.model.Container;
 import au.com.javacloud.lxd.model.Image;
 import au.com.javacloud.lxd.model.Image.Alias;
+import au.com.javacloud.lxd.model.Operation;
+import au.com.javacloud.lxd.model.State;
 import au.com.javacloud.lxd.util.LXDUtil;
 import au.com.javacloud.lxd.util.LXDUtil.LxdCall;
 
+/**
+ * Created by david.vittor on 12/07/16.
+ */
 public class LxdServiceImpl implements LxdService {
 
 	private static final Logger LOG = Logger.getLogger(LxdServiceImpl.class);
@@ -24,6 +29,20 @@ public class LxdServiceImpl implements LxdService {
 
 	private List<Image> imageList = new ArrayList<Image>();
 	private Map<String, Image> imageMap = new HashMap<String, Image>();
+
+	//** Containers **//
+
+	@Override
+	public void reloadContainerCache() throws IOException, InterruptedException {
+		containerMap.clear();
+		containerList.clear();
+		List<Container> containers = LXDUtil.executeCurlGetListCmd(LxdCall.GET_CONTAINER);
+		for (Container container : containers) {
+			LOG.debug("container=" + container);
+			containerMap.put(container.getName(), container);
+			containerList.add(container);
+		}
+	}
 
 	@Override
 	public List<Container> getContainers() {
@@ -40,33 +59,27 @@ public class LxdServiceImpl implements LxdService {
 	}
 
 	@Override
-	public void reloadContainerCache() throws IOException, InterruptedException {
-		containerMap.clear();
-		containerList.clear();
-		List<Container> containers = LXDUtil.executeCurlGetListCmd(LxdCall.CONTAINER_GET);
-		for (Container container : containers) {
-			LOG.debug("container=" + container);
-			containerMap.put(container.getName(), container);
-			containerList.add(container);
-		}
-	}
-
-	@Override
 	public Container getContainer(String name) {
 		getContainers();
 		return containerMap.get(name);
 	}
 
 	@Override
-	public void deleteContainer(String name) {
-		// TODO : Implement
+	public State getContainerState(String name) throws IOException, InterruptedException {
+		Container container = getContainer(name);
+		if (container != null) {
+			State state = LXDUtil.executeCurlGetCmd(LxdCall.GET_STATE, name);
+			return state;
+		}
+		return null;
 	}
 
+	//** Images **//
 	@Override
 	public void reloadImageCache() throws IOException, InterruptedException {
 		imageMap.clear();
 		imageList.clear();
-		List<Image> images = LXDUtil.executeCurlGetListCmd(LxdCall.IMAGE_GET);
+		List<Image> images = LXDUtil.executeCurlGetListCmd(LxdCall.GET_IMAGE);
 		for (Image image : images) {
 			LOG.debug("image=" + image);
 			imageMap.put(image.getFingerprint(), image);
@@ -104,16 +117,54 @@ public class LxdServiceImpl implements LxdService {
 		// TODO: Implement
 	}
 
-	public void startContainer(String name) {
-		// TODO: Implement
+
+	//** Container operations **//
+	@Override
+	public void startContainer(String name) throws IOException, InterruptedException {
+		Container container = getContainer(name);
+		if (container != null) {
+			LXDUtil.executeCurlPostOrPutCmd(LxdCall.PUT_STATE_START, name);
+		}
 	}
 
-	public void stopContainer(String name) {
-		// TODO: Implement
+	@Override
+	public void stopContainer(String name) throws IOException, InterruptedException {
+		Container container = getContainer(name);
+		if (container != null) {
+			LXDUtil.executeCurlPostOrPutCmd(LxdCall.PUT_STATE_STOP, name);
+		}
 	}
 
-	public void launchContainer(String newContainerName, String imageNameOrId) {
+	@Override
+	public void createContainer(String newContainerName, String imageNameOrId) throws IOException, InterruptedException {
+		Image image = getImage(imageNameOrId);
+		if (image != null) {
+			LXDUtil.executeCurlPostOrPutCmd(LxdCall.POST_CONTAINER_CREATE, newContainerName, imageNameOrId);
+		}
+	}
+
+	@Override
+	public void deleteContainer(String name) throws IOException, InterruptedException {
+		State state = getContainerState(name);
+		if (state != null) {
+			if (!state.isStopped()) {
+				throw new IOException("Cannot delete a container that is not stopped. Container="+name+" status="+state);
+			}
+			LXDUtil.executeCurlPostOrPutCmd(LxdCall.POST_CONTAINER_DELETE, name);
+		}
+	}
+
+	//** Operations **//
+	@Override
+	public List<Operation> getOperations() throws IOException, InterruptedException {
 		// TODO: Implement
+		return new ArrayList<Operation>();
+	}
+
+	@Override
+	public Operation getOperation(String name) throws IOException, InterruptedException {
+		Operation opertaion = LXDUtil.executeCurlGetCmd(LxdCall.GET_OPERATION, name);
+		return opertaion;
 	}
 
 	public static void main(String[] args) {
@@ -132,10 +183,7 @@ public class LxdServiceImpl implements LxdService {
 //				LOG.info("image=" + image);
 //			}
 
-			Container container = service.getContainer("www");
-			if (container != null) {
-				LXDUtil.executeCurlPutCmd(LxdCall.STATE_PUT_STOP, "www");
-			}
+			service.startContainer("alpine1");
 		} catch (Exception e) {
 			LOG.error(e, e);
 		}

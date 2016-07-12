@@ -1,10 +1,12 @@
-package au.com.javacloud.lxd.model.extra;
+package au.com.javacloud.lxd.model;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import au.com.javacloud.lxd.model.extra.NetworkInterface;
+
 /**
- * Created by david on 12/07/16.
+ * Created by david.vittor on 12/07/16.
  *
  * "state":{
  * "status":"Running",
@@ -29,12 +31,16 @@ import java.util.Map;
  * },
  * "pid":4128,
  * "processes":97
+ *
  */
 public class State {
 	public static final String MEM_USAGE = "usage";
 	public static final String MEM_USAGE_PEAK = "usage_peak";
 	public static final String MEM_SWAP_USAGE = "swap_usage";
 	public static final String MEM_SWAP_USAGE_PEAK = "swap_usage_peak";
+
+	public static final int STATUS_CODE_RUNNING = 103;
+	public static final int STATUS_CODE_STOPPED = 102;
 
 	private String status;
 	private int statusCode;
@@ -47,11 +53,19 @@ public class State {
 
 	@Override
 	public String toString() {
-		return "pid=" + pid + " processes=" + processes + " memory=" + getMemoryInMB(MemoryEnum.USAGE) + "M/" + getMemoryInMB(MemoryEnum.USAGE_PEAK) + "M" + " swap=" + getMemoryInMB(MemoryEnum.SWAP_USAGE) + "M/" + getMemoryInMB(MemoryEnum.SWAP_USAGE_PEAK) + "M" + " network=" + network;
+		return "pid=" + pid + " status="+status+"("+statusCode+") processes=" + processes + " memory=" + getMemoryInMB(MemoryEnum.USAGE) + "M/" + getMemoryInMB(MemoryEnum.USAGE_PEAK) + "M" + " swap=" + getMemoryInMB(MemoryEnum.SWAP_USAGE) + "M/" + getMemoryInMB(MemoryEnum.SWAP_USAGE_PEAK) + "M" + " network=" + network;
 	}
 
 	enum MemoryEnum {
 		USAGE, USAGE_PEAK, SWAP_USAGE, SWAP_USAGE_PEAK
+	}
+
+	public boolean isRunning() {
+		return statusCode == STATUS_CODE_RUNNING;
+	}
+
+	public boolean isStopped() {
+		return statusCode == STATUS_CODE_STOPPED;
 	}
 
 	public String getMemoryInMB(MemoryEnum type) {

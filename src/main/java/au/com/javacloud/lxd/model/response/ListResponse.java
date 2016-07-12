@@ -2,7 +2,10 @@ package au.com.javacloud.lxd.model.response;
 
 import java.util.List;
 
-public class ListResponse extends ResponseBase {
+/**
+ * Created by david.vittor on 12/07/16.
+ */
+public class ListResponse extends AbstractResponse {
 	private List<String> metadata;
 
 	@Override

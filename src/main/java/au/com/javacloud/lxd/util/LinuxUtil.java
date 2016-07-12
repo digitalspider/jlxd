@@ -11,6 +11,9 @@ import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
 
+/**
+ * Created by david.vittor on 12/07/16.
+ */
 public class LinuxUtil {
 	private static final Logger LOG = Logger.getLogger(LinuxUtil.class);
 

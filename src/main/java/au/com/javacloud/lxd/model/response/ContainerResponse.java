@@ -2,7 +2,10 @@ package au.com.javacloud.lxd.model.response;
 
 import au.com.javacloud.lxd.model.Container;
 
-public class ContainerResponse extends ResponseBase {
+/**
+ * Created by david.vittor on 12/07/16.
+ */
+public class ContainerResponse extends AbstractResponse {
 	private Container metadata;
 
 	@Override

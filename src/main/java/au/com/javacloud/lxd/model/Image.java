@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Properties;
 
 /**
- * Created by david on 11/07/16.
+ * Created by david.vittor on 11/07/16.
  */
 public class Image {
 	private List<Alias> aliases;
