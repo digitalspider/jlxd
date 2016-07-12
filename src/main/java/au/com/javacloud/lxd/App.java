@@ -11,6 +11,8 @@ import org.apache.log4j.Logger;
 
 import au.com.javacloud.lxd.model.Container;
 import au.com.javacloud.lxd.model.Image;
+import au.com.javacloud.lxd.util.LXDUtil;
+import au.com.javacloud.lxd.util.LXDUtil.LxdCall;
 import au.com.javacloud.lxd.util.LinuxUtil;
 
 public class App implements LXDAPI {
@@ -104,6 +106,7 @@ public class App implements LXDAPI {
 	public static void main(String[] args) {
 		LOG.info("LXC START");
 		try {
+			/*
 			App app = new App();
 			List<Container> containers = app.getContainers();
 			LOG.info("containers=" + containers.size());
@@ -115,6 +118,11 @@ public class App implements LXDAPI {
 			LOG.info("images=" + images.size());
 			for (Image image : images) {
 				LOG.info("image=" + image);
+			}
+			*/
+			List<Container> containers = LXDUtil.executeCurlGetListCmd(LxdCall.CONTAINER_GET);
+			for (Container container : containers) {
+				LOG.info("container=" + container);
 			}
 		} catch (Exception e) {
 			LOG.error(e, e);

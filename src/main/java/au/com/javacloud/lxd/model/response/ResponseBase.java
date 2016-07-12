@@ -1,20 +1,19 @@
-package au.com.javacloud.lxd.model;
-
-import java.util.Map;
+package au.com.javacloud.lxd.model.response;
 
 import com.google.gson.annotations.SerializedName;
 
-public class ResponseBase {
+public abstract class ResponseBase {
 	private String type;
 	private String status;
 	@SerializedName("status_code")
 	private String statusCode;
-	private Map<String, Object> metadata;
 
 	@Override
 	public String toString() {
-		return "ResponseBase [type=" + type + ", status=" + status + ", statusCode=" + statusCode + ", metadata=" + metadata + "]";
+		return getClass().getSimpleName() + ": type=" + type + ", status=" + status + ", statusCode=" + statusCode + " metadata=" + getMetadata();
 	}
+
+	public abstract Object getMetadata();
 
 	public String getType() {
 		return type;
@@ -38,13 +37,5 @@ public class ResponseBase {
 
 	public void setStatusCode(String statusCode) {
 		this.statusCode = statusCode;
-	}
-
-	public Map<String, Object> getMetadata() {
-		return metadata;
-	}
-
-	public void setMetadata(Map<String, Object> metadata) {
-		this.metadata = metadata;
 	}
 }

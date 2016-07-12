@@ -1,7 +1,6 @@
 package au.com.javacloud.lxd.model;
 
 import java.util.Date;
-import java.util.Map;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -75,7 +74,7 @@ import au.com.javacloud.lxd.model.extra.State;
  * }
  * </pre>
  */
-public class Container implements Model {
+public class Container {
 	private String architecture;
 	private String name;
 	private boolean stateful;
@@ -93,11 +92,6 @@ public class Container implements Model {
 	@Override
 	public String toString() {
 		return "name=" + name + " status=" + status + " statusCode=" + statusCode + " stateful=" + stateful + " date=" + createdDate + " config=" + config + " state=" + state;
-	}
-
-	@Override
-	public void load(Map<String, Object> data) {
-		// TODO Implement
 	}
 
 	public String getArchitecture() {
