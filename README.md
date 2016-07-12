@@ -1,6 +1,6 @@
-# Java LXD API Client
+# Java LXD Rest API Client
 
-A Java LXD (Linux Container Daemon) Client allows Java applications to interact with Linux based lxd/lxc commands
+A java rest API client for LXD (Linux Container Daemon) that allows Java applications to interact with Linux based lxd/lxc commands
 To test you can run:
 * bin/jlxd.sh
 
