@@ -13,12 +13,12 @@ public class LXDUtil {
 
 	public static final String CURL_URL_BASE = "curl -s --unix-socket /var/lib/lxd/unix.socket";
 
-	public static final String URL_CONTAINER_GET = "a/1.0/container";
-	public static final String URL_IMAGE_GET = "a/1.0/image";
-	public static final String URL_CERTIFICATE_GET = "a/1.0/certificate";
-	public static final String URL_NETWORK_GET = "a/1.0/network";
-	public static final String URL_OPERATION_GET = "a/1.0/operation";
-	public static final String URL_PROFILE_GET = "a/1.0/profile";
+	public static final String URL_CONTAINER_GET = "a/1.0/containers";
+	public static final String URL_IMAGE_GET = "a/1.0/images";
+	public static final String URL_CERTIFICATE_GET = "a/1.0/certificates";
+	public static final String URL_NETWORK_GET = "a/1.0/networks";
+	public static final String URL_OPERATION_GET = "a/1.0/operations";
+	public static final String URL_PROFILE_GET = "a/1.0/profiles";
 	public static final String STATUS_CODE_200 = "200"; // SUCCESS
 	public static final String STATUS_CODE_400 = "400"; // ERROR
 
@@ -39,7 +39,7 @@ public class LXDUtil {
 	 * NOT YET TESTED!
 	 */
 	public static <T> T executeCurlGetCmd(LxdCall lxdCall, String id) throws IOException, InterruptedException {
-		ResponseBase response = LinuxUtil.executeLinuxCmdWithResultJsonObject(CURL_URL_BASE + " " + lxdCall.command, lxdCall.classType);
+		ResponseBase response = LinuxUtil.executeLinuxCmdWithResultJsonObject(CURL_URL_BASE + " " + lxdCall.command + "/" + id, lxdCall.classType);
 		return (T) response.getMetadata();
 	}
 
@@ -47,7 +47,7 @@ public class LXDUtil {
 	 * NOT YET TESTED!
 	 */
 	public static <T> List<T> executeCurlGetListCmd(LxdCall lxdCall) throws IOException, InterruptedException, InstantiationException, IllegalAccessException {
-		ResponseBase response = LinuxUtil.executeLinuxCmdWithResultJsonObject(CURL_URL_BASE + " " + lxdCall.command + "s", ListResponse.class);
+		ResponseBase response = LinuxUtil.executeLinuxCmdWithResultJsonObject(CURL_URL_BASE + " " + lxdCall.command, ListResponse.class);
 		List<T> results = new ArrayList<T>();
 		if (response != null && response.getStatusCode().equals(STATUS_CODE_200)) {
 			List<String> stringNames = (List<String>) response.getMetadata();
