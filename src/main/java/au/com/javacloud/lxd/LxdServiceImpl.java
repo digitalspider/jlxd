@@ -130,6 +130,7 @@ public class LxdServiceImpl implements LxdService {
 	@Override
 	public void stopContainer(String name) throws IOException, InterruptedException {
 		State state = getContainerState(name);
+		LOG.info(state);
 		if (state != null && state.isRunning()) {
 			LXDUtil.executeCurlPostOrPutCmd(LxdCall.PUT_STATE_STOP, name);
 		}
@@ -137,10 +138,10 @@ public class LxdServiceImpl implements LxdService {
 
 	@Override
 	public void createContainer(String newContainerName, String imageNameOrId) throws IOException, InterruptedException {
-		Image image = getImage(imageNameOrId);
-		if (image != null) {
+//		Image image = getImage(imageNameOrId);
+//		if (image != null) {
 			LXDUtil.executeCurlPostOrPutCmd(LxdCall.POST_CONTAINER_CREATE, newContainerName, imageNameOrId);
-		}
+//		}
 	}
 
 	@Override
@@ -198,20 +199,20 @@ public class LxdServiceImpl implements LxdService {
 							String operation = args[i+1];
 							switch (operation) {
 								case "start":
-									service.startContainer(name);
 									LOG.info("starting container=" + container);
+									service.startContainer(name);
 									break;
 								case "stop":
-									service.stopContainer(name);
 									LOG.info("stopping container=" + container);
+									service.stopContainer(name);
 									break;
 								case "create":
-									service.createContainer(name, "alpine/x64/edge");
-									LOG.info("creating new container=" + container);
+									LOG.info("creating new container=" + name);
+									service.createContainer(name, "alpine/edge/amd64"); // TODO: Alias not valid
 									break;
 								case "delete":
-									service.deleteContainer(name);
 									LOG.info("deleting container=" + container);
+									service.deleteContainer(name);
 									break;
 								default:
 									LOG.info("Unknown container operation: " + operation);

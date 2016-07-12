@@ -101,6 +101,7 @@ public class LXDUtil {
 				List<String> stringNames = new ArrayList<String>();
 				if (lxdCall.equals(LxdCall.GET_OPERATION)) {
 					Map<String,List<String>> responses = (Map<String, List<String>>) response.getMetadata();
+					// TODO: Differentiate success, running and failure
 					for (List<String> values : responses.values()) {
 						stringNames.addAll(values);
 					}

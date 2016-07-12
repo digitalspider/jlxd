@@ -1,5 +1,7 @@
 package au.com.javacloud.lxd.model;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -43,6 +45,7 @@ public class State {
 	public static final int STATUS_CODE_STOPPED = 102;
 
 	private String status;
+	@SerializedName("status_code")
 	private int statusCode;
 	private Map<String, Map<String, String>> disk;
 	private Map<String, Integer> memory;

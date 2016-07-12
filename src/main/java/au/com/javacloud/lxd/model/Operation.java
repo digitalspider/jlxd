@@ -40,7 +40,7 @@ public class Operation {
     @SerializedName("status_code")
     private String statusCode;
     private Object resources;
-    private String metadata;
+    private Object metadata;
 
     @Override
     public String toString() {
@@ -114,11 +114,11 @@ public class Operation {
         this.resources = resources;
     }
 
-    public String getMetadata() {
+    public Object getMetadata() {
         return metadata;
     }
 
-    public void setMetadata(String metadata) {
+    public void setMetadata(Object metadata) {
         this.metadata = metadata;
     }
 
