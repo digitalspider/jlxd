@@ -1,18 +1,18 @@
 package au.com.javacloud.lxd.model;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.Date;
 import java.util.Map;
 
+import com.google.gson.annotations.SerializedName;
+
 import au.com.javacloud.lxd.model.extra.Config;
-import au.com.javacloud.lxd.model.extra.NetworkInterface;
 import au.com.javacloud.lxd.model.extra.State;
 
 /**
  * Created by david on 11/07/16.
  *
  * JSON format is:
+ * 
  * <pre>
  * {@code
  * {
@@ -75,103 +75,108 @@ import au.com.javacloud.lxd.model.extra.State;
  * }
  * </pre>
  */
-public class Container {
-    private String architecture;
-    private String name;
-    private boolean stateful;
-    private boolean ephemeral;
-    @SerializedName("created_at")
-    private Date createdDate;
-    private String status;
-    @SerializedName("status_code")
-    private int statusCode;
-    private Config config;
-    @SerializedName("expanded_config")
-    private Config expandedConfig;
-    private State state;
+public class Container implements Model {
+	private String architecture;
+	private String name;
+	private boolean stateful;
+	private boolean ephemeral;
+	@SerializedName("created_at")
+	private Date createdDate;
+	private String status;
+	@SerializedName("status_code")
+	private int statusCode;
+	private Config config;
+	@SerializedName("expanded_config")
+	private Config expandedConfig;
+	private State state;
 
+	@Override
+	public String toString() {
+		return "name=" + name + " status=" + status + " statusCode=" + statusCode + " stateful=" + stateful + " date=" + createdDate + " config=" + config + " state=" + state;
+	}
 
-    public String toString() {
-        return "name="+name+" status="+status+" statusCode="+statusCode+" stateful="+stateful+" date="+createdDate+" config="+config+" state="+state;
-    }
+	@Override
+	public void load(Map<String, Object> data) {
+		// TODO Implement
+	}
 
-    public String getArchitecture() {
-        return architecture;
-    }
+	public String getArchitecture() {
+		return architecture;
+	}
 
-    public void setArchitecture(String architecture) {
-        this.architecture = architecture;
-    }
+	public void setArchitecture(String architecture) {
+		this.architecture = architecture;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public boolean isStateful() {
-        return stateful;
-    }
+	public boolean isStateful() {
+		return stateful;
+	}
 
-    public void setStateful(boolean stateful) {
-        this.stateful = stateful;
-    }
+	public void setStateful(boolean stateful) {
+		this.stateful = stateful;
+	}
 
-    public String getStatus() {
-        return status;
-    }
+	public String getStatus() {
+		return status;
+	}
 
-    public void setStatus(String status) {
-        this.status = status;
-    }
+	public void setStatus(String status) {
+		this.status = status;
+	}
 
-    public int getStatusCode() {
-        return statusCode;
-    }
+	public int getStatusCode() {
+		return statusCode;
+	}
 
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
-    }
+	public void setStatusCode(int statusCode) {
+		this.statusCode = statusCode;
+	}
 
-    public Date getCreatedDate() {
-        return createdDate;
-    }
+	public Date getCreatedDate() {
+		return createdDate;
+	}
 
-    public void setCreatedDate(Date createdDate) {
-        this.createdDate = createdDate;
-    }
+	public void setCreatedDate(Date createdDate) {
+		this.createdDate = createdDate;
+	}
 
-    public boolean isEphemeral() {
-        return ephemeral;
-    }
+	public boolean isEphemeral() {
+		return ephemeral;
+	}
 
-    public void setEphemeral(boolean ephemeral) {
-        this.ephemeral = ephemeral;
-    }
+	public void setEphemeral(boolean ephemeral) {
+		this.ephemeral = ephemeral;
+	}
 
-    public Config getConfig() {
-        return config;
-    }
+	public Config getConfig() {
+		return config;
+	}
 
-    public void setConfig(Config config) {
-        this.config = config;
-    }
+	public void setConfig(Config config) {
+		this.config = config;
+	}
 
-    public Config getExpandedConfig() {
-        return expandedConfig;
-    }
+	public Config getExpandedConfig() {
+		return expandedConfig;
+	}
 
-    public void setExpandedConfig(Config expandedConfig) {
-        this.expandedConfig = expandedConfig;
-    }
+	public void setExpandedConfig(Config expandedConfig) {
+		this.expandedConfig = expandedConfig;
+	}
 
-    public State getState() {
-        return state;
-    }
+	public State getState() {
+		return state;
+	}
 
-    public void setState(State state) {
-        this.state = state;
-    }
+	public void setState(State state) {
+		this.state = state;
+	}
 }
