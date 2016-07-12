@@ -1,8 +1,11 @@
 # Java LXD Rest API Client
 
 A java rest API client for LXD (Linux Container Daemon) that allows Java applications to interact with Linux based lxd/lxc commands
-To test you can run:
+To test, use the CLI:
 * bin/jlxd.sh
+
+The main interface is here:
+* https://github.com/digitalspider/jlxd/blob/master/src/main/java/au/com/javacloud/lxd/LxdService.java
 
 See:
 * https://www.stgraber.org/2016/04/18/lxd-api-direct-interaction
