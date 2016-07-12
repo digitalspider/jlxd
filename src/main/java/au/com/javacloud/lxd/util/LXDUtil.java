@@ -40,7 +40,10 @@ public class LXDUtil {
 	 */
 	public static <T> T executeCurlGetCmd(LxdCall lxdCall, String id) throws IOException, InterruptedException {
 		ResponseBase response = LinuxUtil.executeLinuxCmdWithResultJsonObject(CURL_URL_BASE + " " + lxdCall.command + "/" + id, lxdCall.classType);
-		return (T) response.getMetadata();
+		if (response != null && response.getStatusCode().equals(STATUS_CODE_200)) {
+			return (T) response.getMetadata();
+		}
+		return null;
 	}
 
 	/**
@@ -55,7 +58,9 @@ public class LXDUtil {
 				int index = stringName.lastIndexOf("/");
 				String id = stringName.substring(index);
 				T instance = executeCurlGetCmd(lxdCall, id);
-				results.add(instance);
+				if (instance != null) {
+					results.add(instance);
+				}
 			}
 		}
 		return results;
