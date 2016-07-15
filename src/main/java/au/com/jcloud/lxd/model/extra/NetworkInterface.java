@@ -1,4 +1,4 @@
-package au.com.javacloud.lxd.model.extra;
+package au.com.jcloud.lxd.model.extra;
 
 import java.util.HashMap;
 import java.util.Map;

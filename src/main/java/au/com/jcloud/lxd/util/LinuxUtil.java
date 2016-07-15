@@ -1,4 +1,4 @@
-package au.com.javacloud.lxd.util;
+package au.com.jcloud.lxd.util;
 
 import java.io.BufferedReader;
 import java.io.File;

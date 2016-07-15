@@ -1,4 +1,4 @@
-package au.com.javacloud.lxd.model.response;
+package au.com.jcloud.lxd.model.response;
 
 import java.util.List;
 

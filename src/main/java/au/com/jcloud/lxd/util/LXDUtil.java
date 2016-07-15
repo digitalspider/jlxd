@@ -1,4 +1,4 @@
-package au.com.javacloud.lxd.util;
+package au.com.jcloud.lxd.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -7,13 +7,13 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
-import au.com.javacloud.lxd.model.response.ContainerResponse;
-import au.com.javacloud.lxd.model.response.ListOperationResponse;
-import au.com.javacloud.lxd.model.response.StateResponse;
-import au.com.javacloud.lxd.model.response.ImageResponse;
-import au.com.javacloud.lxd.model.response.ListResponse;
-import au.com.javacloud.lxd.model.response.OperationResponse;
-import au.com.javacloud.lxd.model.response.AbstractResponse;
+import au.com.jcloud.lxd.model.response.ContainerResponse;
+import au.com.jcloud.lxd.model.response.ListOperationResponse;
+import au.com.jcloud.lxd.model.response.StateResponse;
+import au.com.jcloud.lxd.model.response.ImageResponse;
+import au.com.jcloud.lxd.model.response.ListResponse;
+import au.com.jcloud.lxd.model.response.OperationResponse;
+import au.com.jcloud.lxd.model.response.AbstractResponse;
 
 /**
  * Created by david.vittor on 12/07/16.

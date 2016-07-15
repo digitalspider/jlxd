@@ -1,11 +1,11 @@
-package au.com.javacloud.lxd.model;
+package au.com.jcloud.lxd.model;
 
 import com.google.gson.annotations.SerializedName;
 
 import java.util.HashMap;
 import java.util.Map;
 
-import au.com.javacloud.lxd.model.extra.NetworkInterface;
+import au.com.jcloud.lxd.model.extra.NetworkInterface;
 
 /**
  * Created by david.vittor on 12/07/16.

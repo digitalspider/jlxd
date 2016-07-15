@@ -1,4 +1,4 @@
-package au.com.javacloud.lxd.model;
+package au.com.jcloud.lxd.model;
 
 import java.util.Date;
 import java.util.List;

@@ -1,10 +1,10 @@
-package au.com.javacloud.lxd.model;
+package au.com.jcloud.lxd.model;
 
 import java.util.Date;
 
 import com.google.gson.annotations.SerializedName;
 
-import au.com.javacloud.lxd.model.extra.Config;
+import au.com.jcloud.lxd.model.extra.Config;
 
 /**
  * Created by david.vittor on 11/07/16.

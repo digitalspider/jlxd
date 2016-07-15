@@ -1,6 +1,6 @@
-package au.com.javacloud.lxd.model.response;
+package au.com.jcloud.lxd.model.response;
 
-import au.com.javacloud.lxd.model.Image;
+import au.com.jcloud.lxd.model.Image;
 
 /**
  * Created by david.vittor on 12/07/16.

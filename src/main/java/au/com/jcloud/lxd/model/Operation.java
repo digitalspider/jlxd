@@ -1,4 +1,4 @@
-package au.com.javacloud.lxd.model;
+package au.com.jcloud.lxd.model;
 
 import com.google.gson.annotations.SerializedName;
 
