@@ -1,4 +1,4 @@
-package au.com.jcloud.lxd;
+package au.com.jcloud.lxd.service;
 
 import java.io.IOException;
 import java.util.List;
@@ -13,16 +13,18 @@ import au.com.jcloud.lxd.model.State;
  */
 public interface LxdService {
     // Containers
+    public List<Container> loadContainers() throws IOException, InterruptedException;
     public void reloadContainerCache() throws IOException, InterruptedException;
     public List<Container> getContainers();
     public Container getContainer(String name);
     public State getContainerState(String name) throws IOException, InterruptedException;
 
     // Images
+    public List<Image> loadImages() throws IOException, InterruptedException;
     public void reloadImageCache() throws IOException, InterruptedException;
     public List<Image> getImages();
     public Image getImage(String nameOrId);
-    public void deleteImage(Image image);
+    public void deleteImage(Image image) throws IOException, InterruptedException;
 
     // Container operations
     public void startContainer(String name) throws IOException, InterruptedException;
