@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import au.com.jcloud.lxd.model.Certificate;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
 import au.com.jcloud.lxd.model.Image.Alias;
@@ -141,6 +142,12 @@ public class LxdServiceImpl extends AbstractLxdService {
 	public Map<String,Profile> loadProfiles() throws IOException, InterruptedException {
 		Map<String,Profile> profiles = LXDUtil.executeCurlGetListCmd(LxdCall.GET_PROFILE);
 		return profiles;
+	}
+
+	//** Certificates **//
+	public Map<String,Certificate> loadCertificates() throws IOException, InterruptedException {
+		Map<String,Certificate> certificates = LXDUtil.executeCurlGetListCmd(LxdCall.GET_CERTIFICATE);
+		return certificates;
 	}
 }
 

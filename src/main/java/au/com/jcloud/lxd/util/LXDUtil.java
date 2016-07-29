@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import au.com.jcloud.lxd.model.response.CertificateResponse;
 import au.com.jcloud.lxd.model.response.ContainerResponse;
 import au.com.jcloud.lxd.model.response.ListOperationResponse;
 import au.com.jcloud.lxd.model.response.NetworkResponse;
@@ -49,7 +50,7 @@ public class LXDUtil {
 	public enum LxdCall {
 		GET_CONTAINER(URL_GET_CONTAINER, ContainerResponse.class),
 		GET_IMAGE(URL_GET_IMAGE, ImageResponse.class),
-		GET_CERTIFICATE(URL_GET_CERTIFICATE, AbstractResponse.class),
+		GET_CERTIFICATE(URL_GET_CERTIFICATE, CertificateResponse.class),
 		GET_NETWORK(URL_GET_NETWORK, NetworkResponse.class),
 		GET_OPERATION(URL_GET_OPERATION, OperationResponse.class),
 		GET_PROFILE(URL_GET_PROFILE, ProfileResponse.class),

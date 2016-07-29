@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import au.com.jcloud.lxd.model.Certificate;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
 import au.com.jcloud.lxd.model.Network;
@@ -47,11 +48,17 @@ public interface LxdService {
     public Network getNetwork(String name) throws IOException, InterruptedException;
     public List<Container> getContainersUsedByNetwork(Network network) throws IOException, InterruptedException;
 
-    // Profile
+    // Profiles
     public Map<String,Profile> loadProfiles() throws IOException, InterruptedException;
     public void reloadProfileCache() throws IOException, InterruptedException;
     public List<Profile> getProfiles() throws IOException, InterruptedException;
     public Profile getProfile(String name) throws IOException, InterruptedException;
+
+    // Certificates
+    public Map<String,Certificate> loadCertificates() throws IOException, InterruptedException;
+    public void reloadCertificateCache() throws IOException, InterruptedException;
+    public List<Certificate> getCertificates() throws IOException, InterruptedException;
+    public Certificate getCertificate(String name) throws IOException, InterruptedException;
 
     // Snapshots
 

@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import au.com.jcloud.lxd.model.Certificate;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
 import au.com.jcloud.lxd.model.Network;
@@ -33,6 +34,10 @@ public abstract class AbstractLxdService implements LxdService {
 
     private List<Profile> profileList = new ArrayList<Profile>();
     private Map<String, Profile> profileMap = new HashMap<String, Profile>();
+
+    private List<Certificate> certificateList = new ArrayList<Certificate>();
+    private Map<String, Certificate> certificateMap = new HashMap<String, Certificate>();
+
 
     @Override
     public void reloadContainerCache() throws IOException, InterruptedException {
@@ -151,5 +156,34 @@ public abstract class AbstractLxdService implements LxdService {
     public Profile getProfile(String name) {
         getProfiles();
         return profileMap.get(name);
+    }
+
+
+    @Override
+    public void reloadCertificateCache() throws IOException, InterruptedException {
+        certificateMap.clear();
+        certificateList.clear();
+        certificateMap = loadCertificates();
+        certificateList.addAll(certificateMap.values());
+    }
+
+    @Override
+    public List<Certificate> getCertificates() {
+        if (!certificateList.isEmpty()) {
+            return certificateList;
+        }
+        try {
+            reloadCertificateCache();
+            return certificateList;
+        } catch (Exception e) {
+            LOG.error(e, e);
+        }
+        return Collections.emptyList();
+    }
+
+    @Override
+    public Certificate getCertificate(String name) {
+        getCertificates();
+        return certificateMap.get(name);
     }
 }

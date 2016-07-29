@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import au.com.jcloud.lxd.model.Certificate;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
 import au.com.jcloud.lxd.model.Network;
@@ -99,5 +100,10 @@ public class LxdServiceCliImpl extends AbstractLxdService {
     //** Profiles **//
     public Map<String,Profile> loadProfiles() throws IOException, InterruptedException {
         return lxdServiceDelegate.loadProfiles();
+    }
+
+    //** Certificates **//
+    public Map<String,Certificate> loadCertificates() throws IOException, InterruptedException {
+        return lxdServiceDelegate.loadCertificates();
     }
 }
