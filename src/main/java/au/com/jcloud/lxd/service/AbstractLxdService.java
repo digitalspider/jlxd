@@ -68,7 +68,7 @@ public abstract class AbstractLxdService implements LxdService {
         imageList.clear();
         imageMap = loadImages();
         imageList.addAll(imageMap.values());
-        for (Image image : imageMap.values()) {
+        for (Image image : imageList) {
             LOG.debug("image=" + image);
             // Add all aliases to the map
             for (Image.Alias alias : image.getAliases()) {
