@@ -12,7 +12,9 @@ import org.apache.log4j.Logger;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
 import au.com.jcloud.lxd.model.Image.Alias;
+import au.com.jcloud.lxd.model.Network;
 import au.com.jcloud.lxd.model.Operation;
+import au.com.jcloud.lxd.model.Profile;
 import au.com.jcloud.lxd.model.State;
 import au.com.jcloud.lxd.util.LXDUtil;
 import au.com.jcloud.lxd.util.LXDUtil.LxdCall;
@@ -32,8 +34,8 @@ public class LxdServiceImpl extends AbstractLxdService {
 
 	//** Containers **//
 	@Override
-	public List<Container> loadContainers() throws IOException, InterruptedException {
-		List<Container> containers = LXDUtil.executeCurlGetListCmd(LxdCall.GET_CONTAINER);
+	public Map<String,Container> loadContainers() throws IOException, InterruptedException {
+		Map<String,Container> containers = LXDUtil.executeCurlGetListCmd(LxdCall.GET_CONTAINER);
 		return containers;
 	}
 
@@ -49,8 +51,8 @@ public class LxdServiceImpl extends AbstractLxdService {
 
 	//** Images **//
 	@Override
-	public List<Image> loadImages() throws IOException, InterruptedException {
-		List<Image> images = LXDUtil.executeCurlGetListCmd(LxdCall.GET_IMAGE);
+	public Map<String,Image> loadImages() throws IOException, InterruptedException {
+		Map<String,Image> images = LXDUtil.executeCurlGetListCmd(LxdCall.GET_IMAGE);
 		return images;
 	}
 
@@ -100,15 +102,45 @@ public class LxdServiceImpl extends AbstractLxdService {
 
 	//** Operations **//
 	@Override
-	public List<Operation> getOperations() throws IOException, InterruptedException {
-		List<Operation> opertaions = LXDUtil.executeCurlGetListCmd(LxdCall.GET_OPERATION);
+	public Map<String,Operation> loadOperations() throws IOException, InterruptedException {
+		Map<String,Operation> opertaions = LXDUtil.executeCurlGetListCmd(LxdCall.GET_OPERATION);
 		return opertaions;
+	}
+
+	@Override
+	public List<Operation> getOperations() throws IOException, InterruptedException {
+		Map<String,Operation> opertaions = loadOperations();
+		return new ArrayList<Operation>(opertaions.values());
 	}
 
 	@Override
 	public Operation getOperation(String name) throws IOException, InterruptedException {
 		Operation opertaion = LXDUtil.executeCurlGetCmd(LxdCall.GET_OPERATION, name);
 		return opertaion;
+	}
+
+
+	//** Networks **//
+	public Map<String,Network> loadNetworks() throws IOException, InterruptedException {
+		Map<String,Network> networks = LXDUtil.executeCurlGetListCmd(LxdCall.GET_NETWORK);
+		return networks;
+	}
+
+	public List<Container> getContainersUsedByNetwork(Network network) throws IOException, InterruptedException {
+		List<Container> usedByContainers = new ArrayList<Container>();
+		String[] usedByArray = network.getMetadata().getUsedBy();
+		for (String usedByString : usedByArray) {
+			String containerName = usedByString.substring(usedByString.lastIndexOf("/"));
+			Container container = getContainer(containerName);
+			usedByContainers.add(container);
+		}
+		return usedByContainers;
+	}
+
+	//** Profiles **//
+	public Map<String,Profile> loadProfiles() throws IOException, InterruptedException {
+		Map<String,Profile> profiles = LXDUtil.executeCurlGetListCmd(LxdCall.GET_PROFILE);
+		return profiles;
 	}
 }
 

@@ -2,6 +2,7 @@ package au.com.jcloud.lxd.util;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -9,6 +10,8 @@ import org.apache.log4j.Logger;
 
 import au.com.jcloud.lxd.model.response.ContainerResponse;
 import au.com.jcloud.lxd.model.response.ListOperationResponse;
+import au.com.jcloud.lxd.model.response.NetworkResponse;
+import au.com.jcloud.lxd.model.response.ProfileResponse;
 import au.com.jcloud.lxd.model.response.StateResponse;
 import au.com.jcloud.lxd.model.response.ImageResponse;
 import au.com.jcloud.lxd.model.response.ListResponse;
@@ -47,9 +50,9 @@ public class LXDUtil {
 		GET_CONTAINER(URL_GET_CONTAINER, ContainerResponse.class),
 		GET_IMAGE(URL_GET_IMAGE, ImageResponse.class),
 		GET_CERTIFICATE(URL_GET_CERTIFICATE, AbstractResponse.class),
-		GET_NETWORK(URL_GET_NETWORK, AbstractResponse.class),
+		GET_NETWORK(URL_GET_NETWORK, NetworkResponse.class),
 		GET_OPERATION(URL_GET_OPERATION, OperationResponse.class),
-		GET_PROFILE(URL_GET_PROFILE, AbstractResponse.class),
+		GET_PROFILE(URL_GET_PROFILE, ProfileResponse.class),
 		GET_STATE(URL_GET_STATE, StateResponse.class),
 		PUT_STATE_START(URL_POST_STATE_START, OperationResponse.class),
 		PUT_STATE_STOP(URL_PUT_STATE_STOP, OperationResponse.class),
@@ -88,13 +91,13 @@ public class LXDUtil {
 	/**
 	 * Execute the base curl command to get a list of "LXD Objects" e.g. Containers, Images, Profiles, etc
 	 */
-	public static <T> List<T> executeCurlGetListCmd(LxdCall lxdCall) throws IOException, InterruptedException {
+	public static <T> Map<String,T> executeCurlGetListCmd(LxdCall lxdCall) throws IOException, InterruptedException {
 		Class responseClassType = ListResponse.class;
 		if (lxdCall.equals(LxdCall.GET_OPERATION)) {
 			responseClassType = ListOperationResponse.class;
 		}
 		AbstractResponse response = (AbstractResponse) LinuxUtil.executeLinuxCmdWithResultJsonObject(CURL_URL_BASE + " " + lxdCall.command, responseClassType);
-		List<T> results = new ArrayList<T>();
+		Map<String,T> results = new HashMap<String,T>();
 		if (response != null) {
 			LOG.debug("statusCode=" + response.getStatusCode());
 			if (STATUS_CODE_SUCCESS.equals(response.getStatusCode())) {
@@ -113,7 +116,7 @@ public class LXDUtil {
 					String id = stringName.substring(index + 1);
 					T instance = executeCurlGetCmd(lxdCall, id);
 					if (instance != null) {
-						results.add(instance);
+						results.put(id,instance);
 					}
 				}
 			}

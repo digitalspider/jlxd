@@ -3,10 +3,13 @@ package au.com.jcloud.lxd.service;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
+import au.com.jcloud.lxd.model.Network;
 import au.com.jcloud.lxd.model.Operation;
+import au.com.jcloud.lxd.model.Profile;
 import au.com.jcloud.lxd.model.State;
 import au.com.jcloud.lxd.model.extra.Config;
 import au.com.jcloud.lxd.util.LXDUtil;
@@ -25,7 +28,7 @@ public class LxdServiceCliImpl extends AbstractLxdService {
 
     //** Containers **//
     @Override
-    public List<Container> loadContainers() throws IOException, InterruptedException {
+    public Map<String,Container> loadContainers() throws IOException, InterruptedException {
         return lxdServiceDelegate.loadContainers();
     }
 
@@ -36,7 +39,7 @@ public class LxdServiceCliImpl extends AbstractLxdService {
 
     //** Images **//
     @Override
-    public List<Image> loadImages() throws IOException, InterruptedException {
+    public Map<String,Image> loadImages() throws IOException, InterruptedException {
         return lxdServiceDelegate.loadImages();
     }
 
@@ -46,6 +49,7 @@ public class LxdServiceCliImpl extends AbstractLxdService {
         LinuxUtil.executeLinuxCmd("lxc image delete "+image.getFingerprint());
     }
 
+    //** Container Operations **//
     @Override
     public void startContainer(String name) throws IOException, InterruptedException {
         LinuxUtil.executeLinuxCmd("lxc start "+name);
@@ -66,6 +70,11 @@ public class LxdServiceCliImpl extends AbstractLxdService {
         LinuxUtil.executeLinuxCmd("lxc launch "+imageNameOrId+" "+newContainerName);
     }
 
+    //** Operations **//
+    public Map<String,Operation> loadOperations() throws IOException, InterruptedException {
+        return lxdServiceDelegate.loadOperations();
+    }
+
     @Override
     public List<Operation> getOperations() throws IOException, InterruptedException {
         return lxdServiceDelegate.getOperations();
@@ -74,5 +83,21 @@ public class LxdServiceCliImpl extends AbstractLxdService {
     @Override
     public Operation getOperation(String name) throws IOException, InterruptedException {
         return lxdServiceDelegate.getOperation(name);
+    }
+
+    //** Networks **//
+    @Override
+    public Map<String,Network> loadNetworks() throws IOException, InterruptedException {
+        return lxdServiceDelegate.loadNetworks();
+    }
+
+    @Override
+    public List<Container> getContainersUsedByNetwork(Network network) throws IOException, InterruptedException {
+        return lxdServiceDelegate.getContainersUsedByNetwork(network);
+    }
+
+    //** Profiles **//
+    public Map<String,Profile> loadProfiles() throws IOException, InterruptedException {
+        return lxdServiceDelegate.loadProfiles();
     }
 }
