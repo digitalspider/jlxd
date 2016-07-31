@@ -8,9 +8,11 @@ import java.util.Map;
 import au.com.jcloud.lxd.model.Certificate;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
+import au.com.jcloud.lxd.model.ImageAlias;
 import au.com.jcloud.lxd.model.Network;
 import au.com.jcloud.lxd.model.Operation;
 import au.com.jcloud.lxd.model.Profile;
+import au.com.jcloud.lxd.model.Snapshot;
 import au.com.jcloud.lxd.model.State;
 import au.com.jcloud.lxd.model.extra.Config;
 import au.com.jcloud.lxd.util.LXDUtil;
@@ -72,6 +74,7 @@ public class LxdServiceCliImpl extends AbstractLxdService {
     }
 
     //** Operations **//
+    @Override
     public Map<String,Operation> loadOperations() throws IOException, InterruptedException {
         return lxdServiceDelegate.loadOperations();
     }
@@ -98,12 +101,46 @@ public class LxdServiceCliImpl extends AbstractLxdService {
     }
 
     //** Profiles **//
+    @Override
     public Map<String,Profile> loadProfiles() throws IOException, InterruptedException {
         return lxdServiceDelegate.loadProfiles();
     }
 
     //** Certificates **//
+    @Override
     public Map<String,Certificate> loadCertificates() throws IOException, InterruptedException {
         return lxdServiceDelegate.loadCertificates();
+    }
+
+    //** Snapshots **//
+    @Override
+    public Map<String,Snapshot> loadSnapshots(Container container) throws IOException, InterruptedException {
+        return lxdServiceDelegate.loadSnapshots(container);
+    }
+
+    @Override
+    public List<Snapshot> getSnapshots(Container container) throws IOException, InterruptedException {
+        return lxdServiceDelegate.getSnapshots(container);
+    }
+
+    @Override
+    public Snapshot getSnapshot(Container container, String name) throws IOException, InterruptedException {
+        return lxdServiceDelegate.getSnapshot(container, name);
+    }
+
+    //** Image Aliases **//
+    @Override
+    public Map<String,ImageAlias> loadImageAliases() throws IOException, InterruptedException {
+        return lxdServiceDelegate.loadImageAliases();
+    }
+
+    @Override
+    public List<ImageAlias> getImageAliases() throws IOException, InterruptedException {
+        return lxdServiceDelegate.getImageAliases();
+    }
+
+    @Override
+    public ImageAlias getImageAlias(String name) throws IOException, InterruptedException {
+        return lxdServiceDelegate.getImageAlias(name);
     }
 }

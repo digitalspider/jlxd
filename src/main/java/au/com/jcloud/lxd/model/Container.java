@@ -1,6 +1,7 @@
 package au.com.jcloud.lxd.model;
 
 import java.util.Date;
+import java.util.Map;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -86,6 +87,9 @@ public class Container {
 	private Config config;
 	@SerializedName("expanded_config")
 	private Config expandedConfig;
+	private Map<String,Object> devices;
+	@SerializedName("expanded_devices")
+	private Map<String,Object> expandedDevices;
 	private State state;
 
 	@Override
@@ -171,5 +175,21 @@ public class Container {
 
 	public void setState(State state) {
 		this.state = state;
+	}
+
+	public Map<String, Object> getDevices() {
+		return devices;
+	}
+
+	public void setDevices(Map<String, Object> devices) {
+		this.devices = devices;
+	}
+
+	public Map<String, Object> getExpandedDevices() {
+		return expandedDevices;
+	}
+
+	public void setExpandedDevices(Map<String, Object> expandedDevices) {
+		this.expandedDevices = expandedDevices;
 	}
 }

@@ -12,10 +12,11 @@ import org.apache.log4j.Logger;
 import au.com.jcloud.lxd.model.Certificate;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
-import au.com.jcloud.lxd.model.Image.Alias;
+import au.com.jcloud.lxd.model.ImageAlias;
 import au.com.jcloud.lxd.model.Network;
 import au.com.jcloud.lxd.model.Operation;
 import au.com.jcloud.lxd.model.Profile;
+import au.com.jcloud.lxd.model.Snapshot;
 import au.com.jcloud.lxd.model.State;
 import au.com.jcloud.lxd.util.LXDUtil;
 import au.com.jcloud.lxd.util.LXDUtil.LxdCall;
@@ -127,6 +128,7 @@ public class LxdServiceImpl extends AbstractLxdService {
 		return networks;
 	}
 
+	@Override
 	public List<Container> getContainersUsedByNetwork(Network network) throws IOException, InterruptedException {
 		List<Container> usedByContainers = new ArrayList<Container>();
 		String[] usedByArray = network.getMetadata().getUsedBy();
@@ -139,15 +141,55 @@ public class LxdServiceImpl extends AbstractLxdService {
 	}
 
 	//** Profiles **//
+	@Override
 	public Map<String,Profile> loadProfiles() throws IOException, InterruptedException {
 		Map<String,Profile> profiles = LXDUtil.executeCurlGetListCmd(LxdCall.GET_PROFILE);
 		return profiles;
 	}
 
 	//** Certificates **//
+	@Override
 	public Map<String,Certificate> loadCertificates() throws IOException, InterruptedException {
 		Map<String,Certificate> certificates = LXDUtil.executeCurlGetListCmd(LxdCall.GET_CERTIFICATE);
 		return certificates;
+	}
+
+	//** Snapshots **//
+	@Override
+	public Map<String,Snapshot> loadSnapshots(Container container) throws IOException, InterruptedException {
+		Map<String,Snapshot> snapshots = LXDUtil.executeCurlGetListCmd(LxdCall.GET_SNAPSHOTS);
+		return snapshots;
+	}
+
+	@Override
+	public List<Snapshot> getSnapshots(Container container) throws IOException, InterruptedException {
+		Map<String,Snapshot> snapshots = loadSnapshots(container);
+		return new ArrayList<>(snapshots.values());
+	}
+
+	@Override
+	public Snapshot getSnapshot(Container container, String name) throws IOException, InterruptedException {
+		Snapshot snapshot = LXDUtil.executeCurlGetCmd(LxdCall.GET_SNAPSHOTS, name);
+		return snapshot;
+	}
+
+	//** Image Aliases **//
+	@Override
+	public Map<String,ImageAlias> loadImageAliases() throws IOException, InterruptedException {
+		Map<String,ImageAlias> aliases = LXDUtil.executeCurlGetListCmd(LxdCall.GET_IMAGEALIAS);
+		return aliases;
+	}
+
+	@Override
+	public List<ImageAlias> getImageAliases() throws IOException, InterruptedException {
+		Map<String,ImageAlias> aliases = loadImageAliases();
+		return new ArrayList<>(aliases.values());
+	}
+
+	@Override
+	public ImageAlias getImageAlias(String name) throws IOException, InterruptedException {
+		ImageAlias alias = LXDUtil.executeCurlGetCmd(LxdCall.GET_IMAGEALIAS, name);
+		return alias;
 	}
 }
 

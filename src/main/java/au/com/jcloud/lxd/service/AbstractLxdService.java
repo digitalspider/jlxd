@@ -12,9 +12,9 @@ import java.util.Map;
 import au.com.jcloud.lxd.model.Certificate;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
+import au.com.jcloud.lxd.model.ImageAlias;
 import au.com.jcloud.lxd.model.Network;
 import au.com.jcloud.lxd.model.Profile;
-import au.com.jcloud.lxd.util.LXDUtil;
 
 /**
  * Created by david.vittor on 16/07/16.
@@ -76,7 +76,7 @@ public abstract class AbstractLxdService implements LxdService {
         for (Image image : imageList) {
             LOG.debug("image=" + image);
             // Add all aliases to the map
-            for (Image.Alias alias : image.getAliases()) {
+            for (ImageAlias alias : image.getAliases()) {
                 imageMap.put(alias.getName(), image);
             }
         }

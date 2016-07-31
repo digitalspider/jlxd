@@ -7,9 +7,11 @@ import java.util.Map;
 import au.com.jcloud.lxd.model.Certificate;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
+import au.com.jcloud.lxd.model.ImageAlias;
 import au.com.jcloud.lxd.model.Network;
 import au.com.jcloud.lxd.model.Operation;
 import au.com.jcloud.lxd.model.Profile;
+import au.com.jcloud.lxd.model.Snapshot;
 import au.com.jcloud.lxd.model.State;
 
 /**
@@ -61,6 +63,14 @@ public interface LxdService {
     public Certificate getCertificate(String name) throws IOException, InterruptedException;
 
     // Snapshots
+    public Map<String,Snapshot> loadSnapshots(Container container) throws IOException, InterruptedException;
+    public List<Snapshot> getSnapshots(Container container) throws IOException, InterruptedException;
+    public Snapshot getSnapshot(Container container, String name) throws IOException, InterruptedException;
+
+    // Image Aliases
+    public Map<String,ImageAlias> loadImageAliases() throws IOException, InterruptedException;
+    public List<ImageAlias> getImageAliases() throws IOException, InterruptedException;
+    public ImageAlias getImageAlias(String name) throws IOException, InterruptedException;
 
     // File Ops
 }

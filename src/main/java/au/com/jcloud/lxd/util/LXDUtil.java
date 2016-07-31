@@ -11,9 +11,11 @@ import org.apache.log4j.Logger;
 import au.com.jcloud.lxd.model.StatusCode;
 import au.com.jcloud.lxd.model.response.CertificateResponse;
 import au.com.jcloud.lxd.model.response.ContainerResponse;
+import au.com.jcloud.lxd.model.response.ImageAliasResponse;
 import au.com.jcloud.lxd.model.response.ListOperationResponse;
 import au.com.jcloud.lxd.model.response.NetworkResponse;
 import au.com.jcloud.lxd.model.response.ProfileResponse;
+import au.com.jcloud.lxd.model.response.SnapshotResponse;
 import au.com.jcloud.lxd.model.response.StateResponse;
 import au.com.jcloud.lxd.model.response.ImageResponse;
 import au.com.jcloud.lxd.model.response.ListResponse;
@@ -32,26 +34,35 @@ public class LXDUtil {
 	// Get commands
 	public static final String URL_GET_CONTAINER = "a/1.0/containers";
 	public static final String URL_GET_IMAGE = "a/1.0/images";
+    public static final String URL_GET_IMAGEALIAS = URL_GET_IMAGE + "/aliases";
 	public static final String URL_GET_CERTIFICATE = "a/1.0/certificates";
 	public static final String URL_GET_NETWORK = "a/1.0/networks";
 	public static final String URL_GET_OPERATION = "a/1.0/operations";
 	public static final String URL_GET_PROFILE = "a/1.0/profiles";
 	public static final String URL_GET_STATE = "a/1.0/containers/${ID}/state";
+    public static final String URL_GET_LOGS = "a/1.0/containers/${ID}/logs";
+    public static final String URL_GET_SNAPSHOTS = "a/1.0/containers/${ID}/snapshots";
+    public static final String URL_GET_FILES = "a/1.0/containers/${ID}/files?path=${PATH}";
+
 
 	// Post Commands
 	public static final String URL_PUT_STATE_STOP = URL_GET_STATE + " -X PUT -d '{\"action\": \"stop\", \"force\": true}'";
 	public static final String URL_POST_STATE_START = URL_GET_STATE + " -X PUT -d '{\"action\": \"start\"}'";
 	public static final String URL_POST_CONTAINER_CREATE = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", \"source\": {\"type\": \"image\", \"protocol\": \"simplestreams\", \"server\": \"https://cloud-images.ubuntu.com/daily\", \"alias\": \"16.04\"}}'";
 	public static final String URL_POST_CONTAINER_DELETE = URL_GET_CONTAINER + "/${ID} -X DELETE";
+    public static final String URL_POST_FILES = "a/1.0/containers/${ID}/files?path=${PATH} -X POST";
+    public static final String URL_POST_EXEC = "a/1.0/containers/${ID}/exec -X POST -d { \"command\": [\"${CMD}\"], \"environment\": {${ENV}}, \"wait-for-websocket\": ${WAIT}, \"interactive\": false }";
 
 	public enum LxdCall {
 		GET_CONTAINER(URL_GET_CONTAINER, ContainerResponse.class),
 		GET_IMAGE(URL_GET_IMAGE, ImageResponse.class),
+        GET_IMAGEALIAS(URL_GET_IMAGEALIAS, ImageAliasResponse.class),
 		GET_CERTIFICATE(URL_GET_CERTIFICATE, CertificateResponse.class),
 		GET_NETWORK(URL_GET_NETWORK, NetworkResponse.class),
 		GET_OPERATION(URL_GET_OPERATION, OperationResponse.class),
 		GET_PROFILE(URL_GET_PROFILE, ProfileResponse.class),
 		GET_STATE(URL_GET_STATE, StateResponse.class),
+        GET_SNAPSHOTS(URL_GET_SNAPSHOTS, SnapshotResponse.class),
 		PUT_STATE_START(URL_POST_STATE_START, OperationResponse.class),
 		PUT_STATE_STOP(URL_PUT_STATE_STOP, OperationResponse.class),
 		POST_CONTAINER_CREATE(URL_POST_CONTAINER_CREATE, OperationResponse.class),
