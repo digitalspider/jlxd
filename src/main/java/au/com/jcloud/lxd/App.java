@@ -22,13 +22,13 @@ public class App {
         LOG.info("LXC START. args="+args.length);
         try {
             if (args.length==0) {
-                System.out.println("Usage: jlxd <c|i|o> [name] [start|stop|create|delete]");
+                System.out.println("Usage: jlxd <c|i|o> [name] [start|stop|create|delete|snaps]");
                 System.out.println("");
                 System.out.println("   c = list containers");
                 System.out.println("   i = list images");
                 System.out.println("   o = list operations");
                 System.out.println("   name = a specific instance of one of the above");
-                System.out.println("   start|stop|create|delete = only for containers");
+                System.out.println("   start|stop|create|delete|snaps = only for containers");
                 System.exit(1);
             }
             //LxdService service = new LxdServiceCliImpl(new LxdServiceImpl());
@@ -64,6 +64,10 @@ public class App {
                                 case "delete":
                                     LOG.info("deleting container=" + container);
                                     service.deleteContainer(name);
+                                    break;
+                                case "snaps":
+                                    LOG.info("Snapshots for container=" + container);
+                                    LOG.info(service.getSnapshots(container));
                                     break;
                                 default:
                                     LOG.info("Unknown container operation: " + operation);
