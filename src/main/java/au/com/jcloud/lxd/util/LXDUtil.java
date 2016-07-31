@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import au.com.jcloud.lxd.model.StatusCode;
 import au.com.jcloud.lxd.model.response.CertificateResponse;
 import au.com.jcloud.lxd.model.response.ContainerResponse;
 import au.com.jcloud.lxd.model.response.ListOperationResponse;
@@ -42,10 +43,6 @@ public class LXDUtil {
 	public static final String URL_POST_STATE_START = URL_GET_STATE + " -X PUT -d '{\"action\": \"start\"}'";
 	public static final String URL_POST_CONTAINER_CREATE = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", \"source\": {\"type\": \"image\", \"protocol\": \"simplestreams\", \"server\": \"https://cloud-images.ubuntu.com/daily\", \"alias\": \"16.04\"}}'";
 	public static final String URL_POST_CONTAINER_DELETE = URL_GET_CONTAINER + "/${ID} -X DELETE";
-
-	public static final String STATUS_CODE_SUCCESS = "200";
-	public static final String STATUS_CODE_ERROR = "400";
-	public static final String STATUS_CODE_100 = "100";
 
 	public enum LxdCall {
 		GET_CONTAINER(URL_GET_CONTAINER, ContainerResponse.class),
@@ -82,7 +79,7 @@ public class LXDUtil {
 		AbstractResponse response = LinuxUtil.executeLinuxCmdWithResultJsonObject(url, lxdCall.classType);
 		if (response != null) {
 			LOG.debug("statusCode=" + response.getStatusCode());
-			if (STATUS_CODE_SUCCESS.equals(response.getStatusCode())) {
+			if (StatusCode.SUCCESS.equals(StatusCode.parse(response.getStatusCode()))) {
 				return (T) response.getMetadata();
 			}
 		}
@@ -101,7 +98,7 @@ public class LXDUtil {
 		Map<String,T> results = new HashMap<String,T>();
 		if (response != null) {
 			LOG.debug("statusCode=" + response.getStatusCode());
-			if (STATUS_CODE_SUCCESS.equals(response.getStatusCode())) {
+            if (StatusCode.SUCCESS.equals(StatusCode.parse(response.getStatusCode()))) {
 				List<String> stringNames = new ArrayList<String>();
 				if (lxdCall.equals(LxdCall.GET_OPERATION)) {
 					Map<String,List<String>> responses = (Map<String, List<String>>) response.getMetadata();
@@ -148,7 +145,7 @@ public class LXDUtil {
 		LOG.info("repsonse="+response);
 		if (response != null) {
 			LOG.debug("statusCode=" + response.getStatusCode());
-			if (STATUS_CODE_100.equals(response.getStatusCode())) {
+            if (StatusCode.OPERATION_CREATED.equals(StatusCode.parse(response.getStatusCode()))) {
 				return;
 			}
 		}
