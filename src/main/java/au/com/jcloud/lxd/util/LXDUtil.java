@@ -81,12 +81,23 @@ public class LXDUtil {
 	 * Execute the curl command to get a single "LXD Object" e.g. Container, Image, Profile, etc
 	 */
 	public static <T> T executeCurlGetCmd(LxdCall lxdCall, String id) throws IOException, InterruptedException {
+		return executeCurlGetCmd(lxdCall, id, null);
+	}
+
+	/**
+	 * Execute the curl command to get a single "LXD Object" e.g. Container, Image, Profile, etc
+	 */
+	public static <T> T executeCurlGetCmd(LxdCall lxdCall, String id, String containerName) throws IOException, InterruptedException {
 		String url = CURL_URL_BASE + " " + lxdCall.command;
+		if (containerName!=null) {
+			url = getParameterisedUrl(url, containerName, null);
+		}
 		if (lxdCall.equals(LxdCall.GET_STATE)) {
 			url = getParameterisedUrl(url, id, null);
 		} else {
 			url += "/"+id;
 		}
+		LOG.debug("url=" + url);
 		AbstractResponse response = LinuxUtil.executeLinuxCmdWithResultJsonObject(url, lxdCall.classType);
 		if (response != null) {
 			LOG.debug("statusCode=" + response.getStatusCode());
@@ -99,13 +110,23 @@ public class LXDUtil {
 
 	/**
 	 * Execute the base curl command to get a list of "LXD Objects" e.g. Containers, Images, Profiles, etc
-	 */
+     */
 	public static <T> Map<String,T> executeCurlGetListCmd(LxdCall lxdCall) throws IOException, InterruptedException {
+		return executeCurlGetListCmd(lxdCall, null);
+	}
+
+	/**
+	 * Execute the base curl command to get a list of "LXD Objects" e.g. Containers, Images, Profiles, etc
+	 */
+	public static <T> Map<String,T> executeCurlGetListCmd(LxdCall lxdCall, String containerName) throws IOException, InterruptedException {
 		Class responseClassType = ListResponse.class;
 		if (lxdCall.equals(LxdCall.GET_OPERATION)) {
 			responseClassType = ListOperationResponse.class;
 		}
-		AbstractResponse response = (AbstractResponse) LinuxUtil.executeLinuxCmdWithResultJsonObject(CURL_URL_BASE + " " + lxdCall.command, responseClassType);
+		String url = CURL_URL_BASE + " " + lxdCall.command;
+		url = getParameterisedUrl(url, containerName, null);
+		LOG.debug("url=" + url);
+		AbstractResponse response = (AbstractResponse) LinuxUtil.executeLinuxCmdWithResultJsonObject(url, responseClassType);
 		Map<String,T> results = new HashMap<String,T>();
 		if (response != null) {
 			LOG.debug("statusCode=" + response.getStatusCode());
@@ -123,7 +144,7 @@ public class LXDUtil {
 				for (String stringName : stringNames) {
 					int index = stringName.lastIndexOf("/");
 					String id = stringName.substring(index + 1);
-					T instance = executeCurlGetCmd(lxdCall, id);
+					T instance = executeCurlGetCmd(lxdCall, id, containerName);
 					if (instance != null) {
 						results.put(id,instance);
 					}
@@ -151,7 +172,7 @@ public class LXDUtil {
 		} else {
 			throw new IOException("This call is not implemented! "+lxdCall);
 		}
-		LOG.info("url="+url);
+		LOG.debug("url="+url);
 		AbstractResponse response = LinuxUtil.executeLinuxCmdWithResultJsonObject(url, lxdCall.classType);
 		LOG.info("repsonse="+response);
 		if (response != null) {

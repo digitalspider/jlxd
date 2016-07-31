@@ -157,7 +157,7 @@ public class LxdServiceImpl extends AbstractLxdService {
 	//** Snapshots **//
 	@Override
 	public Map<String,Snapshot> loadSnapshots(Container container) throws IOException, InterruptedException {
-		Map<String,Snapshot> snapshots = LXDUtil.executeCurlGetListCmd(LxdCall.GET_SNAPSHOTS);
+		Map<String,Snapshot> snapshots = LXDUtil.executeCurlGetListCmd(LxdCall.GET_SNAPSHOTS, container.getName());
 		return snapshots;
 	}
 
