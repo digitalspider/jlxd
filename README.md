@@ -15,5 +15,5 @@ See:
 
 Note:
 * This works on a local instance, but needs some work to work remotely
-* Proflies and Certificates are not yet implemented
+* Most GET operations are implemented, but only a few of the POST/PUT are
 * Cannot create containers from existing images - some things are hard coded here
