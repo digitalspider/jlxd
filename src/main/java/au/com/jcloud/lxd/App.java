@@ -3,6 +3,7 @@ package au.com.jcloud.lxd;
 import org.apache.log4j.Logger;
 
 import java.util.List;
+import java.util.Map;
 
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
@@ -80,16 +81,19 @@ public class App {
                 }
                 else if (args[i].equals("i")) {
                     LOG.info("");
+                    Map<String,Image> images = service.loadImages();
                     if (args.length-1==i || args[i+1].equals("o") || args[i+1].equals("c")) {
-                        List<Image> images = service.getImages();
                         LOG.info("images=" + images.size());
-                        for (Image image : images) {
+                        for (Image image : images.values()) {
                             LOG.info("image=" + image);
                         }
                     } else if (args.length>i+1 && !args[i+1].equals("o") && !args[i+1].equals("c")) {
                         String name = args[i+1];
-                        Image image = service.getImage(name);
-                        LOG.info("image=" + image);
+                        for (String key : images.keySet()) {
+                            if (key.contains(name)) {
+                                LOG.info("image=" + images.get(key));
+                            }
+                        }
                         i++;
                     }
                 }

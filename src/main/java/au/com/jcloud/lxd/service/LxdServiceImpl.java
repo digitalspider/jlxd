@@ -31,9 +31,6 @@ public class LxdServiceImpl extends AbstractLxdService {
 	private List<Container> containerList = new ArrayList<Container>();
 	private Map<String, Container> containerMap = new HashMap<String, Container>();
 
-	private List<Image> imageList = new ArrayList<Image>();
-	private Map<String, Image> imageMap = new HashMap<String, Image>();
-
 	//** Containers **//
 	@Override
 	public Map<String,Container> loadContainers() throws IOException, InterruptedException {
@@ -55,6 +52,16 @@ public class LxdServiceImpl extends AbstractLxdService {
 	@Override
 	public Map<String,Image> loadImages() throws IOException, InterruptedException {
 		Map<String,Image> images = LXDUtil.executeCurlGetListCmd(LxdCall.GET_IMAGE);
+		Map<String,Image> imageAliasMap = new HashMap<>();
+		for (Image image : images.values()) {
+			LOG.debug("image=" + image);
+			// Add all aliases to the map
+			for (ImageAlias alias : image.getAliases()) {
+				LOG.debug("alias=" + alias.getName());
+				imageAliasMap.put(alias.getName(), image);
+			}
+		}
+		images.putAll(imageAliasMap);
 		return images;
 	}
 
