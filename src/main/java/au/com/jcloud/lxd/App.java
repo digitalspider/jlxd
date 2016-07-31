@@ -46,6 +46,10 @@ public class App {
                     } else if (args.length>i+1 && !args[i+1].equals("o") && !args[i+1].equals("i")) {
                         String name = args[i+1];
                         Container container = service.getContainer(name);
+                        if (container==null) {
+                            LOG.error("container " + name + " does not exist");
+                            System.exit(1);
+                        }
                         i++;
                         if (args.length>i+1 && !args[i+1].equals("o") && !args[i+1].equals("i")) {
                             String operation = args[i+1];
