@@ -38,9 +38,9 @@ public enum StatusCode {
     }
 
     public static StatusCode parse(String value) {
-        if (value != null && StringUtils.isNumeric(value)) {
-            int intValue = Integer.getInteger(value);
-            return parse(intValue);
+        if (StringUtils.isNotBlank(value) && StringUtils.isNumeric(value)) {
+            int intValue = Integer.parseInt(value);
+            return StatusCode.parse(intValue);
         }
         return null;
     }
