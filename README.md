@@ -5,7 +5,7 @@ To test, use the CLI:
 * bin/jlxd.sh
 
 The main interface is here:
-* [LxdService.java](https://github.com/digitalspider/jlxd/blob/master/src/main/java/au/com/jcloud/lxd/LxdService.java)
+* [LxdService.java](https://github.com/digitalspider/jlxd/blob/master/src/main/java/au/com/jcloud/lxd/service/LxdService.java)
 
 See:
 * https://www.stgraber.org/2016/04/18/lxd-api-direct-interaction
