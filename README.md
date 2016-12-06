@@ -6,6 +6,8 @@ To test, use the CLI:
 
 The main interface is here:
 * [LxdService.java](https://github.com/digitalspider/jlxd/blob/master/src/main/java/au/com/jcloud/lxd/service/LxdService.java)
+Sample code (and the command line interface (CLI)) is here:
+* [App.java](https://github.com/digitalspider/jlxd/blob/master/src/main/java/au/com/jcloud/lxd/App.java)
 
 See:
 * https://www.stgraber.org/2016/04/18/lxd-api-direct-interaction
