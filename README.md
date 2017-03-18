@@ -21,6 +21,6 @@ See:
 * https://github.com/lxc/lxd/blob/master/doc/rest-api.md
 
 Note:
-* This works on a local instance, but needs some work to work remotely
+* This now works on a both local and remote LXD instances
 * Most GET operations are implemented, but only a few of the POST/PUT are
 * Cannot create containers from existing images - some things are hard coded here
