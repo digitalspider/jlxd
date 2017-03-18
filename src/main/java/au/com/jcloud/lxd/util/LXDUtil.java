@@ -148,6 +148,9 @@ public class LXDUtil {
 					}
 				} else {
 					stringNames = (List<String>) response.getMetadata();
+					if (stringNames==null) {
+						stringNames = new ArrayList<String>();
+					}
 				}
 				for (String stringName : stringNames) {
 					int index = stringName.lastIndexOf("/");

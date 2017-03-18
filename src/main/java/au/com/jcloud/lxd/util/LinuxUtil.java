@@ -123,7 +123,7 @@ public class LinuxUtil {
 
 	public static String getFileNameWithoutExtension(String filename) {
 		int index = filename.lastIndexOf(".");
-		if (index>0) {
+		if (index > 0) {
 			String filenameWithoutExtension = filename.substring(0, index);
 			return filenameWithoutExtension;
 		}
