@@ -13,6 +13,7 @@ import au.com.jcloud.lxd.model.StatusCode;
 import au.com.jcloud.lxd.model.response.AbstractResponse;
 import au.com.jcloud.lxd.model.response.CertificateResponse;
 import au.com.jcloud.lxd.model.response.ContainerResponse;
+import au.com.jcloud.lxd.model.response.FileResponse;
 import au.com.jcloud.lxd.model.response.ImageAliasResponse;
 import au.com.jcloud.lxd.model.response.ImageResponse;
 import au.com.jcloud.lxd.model.response.ListOperationResponse;
@@ -44,12 +45,12 @@ public class LXDUtil {
 	public static final String URL_GET_STATE = "/1.0/containers/${ID}/state";
     public static final String URL_GET_LOGS = "/1.0/containers/${ID}/logs";
     public static final String URL_GET_SNAPSHOTS = "/1.0/containers/${ID}/snapshots";
-    public static final String URL_GET_FILES = "/1.0/containers/${ID}/files?path=${PATH}";
+    public static final String URL_GET_FILE = "/1.0/containers/${ID}/files?path=${PATH}";
  
 
 	// Post Commands
 	public static final String URL_PUT_STATE_STOP = URL_GET_STATE + " -X PUT -d '{\"action\": \"stop\", \"force\": true}'";
-	public static final String URL_POST_STATE_START = URL_GET_STATE + " -X PUT -d '{\"action\": \"start\"}'";
+	public static final String URL_PUT_STATE_START = URL_GET_STATE + " -X PUT -d '{\"action\": \"start\"}'";
 	public static final String URL_POST_CONTAINER_CREATE = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", \"source\": {\"type\": \"image\", \"protocol\": \"simplestreams\", \"server\": \"https://cloud-images.ubuntu.com/daily\", \"alias\": \"16.04\"}}'";
 	public static final String URL_POST_CONTAINER_DELETE = URL_GET_CONTAINER + "/${ID} -X DELETE";
     public static final String URL_POST_FILES = "/1.0/containers/${ID}/files?path=${PATH} -X POST";
@@ -65,7 +66,8 @@ public class LXDUtil {
 		GET_PROFILE(URL_GET_PROFILE, ProfileResponse.class),
 		GET_STATE(URL_GET_STATE, StateResponse.class),
         GET_SNAPSHOTS(URL_GET_SNAPSHOTS, SnapshotResponse.class),
-		PUT_STATE_START(URL_POST_STATE_START, OperationResponse.class),
+        GET_FILE(URL_GET_FILE, FileResponse.class),
+		PUT_STATE_START(URL_PUT_STATE_START, OperationResponse.class),
 		PUT_STATE_STOP(URL_PUT_STATE_STOP, OperationResponse.class),
 		POST_CONTAINER_CREATE(URL_POST_CONTAINER_CREATE, OperationResponse.class),
 		POST_CONTAINER_DELETE(URL_POST_CONTAINER_DELETE, OperationResponse.class);
@@ -89,10 +91,14 @@ public class LXDUtil {
 	/**
 	 * Execute the curl command to get a single "LXD Object" e.g. Container, Image, Profile, etc
 	 */
-	public static <T> T executeCurlGetCmd(String remoteHostAndPort, LxdCall lxdCall, String id, String containerName) throws IOException, InterruptedException {
+	public static <T> T executeCurlGetCmd(String remoteHostAndPort, LxdCall lxdCall, String id, String containerName, String... additionalParams) throws IOException, InterruptedException {
 		String url = getBaseUrl(remoteHostAndPort) + lxdCall.command;
 		if (containerName!=null) {
 			url = getParameterisedUrl(url, containerName, null);
+		}
+		if (lxdCall.equals(LxdCall.GET_FILE) && additionalParams.length>0) {
+			url = url.replaceAll("\\$\\{PATH\\}", additionalParams[0]);
+			return (T) LinuxUtil.executeLinuxCmd(url);
 		}
 		if (lxdCall.equals(LxdCall.GET_STATE)) {
 			url = getParameterisedUrl(url, id, null);

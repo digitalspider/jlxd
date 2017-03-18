@@ -140,4 +140,11 @@ public class LxdServiceCliImpl extends AbstractLxdService {
 	public ImageAlias getImageAlias(String name) throws IOException, InterruptedException {
 		return lxdServiceDelegate.getImageAlias(name);
 	}
+	
+	// ** File Ops **//
+	@Override
+	public String getFile(String containerName, String filepath) throws IOException, InterruptedException {
+		LinuxUtil.executeLinuxCmd("lxc file pull "+containerName+filepath+" .");
+		return "";
+	}
 }

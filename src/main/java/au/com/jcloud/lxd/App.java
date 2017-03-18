@@ -23,13 +23,13 @@ public class App {
         LOG.info("LXC START. args="+args.length);
         try {
             if (args.length==0) {
-                System.out.println("Usage: jlxd [host[:port]] <c|i|o> [name] [start|stop|create|delete|snaps]");
+                System.out.println("Usage: jlxd [host[:port]] <c|i|o> [name] [start|stop|create|delete|snaps|file]");
                 System.out.println("");
                 System.out.println("   c = list containers");
                 System.out.println("   i = list images");
                 System.out.println("   o = list operations");
                 System.out.println("   name = a specific instance of one of the above");
-                System.out.println("   start|stop|create|delete|snaps = only for containers");
+                System.out.println("   start|stop|create|delete|snaps|file = only for containers");
                 System.exit(1);
             }
             //LxdService service = new LxdServiceCliImpl(new LxdServiceImpl());
@@ -75,8 +75,17 @@ public class App {
                                     LOG.info("Snapshots for container=" + container);
                                     LOG.info(service.getSnapshots(container));
                                     break;
+                                case "file":
+                                	if (args.length>i+2 && !args[i+2].equals("o") && !args[i+2].equals("i")) {
+                                		String filepath = args[i+2];
+	                                    LOG.info("Getting file "+filepath+" for container=" + container);
+	                                    LOG.info(service.getFile(container.getName(), filepath));
+                                	} else {
+                                		LOG.warn("Cannot get file for container=" + container+". Filepath not provided");
+                                	}
+                                    break;
                                 default:
-                                    LOG.info("Unknown container operation: " + operation);
+                                    LOG.warn("Unknown container operation: " + operation);
                                     System.exit(1);
                             }
                         } else {

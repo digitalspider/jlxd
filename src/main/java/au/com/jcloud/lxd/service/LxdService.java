@@ -78,4 +78,5 @@ public interface LxdService {
     public ImageAlias getImageAlias(String name) throws IOException, InterruptedException;
 
     // File Ops
+    public String getFile(String containerName, String filepath) throws IOException, InterruptedException;
 }
