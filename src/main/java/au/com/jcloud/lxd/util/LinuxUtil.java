@@ -77,7 +77,8 @@ public class LinuxUtil {
 	/**
 	 * Execute a linux command returning the result as a json object
 	 */
-	public static <T> T executeLinuxCmdWithResultJsonObject(String cmd, Class<T> classType) throws IOException, InterruptedException {
+	public static <T> T executeLinuxCmdWithResultJsonObject(String cmd, Class<T> classType)
+			throws IOException, InterruptedException {
 		String output = executeLinuxCmd(cmd);
 		if (output.trim().length() > 0) {
 			LOG.debug("output=" + output);
@@ -103,7 +104,8 @@ public class LinuxUtil {
 	}
 
 	/**
-	 * Get last n lines from a file, returning only the first few lines from that set.
+	 * Get last n lines from a file, returning only the first few lines from
+	 * that set.
 	 */
 	public static List<String> getLastNFileLines(File readFile, int linesToRead, int headSize) {
 		List<String> result = new ArrayList<String>();
@@ -121,8 +123,11 @@ public class LinuxUtil {
 
 	public static String getFileNameWithoutExtension(String filename) {
 		int index = filename.lastIndexOf(".");
-		String filenameWithoutExtension = filename.substring(0, index);
-		return filenameWithoutExtension;
+		if (index>0) {
+			String filenameWithoutExtension = filename.substring(0, index);
+			return filenameWithoutExtension;
+		}
+		return filename;
 	}
 
 	public static String getFileExtension(String filename) {

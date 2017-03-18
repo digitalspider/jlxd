@@ -1,15 +1,15 @@
 package au.com.jcloud.lxd;
 
-import org.apache.log4j.Logger;
-
 import java.util.List;
 import java.util.Map;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.log4j.Logger;
 
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
 import au.com.jcloud.lxd.model.Operation;
 import au.com.jcloud.lxd.service.LxdService;
-import au.com.jcloud.lxd.service.LxdServiceCliImpl;
 import au.com.jcloud.lxd.service.LxdServiceImpl;
 
 /**
@@ -23,7 +23,7 @@ public class App {
         LOG.info("LXC START. args="+args.length);
         try {
             if (args.length==0) {
-                System.out.println("Usage: jlxd <c|i|o> [name] [start|stop|create|delete|snaps]");
+                System.out.println("Usage: jlxd [host[:port]] <c|i|o> [name] [start|stop|create|delete|snaps]");
                 System.out.println("");
                 System.out.println("   c = list containers");
                 System.out.println("   i = list images");
@@ -34,6 +34,7 @@ public class App {
             }
             //LxdService service = new LxdServiceCliImpl(new LxdServiceImpl());
             LxdService service = new LxdServiceImpl();
+            String remoteHostAndPort = null;
             for (int i=0; i<args.length; i++) {
                 if (args[i].equals("c")) {
                     LOG.info("");
@@ -115,6 +116,12 @@ public class App {
                         LOG.info("operation=" + operation);
                         i++;
                     }
+                }
+                else {
+                	if (StringUtils.isBlank(remoteHostAndPort)) {
+                		remoteHostAndPort = args[i];
+                		service.setRemoteHostAndPort(remoteHostAndPort);
+                	}
                 }
             }
         } catch (Exception e) {

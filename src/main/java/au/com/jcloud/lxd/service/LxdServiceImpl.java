@@ -2,7 +2,6 @@ package au.com.jcloud.lxd.service;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,13 +27,10 @@ public class LxdServiceImpl extends AbstractLxdService {
 
 	private static final Logger LOG = Logger.getLogger(LxdServiceImpl.class);
 
-	private List<Container> containerList = new ArrayList<Container>();
-	private Map<String, Container> containerMap = new HashMap<String, Container>();
-
-	//** Containers **//
+	// ** Containers **//
 	@Override
-	public Map<String,Container> loadContainers() throws IOException, InterruptedException {
-		Map<String,Container> containers = LXDUtil.executeCurlGetListCmd(LxdCall.GET_CONTAINER);
+	public Map<String, Container> loadContainers() throws IOException, InterruptedException {
+		Map<String, Container> containers = LXDUtil.executeCurlGetListCmd(remoteHostAndPort, LxdCall.GET_CONTAINER);
 		return containers;
 	}
 
@@ -42,17 +38,17 @@ public class LxdServiceImpl extends AbstractLxdService {
 	public State getContainerState(String name) throws IOException, InterruptedException {
 		Container container = getContainer(name);
 		if (container != null) {
-			State state = LXDUtil.executeCurlGetCmd(LxdCall.GET_STATE, name);
+			State state = LXDUtil.executeCurlGetCmd(remoteHostAndPort, LxdCall.GET_STATE, name);
 			return state;
 		}
 		return null;
 	}
 
-	//** Images **//
+	// ** Images **//
 	@Override
-	public Map<String,Image> loadImages() throws IOException, InterruptedException {
-		Map<String,Image> images = LXDUtil.executeCurlGetListCmd(LxdCall.GET_IMAGE);
-		Map<String,Image> imageAliasMap = new HashMap<>();
+	public Map<String, Image> loadImages() throws IOException, InterruptedException {
+		Map<String, Image> images = LXDUtil.executeCurlGetListCmd(remoteHostAndPort, LxdCall.GET_IMAGE);
+		Map<String, Image> imageAliasMap = new HashMap<>();
 		for (Image image : images.values()) {
 			LOG.debug("image=" + image);
 			// Add all aliases to the map
@@ -65,19 +61,17 @@ public class LxdServiceImpl extends AbstractLxdService {
 		return images;
 	}
 
-
 	@Override
 	public void deleteImage(Image image) throws IOException, InterruptedException {
 		// TODO: Implement
 	}
 
-
-	//** Container operations **//
+	// ** Container operations **//
 	@Override
 	public void startContainer(String name) throws IOException, InterruptedException {
 		State state = getContainerState(name);
 		if (state != null && !state.isRunning()) {
-			LXDUtil.executeCurlPostOrPutCmd(LxdCall.PUT_STATE_START, name);
+			LXDUtil.executeCurlPostOrPutCmd(remoteHostAndPort, LxdCall.PUT_STATE_START, name);
 		}
 	}
 
@@ -86,16 +80,18 @@ public class LxdServiceImpl extends AbstractLxdService {
 		State state = getContainerState(name);
 		LOG.info(state);
 		if (state != null && state.isRunning()) {
-			LXDUtil.executeCurlPostOrPutCmd(LxdCall.PUT_STATE_STOP, name);
+			LXDUtil.executeCurlPostOrPutCmd(remoteHostAndPort, LxdCall.PUT_STATE_STOP, name);
 		}
 	}
 
 	@Override
-	public void createContainer(String newContainerName, String imageNameOrId) throws IOException, InterruptedException {
-//		Image image = getImage(imageNameOrId);
-//		if (image != null) {
-			LXDUtil.executeCurlPostOrPutCmd(LxdCall.POST_CONTAINER_CREATE, newContainerName, imageNameOrId);
-//		}
+	public void createContainer(String newContainerName, String imageNameOrId)
+			throws IOException, InterruptedException {
+		// Image image = getImage(imageNameOrId);
+		// if (image != null) {
+		LXDUtil.executeCurlPostOrPutCmd(remoteHostAndPort, LxdCall.POST_CONTAINER_CREATE, newContainerName,
+				imageNameOrId);
+		// }
 	}
 
 	@Override
@@ -103,35 +99,36 @@ public class LxdServiceImpl extends AbstractLxdService {
 		State state = getContainerState(name);
 		if (state != null) {
 			if (!state.isStopped()) {
-				throw new IOException("Cannot delete a container that is not stopped. Container="+name+" status="+state);
+				throw new IOException(
+						"Cannot delete a container that is not stopped. Container=" + name + " status=" + state);
 			}
-			LXDUtil.executeCurlPostOrPutCmd(LxdCall.POST_CONTAINER_DELETE, name);
+			LXDUtil.executeCurlPostOrPutCmd(remoteHostAndPort, LxdCall.POST_CONTAINER_DELETE, name);
 		}
 	}
 
-	//** Operations **//
+	// ** Operations **//
 	@Override
-	public Map<String,Operation> loadOperations() throws IOException, InterruptedException {
-		Map<String,Operation> opertaions = LXDUtil.executeCurlGetListCmd(LxdCall.GET_OPERATION);
+	public Map<String, Operation> loadOperations() throws IOException, InterruptedException {
+		Map<String, Operation> opertaions = LXDUtil.executeCurlGetListCmd(remoteHostAndPort, LxdCall.GET_OPERATION);
 		return opertaions;
 	}
 
 	@Override
 	public List<Operation> getOperations() throws IOException, InterruptedException {
-		Map<String,Operation> opertaions = loadOperations();
+		Map<String, Operation> opertaions = loadOperations();
 		return new ArrayList<Operation>(opertaions.values());
 	}
 
 	@Override
 	public Operation getOperation(String name) throws IOException, InterruptedException {
-		Operation opertaion = LXDUtil.executeCurlGetCmd(LxdCall.GET_OPERATION, name);
+		Operation opertaion = LXDUtil.executeCurlGetCmd(remoteHostAndPort, LxdCall.GET_OPERATION, name);
 		return opertaion;
 	}
 
-
-	//** Networks **//
-	public Map<String,Network> loadNetworks() throws IOException, InterruptedException {
-		Map<String,Network> networks = LXDUtil.executeCurlGetListCmd(LxdCall.GET_NETWORK);
+	// ** Networks **//
+	@Override
+	public Map<String, Network> loadNetworks() throws IOException, InterruptedException {
+		Map<String, Network> networks = LXDUtil.executeCurlGetListCmd(remoteHostAndPort, LxdCall.GET_NETWORK);
 		return networks;
 	}
 
@@ -147,56 +144,57 @@ public class LxdServiceImpl extends AbstractLxdService {
 		return usedByContainers;
 	}
 
-	//** Profiles **//
+	// ** Profiles **//
 	@Override
-	public Map<String,Profile> loadProfiles() throws IOException, InterruptedException {
-		Map<String,Profile> profiles = LXDUtil.executeCurlGetListCmd(LxdCall.GET_PROFILE);
+	public Map<String, Profile> loadProfiles() throws IOException, InterruptedException {
+		Map<String, Profile> profiles = LXDUtil.executeCurlGetListCmd(remoteHostAndPort, LxdCall.GET_PROFILE);
 		return profiles;
 	}
 
-	//** Certificates **//
+	// ** Certificates **//
 	@Override
-	public Map<String,Certificate> loadCertificates() throws IOException, InterruptedException {
-		Map<String,Certificate> certificates = LXDUtil.executeCurlGetListCmd(LxdCall.GET_CERTIFICATE);
+	public Map<String, Certificate> loadCertificates() throws IOException, InterruptedException {
+		Map<String, Certificate> certificates = LXDUtil.executeCurlGetListCmd(remoteHostAndPort,
+				LxdCall.GET_CERTIFICATE);
 		return certificates;
 	}
 
-	//** Snapshots **//
+	// ** Snapshots **//
 	@Override
-	public Map<String,Snapshot> loadSnapshots(Container container) throws IOException, InterruptedException {
-		Map<String,Snapshot> snapshots = LXDUtil.executeCurlGetListCmd(LxdCall.GET_SNAPSHOTS, container.getName());
+	public Map<String, Snapshot> loadSnapshots(Container container) throws IOException, InterruptedException {
+		Map<String, Snapshot> snapshots = LXDUtil.executeCurlGetListCmd(remoteHostAndPort, LxdCall.GET_SNAPSHOTS,
+				container.getName());
 		return snapshots;
 	}
 
 	@Override
 	public List<Snapshot> getSnapshots(Container container) throws IOException, InterruptedException {
-		Map<String,Snapshot> snapshots = loadSnapshots(container);
+		Map<String, Snapshot> snapshots = loadSnapshots(container);
 		return new ArrayList<>(snapshots.values());
 	}
 
 	@Override
 	public Snapshot getSnapshot(Container container, String name) throws IOException, InterruptedException {
-		Snapshot snapshot = LXDUtil.executeCurlGetCmd(LxdCall.GET_SNAPSHOTS, name);
+		Snapshot snapshot = LXDUtil.executeCurlGetCmd(remoteHostAndPort, LxdCall.GET_SNAPSHOTS, name);
 		return snapshot;
 	}
 
-	//** Image Aliases **//
+	// ** Image Aliases **//
 	@Override
-	public Map<String,ImageAlias> loadImageAliases() throws IOException, InterruptedException {
-		Map<String,ImageAlias> aliases = LXDUtil.executeCurlGetListCmd(LxdCall.GET_IMAGEALIAS);
+	public Map<String, ImageAlias> loadImageAliases() throws IOException, InterruptedException {
+		Map<String, ImageAlias> aliases = LXDUtil.executeCurlGetListCmd(remoteHostAndPort, LxdCall.GET_IMAGEALIAS);
 		return aliases;
 	}
 
 	@Override
 	public List<ImageAlias> getImageAliases() throws IOException, InterruptedException {
-		Map<String,ImageAlias> aliases = loadImageAliases();
+		Map<String, ImageAlias> aliases = loadImageAliases();
 		return new ArrayList<>(aliases.values());
 	}
 
 	@Override
 	public ImageAlias getImageAlias(String name) throws IOException, InterruptedException {
-		ImageAlias alias = LXDUtil.executeCurlGetCmd(LxdCall.GET_IMAGEALIAS, name);
+		ImageAlias alias = LXDUtil.executeCurlGetCmd(remoteHostAndPort, LxdCall.GET_IMAGEALIAS, name);
 		return alias;
 	}
 }
-

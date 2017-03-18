@@ -18,6 +18,11 @@ import au.com.jcloud.lxd.model.State;
  * Created by david.vittor on 12/07/16.
  */
 public interface LxdService {
+	
+	// RemoteHostAndPort
+	public String getRemoteHostAndPort();
+	public void setRemoteHostAndPort(String remoteHostAndPort);
+	
     // Containers
     public Map<String,Container> loadContainers() throws IOException, InterruptedException;
     public void reloadContainerCache() throws IOException, InterruptedException;
