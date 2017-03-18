@@ -201,7 +201,7 @@ public class LxdServiceImpl extends AbstractLxdService {
 	// ** File Ops **//
 	@Override
 	public String getFile(String containerName, String filepath) throws IOException, InterruptedException {
-		String response = LXDUtil.executeCurlGetCmd(remoteHostAndPort, LxdCall.GET_FILE, containerName, filepath);
+		String response = LXDUtil.executeCurlGetCmd(remoteHostAndPort, LxdCall.GET_FILE, null, containerName, filepath);
 		return response;
 	}
 }
