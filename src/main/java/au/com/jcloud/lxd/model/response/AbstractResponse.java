@@ -1,5 +1,7 @@
 package au.com.jcloud.lxd.model.response;
 
+import org.apache.commons.lang3.StringUtils;
+
 import com.google.gson.annotations.SerializedName;
 
 /**
@@ -7,13 +9,23 @@ import com.google.gson.annotations.SerializedName;
  */
 public abstract class AbstractResponse {
 	private String type;
+	private String error;
+	@SerializedName("error_code")
+	private String errorCode;
 	private String status;
 	@SerializedName("status_code")
 	private String statusCode;
 
 	@Override
 	public String toString() {
-		return getClass().getSimpleName() + ": type=" + type + ", status=" + status + ", statusCode=" + statusCode + " metadata=" + getMetadata();
+		String result = getClass().getSimpleName() + ": type=" + type;
+		if (StringUtils.isNotBlank(statusCode)) {
+			result +=  ", status=" + status + ", statusCode=" + statusCode + ", metadata=" + getMetadata();
+		}
+		if (StringUtils.isNotBlank(errorCode)) {
+			result += ", error=" + error + ", errorCode=" + errorCode;
+		}
+		return result;
 	}
 
 	public abstract Object getMetadata();
@@ -40,5 +52,21 @@ public abstract class AbstractResponse {
 
 	public void setStatusCode(String statusCode) {
 		this.statusCode = statusCode;
+	}
+
+	public String getError() {
+		return error;
+	}
+
+	public void setError(String error) {
+		this.error = error;
+	}
+
+	public String getErrorCode() {
+		return errorCode;
+	}
+
+	public void setErrorCode(String errorCode) {
+		this.errorCode = errorCode;
 	}
 }

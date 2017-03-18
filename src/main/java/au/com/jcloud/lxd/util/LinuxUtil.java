@@ -17,13 +17,26 @@ import com.google.gson.Gson;
 public class LinuxUtil {
 	private static final Logger LOG = Logger.getLogger(LinuxUtil.class);
 
+	public static boolean isWindows() {
+		String os = System.getProperty("os.name");
+		if (os!=null && os.toLowerCase().startsWith("win")) {
+			return true;
+		}
+		return false;
+	}
+	
 	public static String executeLinuxCmd(String cmd) throws IOException, InterruptedException {
-		String[] cmdArray = { "/bin/sh", "-c", cmd };
 		StringBuffer result = new StringBuffer();
 		BufferedReader in = null;
-		LOG.debug("cmd=" + cmdArray[2]);
+		LOG.debug("cmd=" + cmd);
 		try {
-			Process process = Runtime.getRuntime().exec(cmdArray);
+			Process process = null;
+			if (isWindows()) {
+				process = Runtime.getRuntime().exec(cmd);
+			} else {
+				String[] cmdArray = { "/bin/sh", "-c", cmd };
+				process = Runtime.getRuntime().exec(cmdArray);
+			}
 			in = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			String line;
 

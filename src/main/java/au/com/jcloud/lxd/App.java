@@ -11,6 +11,7 @@ import au.com.jcloud.lxd.model.Image;
 import au.com.jcloud.lxd.model.Operation;
 import au.com.jcloud.lxd.service.LxdService;
 import au.com.jcloud.lxd.service.LxdServiceImpl;
+import au.com.jcloud.lxd.util.LXDUtil;
 
 /**
  * Created by david on 16/07/16.
@@ -33,6 +34,7 @@ public class App {
                 System.exit(1);
             }
             //LxdService service = new LxdServiceCliImpl(new LxdServiceImpl());
+            LXDUtil.setKeypath("C:/opt/jcloud/");
             LxdService service = new LxdServiceImpl();
             String remoteHostAndPort = null;
             for (int i=0; i<args.length; i++) {

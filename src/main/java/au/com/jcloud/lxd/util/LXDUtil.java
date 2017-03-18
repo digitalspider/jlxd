@@ -29,10 +29,12 @@ import au.com.jcloud.lxd.model.response.StateResponse;
  */
 public class LXDUtil {
 
-	public static final String CURL_URL_BASE_REMOTE = "curl -s -k --cert ~/.config/lxc/client.crt --key ~/.config/lxc/client.key https://${HOSTANDPORT}";
+	public static final String CURL_URL_BASE_REMOTE = "curl -s -k --cert ${KEYPATH}client.crt --key ${KEYPATH}client.key https://${HOSTANDPORT}";
 	public static final String CURL_URL_BASE_LOCAL = "curl -s --unix-socket /var/lib/lxd/unix.socket a";
 
 	public static final Logger LOG = Logger.getLogger(LXDUtil.class);
+	
+	private static String keypath = "~/.config/lxc/";
 
 	// Get commands
 	public static final String URL_GET_CONTAINER = "/1.0/containers";
@@ -166,6 +168,8 @@ public class LXDUtil {
 						results.put(id,instance);
 					}
 				}
+			} else {
+				LOG.warn("Invalid Response! response="+response+" url="+url);
 			}
 		}
 		return results;
@@ -236,8 +240,18 @@ public class LXDUtil {
 				remoteHostAndPort += ":8443";
 			}
 			url = CURL_URL_BASE_REMOTE.replaceAll("\\$\\{HOSTANDPORT}", remoteHostAndPort);
+			url = url.replaceAll("\\$\\{KEYPATH}", keypath);
 		}
 		return url;
+	}
+	
+
+	public static String getKeypath() {
+		return keypath;
+	}
+
+	public static void setKeypath(String keypath) {
+		LXDUtil.keypath = keypath;
 	}
 }
 
