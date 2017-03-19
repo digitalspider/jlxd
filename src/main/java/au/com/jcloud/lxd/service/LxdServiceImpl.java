@@ -107,6 +107,7 @@ public class LxdServiceImpl extends AbstractLxdService {
 			boolean found = false;
 			for (RemoteServer remoteServer : RemoteServer.values()) {
 				if (remoteServer!=RemoteServer.LOCAL && imageAlias.startsWith(remoteServer.getName()+":")) {
+					imageAlias = imageAlias.substring((remoteServer.getName()+":").length());
 					LXDUtil.executeCurlPostCmdToCreateNewContainerFromImage(remoteHostAndPort, remoteServer, newContainerName, imageAlias);
 					found = true;
 					break;
