@@ -65,9 +65,8 @@ public class LxdServiceImpl extends AbstractLxdService {
 				LOG.debug("alias=" + alias.getName());
 				imageAliasMap.put(alias.getName(), image);
 			}
-			// Add fingerprints to the map
+			// Add fingerprint to the map
 			if (image.getFingerprint()!=null && image.getFingerprint().length()>12) {
-				imageAliasMap.put(image.getFingerprint(), image);
 				imageAliasMap.put(image.getFingerprint().substring(0,12), image);
 			}
 		}
