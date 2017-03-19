@@ -53,7 +53,7 @@ public class App {
                     } else if (args.length>i+1 && !args[i+1].equals("o") && !args[i+1].equals("i") || !args[i+1].equals("s")) {
                         String name = args[i+1];
                         Container container = service.getContainer(name);
-                        if (container==null) {
+                        if (container==null && args.length>i+1 && !args[i+1].equals("create")) {
                             LOG.error("container " + name + " does not exist");
                             System.exit(1);
                         }
@@ -71,7 +71,7 @@ public class App {
                                     break;
                                 case "create":
                                     LOG.info("creating new container=" + name);
-                                    service.createContainer(RemoteServer.IMAGES, name, "alpine/edge/amd64"); // TODO: Alias not valid
+                                    service.createContainer(RemoteServer.IMAGES, name, "alpine/edge");
                                     break;
                                 case "delete":
                                     LOG.info("deleting container=" + container);
