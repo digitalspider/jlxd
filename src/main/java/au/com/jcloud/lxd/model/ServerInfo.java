@@ -74,6 +74,74 @@ public class ServerInfo {
                 '}';
     }
 
+
+    public String getHttpsAddress() {
+    	return getConfigParam("core.https_address");
+    }
+    
+    public boolean isTrustPassword() {
+    	String isTrustPassword = getConfigParam("core.trust_password");
+    	return Boolean.parseBoolean(isTrustPassword!=null ? isTrustPassword : "false");
+    }
+    
+    public String getZfsPoolName() {
+    	return getConfigParam("storage.zfs_pool_name");
+    }
+    
+    public String getDriver() {
+    	return getEnvironmentParam("driver");
+    }
+    
+    public String getDriverVersion() {
+    	return getEnvironmentParam("driver_version");
+    }
+    
+    public String getKernel() {
+    	return getEnvironmentParam("kernel");
+    }
+    
+    public String getKernelArchitecture() {
+    	return getEnvironmentParam("kernel_architecture");
+    }
+    
+    public String getKernelVersion() {
+    	return getEnvironmentParam("kernel_version");
+    }
+    
+    public String getServer() {
+    	return getEnvironmentParam("server");
+    }
+    
+    public String getServerPid() {
+    	return getEnvironmentParam("server_pid");
+    }
+    
+    public String getServerVersion() {
+    	return getEnvironmentParam("server_version");
+    }
+    
+    public String getStorage() {
+    	return getEnvironmentParam("storage");
+    }
+    
+    public String getStorageVersion() {
+    	return getEnvironmentParam("storage_version");
+    }
+	
+	/**
+	 * Get parameter from within the {@link #environment} map
+	 */
+	public String getEnvironmentParam(String paramName) {
+		return environment != null ? (String) environment.get(paramName) : null;
+	}
+	
+	/**
+	 * Get parameter from within the {@link #config} map
+	 */
+	public String getConfigParam(String paramName) {
+		return config != null ? (String) config.get(paramName) : null;
+	}
+    
     public Map<String, Object> getEnvironment() {
         return environment;
     }
