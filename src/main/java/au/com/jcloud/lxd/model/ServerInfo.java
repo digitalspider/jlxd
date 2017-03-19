@@ -63,7 +63,7 @@ public class ServerInfo {
 
     @Override
     public String toString() {
-        return "ProfileMetaData{" +
+        return "ServerInfo{" +
                 "apiExtensions='" + apiExtensions + '\'' +
                 ", apiStatus='" + apiStatus + '\'' +
                 ", apiVersion='" + apiVersion + '\'' +
