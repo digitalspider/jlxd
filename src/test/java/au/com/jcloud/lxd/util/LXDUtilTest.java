@@ -25,13 +25,11 @@ public class LXDUtilTest {
 	
 	@Test
 	public void getParameterisedUrl() {
-		String url = "a${ID}:${ALIAS}";
+		String url = "a${ID}:${ID}";
 		String id = "b";
-		String alias = "c";
-		String result = LXDUtil.getParameterisedUrl(url,id,alias);
+		String result = LXDUtil.getParameterisedUrl(url,id);
 		url = url.replaceAll("\\$\\{ID\\}", id);
-		url = url.replaceAll("\\$\\{ALIAS\\}", alias);
-		Assert.assertEquals("ab:c", result);
+		Assert.assertEquals("ab:b", result);
 	}
 	
 }
