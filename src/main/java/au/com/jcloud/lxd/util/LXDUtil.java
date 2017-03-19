@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import au.com.jcloud.lxd.RemoteServer;
 import au.com.jcloud.lxd.model.StatusCode;
 import au.com.jcloud.lxd.model.response.AbstractResponse;
 import au.com.jcloud.lxd.model.response.CertificateResponse;
@@ -55,7 +56,7 @@ public class LXDUtil {
 	// Post Commands
 	public static final String URL_PUT_STATE_STOP = URL_GET_STATE + " -X PUT -d '{\"action\": \"stop\", \"force\": true}'";
 	public static final String URL_PUT_STATE_START = URL_GET_STATE + " -X PUT -d '{\"action\": \"start\"}'";
-	public static final String URL_POST_CONTAINER_CREATE = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", \"source\": {\"type\": \"image\", \"protocol\": \"simplestreams\", \"server\": \"https://cloud-images.ubuntu.com/daily\", \"alias\": \"16.04\"}}'";
+	public static final String URL_POST_CONTAINER_CREATE = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", \"source\": {\"type\": \"image\", \"protocol\": \"${PROTOCOL}\", \"server\": \"${SERVERURL}\", \"alias\": \"${ALIAS}\"}}'";
 	public static final String URL_POST_CONTAINER_DELETE = URL_GET_CONTAINER + "/${ID} -X DELETE";
     public static final String URL_POST_FILES = "/1.0/containers/${ID}/files?path=${PATH} -X POST";
     public static final String URL_POST_EXEC = "/1.0/containers/${ID}/exec -X POST -d { \"command\": [\"${CMD}\"], \"environment\": {${ENV}}, \"wait-for-websocket\": ${WAIT}, \"interactive\": false }";
@@ -99,14 +100,14 @@ public class LXDUtil {
 	public static <T> T executeCurlGetCmd(String remoteHostAndPort, LxdCall lxdCall, String id, String containerName, String... additionalParams) throws IOException, InterruptedException {
 		String url = getBaseUrl(remoteHostAndPort) + lxdCall.command;
 		if (containerName!=null) {
-			url = getParameterisedUrl(url, containerName, null);
+			url = getParameterisedUrl(url, containerName);
 		}
 		if (lxdCall.equals(LxdCall.GET_FILE) && additionalParams.length>0) {
 			url = url.replaceAll("\\$\\{PATH\\}", additionalParams[0]);
 			return (T) LinuxUtil.executeLinuxCmd(url);
 		}
 		if (lxdCall.equals(LxdCall.GET_STATE)) {
-			url = getParameterisedUrl(url, id, null);
+			url = getParameterisedUrl(url, id);
 		} else {
 			if (StringUtils.isNotBlank(id)) {
 				url += "/"+id;
@@ -145,7 +146,7 @@ public class LXDUtil {
 			responseClassType = ListOperationResponse.class;
 		}
 		String url = getBaseUrl(remoteHostAndPort) + lxdCall.command;
-		url = getParameterisedUrl(url, containerName, null);
+		url = getParameterisedUrl(url, containerName);
 		LOG.debug("url=" + url);
 		AbstractResponse response = (AbstractResponse) LinuxUtil.executeLinuxCmdWithResultJsonObject(url, responseClassType);
 		Map<String,T> results = new HashMap<String,T>();
@@ -187,21 +188,11 @@ public class LXDUtil {
 	 * @param lxdCall the type of operation to perform
 	 */
 	public static void executeCurlPostOrPutCmd(String remoteHostAndPort, LxdCall lxdCall, String containerName) throws IOException, InterruptedException {
-		executeCurlPostOrPutCmd(remoteHostAndPort, lxdCall, containerName, null);
-	}
-
-	/**
-	 * Execute the curl command to start, stop, create or delete a container
-	 * 
-	 * @param remoteHostAndPort see {@link #getBaseUrl(String)}
-	 * @param lxdCall the type of operation to perform
-	 */
-	public static void executeCurlPostOrPutCmd(String remoteHostAndPort, LxdCall lxdCall, String containerName, String imageNameOrId) throws IOException, InterruptedException {
 		String url = getBaseUrl(remoteHostAndPort) + lxdCall.command;
 
 		if (lxdCall.equals(LxdCall.PUT_STATE_START) || lxdCall.equals(LxdCall.PUT_STATE_STOP) ||
 				lxdCall.equals(LxdCall.POST_CONTAINER_CREATE) || lxdCall.equals(LxdCall.POST_CONTAINER_DELETE)) {
-			url = getParameterisedUrl(url, containerName, imageNameOrId);
+			url = getParameterisedUrl(url, containerName);
 		} else {
 			throw new IOException("This call is not implemented! "+lxdCall);
 		}
@@ -215,18 +206,44 @@ public class LXDUtil {
 			}
 		}
 	}
+	
+	/**
+	 * Execute the curl command to start, stop, create or delete a container
+	 * 
+	 * @param remoteHostAndPort see {@link #getBaseUrl(String)}
+	 * @param lxdCall the type of operation to perform
+	 */
+	public static void executeCurlPostCmdToCreateNewContainerFromImage(String remoteHostAndPort, RemoteServer remoteServer, String containerName, String imageAlias) throws IOException, InterruptedException {
+		if (remoteServer == null) {
+			throw new IOException("Cannot create a container without a remoteServer.");
+		}
+		LxdCall lxdCall = LxdCall.POST_CONTAINER_CREATE;
+		String url = getBaseUrl(remoteHostAndPort) + lxdCall.command;
+		url = getParameterisedUrl(url, containerName);
+		url = url.replaceAll("\\$\\{ALIAS\\}", imageAlias);
+		url = url.replaceAll("\\$\\{PROTOCOL\\}", remoteServer.getProtocol());
+		url = url.replaceAll("\\$\\{SERVERURL\\}", remoteServer.getUrl());
+
+		LOG.debug("url="+url);
+		AbstractResponse response = LinuxUtil.executeLinuxCmdWithResultJsonObject(url, lxdCall.classType);
+		LOG.info("repsonse="+response);
+		if (response != null) {
+			LOG.debug("statusCode=" + response.getStatusCode());
+            if (StatusCode.OPERATION_CREATED.equals(StatusCode.parse(response.getStatusCode()))) {
+				return;
+			}
+		}
+	}
 
 	/**
-	 * Perform a replace all on the url replacing ${ID} and ${ALIAS}.
+	 * Perform a replace all on the url replacing ${ID}.
 	 * 
 	 * @param url the url string
 	 * @param id the id replacement value
-	 * @param alias the alias replacement value
 	 * @return the parameterised url
 	 */
-	static String getParameterisedUrl(String url, String id, String alias) {
+	static String getParameterisedUrl(String url, String id) {
 		url = url.replaceAll("\\$\\{ID\\}", id);
-		url = url.replaceAll("\\$\\{ALIAS\\}", alias);
 		return url;
 	}
 	

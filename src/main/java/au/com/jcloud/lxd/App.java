@@ -71,7 +71,7 @@ public class App {
                                     break;
                                 case "create":
                                     LOG.info("creating new container=" + name);
-                                    service.createContainer(name, "alpine/edge/amd64"); // TODO: Alias not valid
+                                    service.createContainer(RemoteServer.IMAGES, name, "alpine/edge/amd64"); // TODO: Alias not valid
                                     break;
                                 case "delete":
                                     LOG.info("deleting container=" + container);

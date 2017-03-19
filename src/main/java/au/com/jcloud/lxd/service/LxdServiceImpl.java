@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import au.com.jcloud.lxd.RemoteServer;
 import au.com.jcloud.lxd.model.Certificate;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
@@ -93,13 +94,17 @@ public class LxdServiceImpl extends AbstractLxdService {
 	}
 
 	@Override
-	public void createContainer(String newContainerName, String imageNameOrId)
-			throws IOException, InterruptedException {
-		// Image image = getImage(imageNameOrId);
-		// if (image != null) {
-		LXDUtil.executeCurlPostOrPutCmd(remoteHostAndPort, LxdCall.POST_CONTAINER_CREATE, newContainerName,
-				imageNameOrId);
-		// }
+	public void createContainer(RemoteServer remoteServer, String newContainerName, String imageAlias) throws IOException, InterruptedException {
+		if (RemoteServer.LOCAL.equals(remoteServer)) {
+			Image image = getImage(imageAlias);
+			if (image != null) {
+				LXDUtil.executeCurlPostCmdToCreateNewContainerFromImage(remoteHostAndPort, remoteServer, newContainerName, imageAlias);
+			} else {
+				throw new IOException("Could not find local image with alias: "+imageAlias);
+			}
+		} else {
+			LXDUtil.executeCurlPostCmdToCreateNewContainerFromImage(remoteHostAndPort, remoteServer, newContainerName, imageAlias);
+		}
 	}
 
 	@Override
