@@ -1,5 +1,6 @@
 package au.com.jcloud.lxd.model;
 
+import java.util.List;
 import java.util.Map;
 
 import com.google.gson.annotations.SerializedName;
@@ -49,7 +50,7 @@ import com.google.gson.annotations.SerializedName;
 public class ServerInfo {
 
 	@SerializedName("api_extensions")
-	private String apiExtensions;
+	private List<String> apiExtensions;
     @SerializedName("api_status")
     private String apiStatus;
     @SerializedName("api_version")
@@ -97,11 +98,11 @@ public class ServerInfo {
 		this.isPublic = isPublic;
 	}
 
-	public String getApiExtensions() {
+	public List<String> getApiExtensions() {
 		return apiExtensions;
 	}
 
-	public void setApiExtensions(String apiExtensions) {
+	public void setApiExtensions(List<String> apiExtensions) {
 		this.apiExtensions = apiExtensions;
 	}
 

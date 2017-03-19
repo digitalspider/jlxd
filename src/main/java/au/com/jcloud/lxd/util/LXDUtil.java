@@ -108,7 +108,9 @@ public class LXDUtil {
 		if (lxdCall.equals(LxdCall.GET_STATE)) {
 			url = getParameterisedUrl(url, id, null);
 		} else {
-			url += "/"+id;
+			if (StringUtils.isNotBlank(id)) {
+				url += "/"+id;
+			}
 		}
 		LOG.debug("url=" + url);
 		AbstractResponse response = LinuxUtil.executeLinuxCmdWithResultJsonObject(url, lxdCall.classType);
