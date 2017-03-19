@@ -11,6 +11,7 @@ import au.com.jcloud.lxd.model.ImageAlias;
 import au.com.jcloud.lxd.model.Network;
 import au.com.jcloud.lxd.model.Operation;
 import au.com.jcloud.lxd.model.Profile;
+import au.com.jcloud.lxd.model.ServerInfo;
 import au.com.jcloud.lxd.model.Snapshot;
 import au.com.jcloud.lxd.model.State;
 
@@ -22,6 +23,9 @@ public interface LxdService {
 	// RemoteHostAndPort
 	public String getRemoteHostAndPort();
 	public void setRemoteHostAndPort(String remoteHostAndPort);
+	
+	// ServerInfo
+	public ServerInfo getServerInfo() throws IOException, InterruptedException;
 	
     // Containers
     public Map<String,Container> loadContainers() throws IOException, InterruptedException;

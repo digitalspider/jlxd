@@ -21,6 +21,7 @@ import au.com.jcloud.lxd.model.response.ListResponse;
 import au.com.jcloud.lxd.model.response.NetworkResponse;
 import au.com.jcloud.lxd.model.response.OperationResponse;
 import au.com.jcloud.lxd.model.response.ProfileResponse;
+import au.com.jcloud.lxd.model.response.ServerInfoResponse;
 import au.com.jcloud.lxd.model.response.SnapshotResponse;
 import au.com.jcloud.lxd.model.response.StateResponse;
 
@@ -37,6 +38,7 @@ public class LXDUtil {
 	private static String keypath = "~/.config/lxc/";
 
 	// Get commands
+	public static final String URL_GET_SERVERINFO = "/1.0";
 	public static final String URL_GET_CONTAINER = "/1.0/containers";
 	public static final String URL_GET_IMAGE = "/1.0/images";
     public static final String URL_GET_IMAGEALIAS = URL_GET_IMAGE + "/aliases";
@@ -59,6 +61,7 @@ public class LXDUtil {
     public static final String URL_POST_EXEC = "/1.0/containers/${ID}/exec -X POST -d { \"command\": [\"${CMD}\"], \"environment\": {${ENV}}, \"wait-for-websocket\": ${WAIT}, \"interactive\": false }";
 
 	public enum LxdCall {
+		GET_SERVERINFO(URL_GET_SERVERINFO, ServerInfoResponse.class),
 		GET_CONTAINER(URL_GET_CONTAINER, ContainerResponse.class),
 		GET_IMAGE(URL_GET_IMAGE, ImageResponse.class),
         GET_IMAGEALIAS(URL_GET_IMAGEALIAS, ImageAliasResponse.class),

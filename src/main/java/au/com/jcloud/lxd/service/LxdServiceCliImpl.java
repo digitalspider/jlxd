@@ -11,6 +11,7 @@ import au.com.jcloud.lxd.model.ImageAlias;
 import au.com.jcloud.lxd.model.Network;
 import au.com.jcloud.lxd.model.Operation;
 import au.com.jcloud.lxd.model.Profile;
+import au.com.jcloud.lxd.model.ServerInfo;
 import au.com.jcloud.lxd.model.Snapshot;
 import au.com.jcloud.lxd.model.State;
 import au.com.jcloud.lxd.util.LinuxUtil;
@@ -26,6 +27,13 @@ public class LxdServiceCliImpl extends AbstractLxdService {
 		this.lxdServiceDelegate = lxdServiceDelegate;
 	}
 
+
+	// ** ServerInfo **//
+	@Override
+	public ServerInfo getServerInfo() throws IOException, InterruptedException {
+		return lxdServiceDelegate.getServerInfo(); // TODO: could use "lxd info", but need to do mapping
+	}
+	
 	// ** Containers **//
 	@Override
 	public Map<String, Container> loadContainers() throws IOException, InterruptedException {

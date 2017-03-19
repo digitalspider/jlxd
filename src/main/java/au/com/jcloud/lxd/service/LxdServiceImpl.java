@@ -15,6 +15,7 @@ import au.com.jcloud.lxd.model.ImageAlias;
 import au.com.jcloud.lxd.model.Network;
 import au.com.jcloud.lxd.model.Operation;
 import au.com.jcloud.lxd.model.Profile;
+import au.com.jcloud.lxd.model.ServerInfo;
 import au.com.jcloud.lxd.model.Snapshot;
 import au.com.jcloud.lxd.model.State;
 import au.com.jcloud.lxd.util.LXDUtil;
@@ -27,6 +28,13 @@ public class LxdServiceImpl extends AbstractLxdService {
 
 	private static final Logger LOG = Logger.getLogger(LxdServiceImpl.class);
 
+	// ** ServerInfo **//
+	@Override
+	public ServerInfo getServerInfo() throws IOException, InterruptedException {
+		ServerInfo serverInfo = LXDUtil.executeCurlGetCmd(remoteHostAndPort, LxdCall.GET_SERVERINFO, null);
+		return serverInfo;
+	}
+	
 	// ** Containers **//
 	@Override
 	public Map<String, Container> loadContainers() throws IOException, InterruptedException {

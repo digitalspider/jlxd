@@ -23,8 +23,9 @@ public class App {
         LOG.info("LXC START. args="+args.length);
         try {
             if (args.length==0) {
-                System.out.println("Usage: jlxd [host[:port]] <c|i|o> [name] [start|stop|create|delete|snaps|file]");
+                System.out.println("Usage: jlxd [host[:port]] <s|c|i|o> [name] [start|stop|create|delete|snaps|file]");
                 System.out.println("");
+                System.out.println("   s = server info");
                 System.out.println("   c = list containers");
                 System.out.println("   i = list images");
                 System.out.println("   o = list operations");
@@ -37,15 +38,19 @@ public class App {
             LxdService service = new LxdServiceImpl();
             String remoteHostAndPort = null;
             for (int i=0; i<args.length; i++) {
-                if (args[i].equals("c")) {
+            	if (args[i].equals("s")) {
+            		LOG.info("");
+            		LOG.info(service.getServerInfo());
+            	}
+            	else if (args[i].equals("c")) {
                     LOG.info("");
-                    if (args.length-1==i || args[i+1].equals("o") || args[i+1].equals("i")) {
+                    if (args.length-1==i || args[i+1].equals("o") || args[i+1].equals("i") || args[i+1].equals("s")) {
                         List<Container> containers = service.getContainers();
                         LOG.info("containers=" + containers.size());
                         for (Container container : containers) {
                             LOG.info("container=" + container);
                         }
-                    } else if (args.length>i+1 && !args[i+1].equals("o") && !args[i+1].equals("i")) {
+                    } else if (args.length>i+1 && !args[i+1].equals("o") && !args[i+1].equals("i") || !args[i+1].equals("s")) {
                         String name = args[i+1];
                         Container container = service.getContainer(name);
                         if (container==null) {
@@ -53,7 +58,7 @@ public class App {
                             System.exit(1);
                         }
                         i++;
-                        if (args.length>i+1 && !args[i+1].equals("o") && !args[i+1].equals("i")) {
+                        if (args.length>i+1 && !args[i+1].equals("o") && !args[i+1].equals("i") || !args[i+1].equals("s")) {
                             String operation = args[i+1];
                             switch (operation) {
                                 case "start":
@@ -77,7 +82,7 @@ public class App {
                                     LOG.info(service.getSnapshots(container));
                                     break;
                                 case "file":
-                                	if (args.length>i+2 && !args[i+2].equals("o") && !args[i+2].equals("i")) {
+                                	if (args.length>i+2 && !args[i+2].equals("o") && !args[i+2].equals("i") || !args[i+2].equals("s")) {
                                 		String filepath = args[i+2];
 	                                    LOG.info("Getting file "+filepath+" for container=" + container);
 	                                    LOG.info(service.getFile(container.getName(), filepath));
@@ -97,12 +102,12 @@ public class App {
                 else if (args[i].equals("i")) {
                     LOG.info("");
                     Map<String,Image> images = service.loadImages();
-                    if (args.length-1==i || args[i+1].equals("o") || args[i+1].equals("c")) {
+                    if (args.length-1==i || args[i+1].equals("o") || args[i+1].equals("c") || args[i+1].equals("s")) {
                         LOG.info("images=" + images.size());
                         for (Image image : images.values()) {
                             LOG.info("image=" + image);
                         }
-                    } else if (args.length>i+1 && !args[i+1].equals("o") && !args[i+1].equals("c")) {
+                    } else if (args.length>i+1 && !args[i+1].equals("o") && !args[i+1].equals("c") || !args[i+1].equals("s")) {
                         String name = args[i+1];
                         for (String key : images.keySet()) {
                             if (key.contains(name)) {
@@ -114,13 +119,13 @@ public class App {
                 }
                 else if (args[i].equals("o")) {
                     LOG.info("");
-                    if (args.length-1==i || args[i+1].equals("i") || args[i+1].equals("c")) {
+                    if (args.length-1==i || args[i+1].equals("i") || args[i+1].equals("c") || args[i+1].equals("s")) {
                         List<Operation> operations = service.getOperations();
                         LOG.info("operations=" + operations.size());
                         for (Operation operation: operations) {
                             LOG.info("operation=" + operation);
                         }
-                    } else if (args.length>i+1 && !args[i+1].equals("i") && !args[i+1].equals("c")) {
+                    } else if (args.length>i+1 && !args[i+1].equals("i") && !args[i+1].equals("c") || !args[i+1].equals("s")) {
                         String name = args[i+1];
                         Operation operation = service.getOperation(name);
                         LOG.info("operation=" + operation);
