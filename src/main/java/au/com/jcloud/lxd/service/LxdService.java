@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import au.com.jcloud.lxd.RemoteServer;
 import au.com.jcloud.lxd.model.Certificate;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
@@ -46,7 +45,7 @@ public interface LxdService {
     public void startContainer(String name) throws IOException, InterruptedException;
     public void stopContainer(String name) throws IOException, InterruptedException;
     public void deleteContainer(String name) throws IOException, InterruptedException;
-    public void createContainer(RemoteServer remoteServer, String newContainerName, String imageNameOrId) throws IOException, InterruptedException;
+    public void createContainer(String newContainerName, String imageAlias) throws IOException, InterruptedException;
 
     // Operations
     public Map<String,Operation> loadOperations() throws IOException, InterruptedException;

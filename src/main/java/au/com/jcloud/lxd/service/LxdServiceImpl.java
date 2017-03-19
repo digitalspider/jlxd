@@ -94,16 +94,27 @@ public class LxdServiceImpl extends AbstractLxdService {
 	}
 
 	@Override
-	public void createContainer(RemoteServer remoteServer, String newContainerName, String imageAlias) throws IOException, InterruptedException {
-		if (RemoteServer.LOCAL.equals(remoteServer)) {
+	public void createContainer(String newContainerName, String imageAlias) throws IOException, InterruptedException {
+		
+		if (!imageAlias.contains(":")) {
 			Image image = getImage(imageAlias);
 			if (image != null) {
-				LXDUtil.executeCurlPostCmdToCreateNewContainerFromImage(remoteHostAndPort, remoteServer, newContainerName, imageAlias);
+				LXDUtil.executeCurlPostCmdToCreateNewContainerFromImage(remoteHostAndPort, RemoteServer.LOCAL, newContainerName, imageAlias);
 			} else {
 				throw new IOException("Could not find local image with alias: "+imageAlias);
 			}
 		} else {
-			LXDUtil.executeCurlPostCmdToCreateNewContainerFromImage(remoteHostAndPort, remoteServer, newContainerName, imageAlias);
+			boolean found = false;
+			for (RemoteServer remoteServer : RemoteServer.values()) {
+				if (remoteServer!=RemoteServer.LOCAL && imageAlias.startsWith(remoteServer.getName()+":")) {
+					LXDUtil.executeCurlPostCmdToCreateNewContainerFromImage(remoteHostAndPort, remoteServer, newContainerName, imageAlias);
+					found = true;
+					break;
+				}
+			}
+			if (!found) {
+				throw new IOException("Could not find remote image server: "+imageAlias);
+			}
 		}
 	}
 

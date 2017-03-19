@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import au.com.jcloud.lxd.RemoteServer;
 import au.com.jcloud.lxd.model.Certificate;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
@@ -74,7 +73,7 @@ public class LxdServiceCliImpl extends AbstractLxdService {
 	}
 
 	@Override
-	public void createContainer(RemoteServer remoteServer, String newContainerName, String imageAlias)
+	public void createContainer(String newContainerName, String imageAlias)
 			throws IOException, InterruptedException {
 		LinuxUtil.executeLinuxCmd("lxc launch " + imageAlias + " " + newContainerName);
 	}

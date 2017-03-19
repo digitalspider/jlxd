@@ -71,7 +71,7 @@ public class App {
                                     break;
                                 case "create":
                                     LOG.info("creating new container=" + name);
-                                    service.createContainer(RemoteServer.IMAGES, name, "alpine/edge");
+                                    service.createContainer(name, "images:alpine/edge");
                                     break;
                                 case "delete":
                                     LOG.info("deleting container=" + container);
