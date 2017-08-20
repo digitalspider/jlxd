@@ -9,8 +9,12 @@ import org.apache.log4j.Logger;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
 import au.com.jcloud.lxd.model.Operation;
-import au.com.jcloud.lxd.service.LxdService;
-import au.com.jcloud.lxd.service.LxdServiceImpl;
+import au.com.jcloud.lxd.service.ILinuxCliService;
+import au.com.jcloud.lxd.service.ILxdApiService;
+import au.com.jcloud.lxd.service.ILxdService;
+import au.com.jcloud.lxd.service.impl.LinuxCliServiceImpl;
+import au.com.jcloud.lxd.service.impl.LxdApiServiceImpl;
+import au.com.jcloud.lxd.service.impl.LxdServiceImpl;
 
 /**
  * Created by david on 16/07/16.
@@ -35,7 +39,11 @@ public class App {
             }
             //LxdService service = new LxdServiceCliImpl(new LxdServiceImpl());
             //LXDUtil.setKeypath("C:/opt/jcloud/");
-            LxdService service = new LxdServiceImpl();
+            ILxdService service = new LxdServiceImpl();
+            ILxdApiService lxdApiService = new LxdApiServiceImpl();
+            ILinuxCliService linuxCliService = new LinuxCliServiceImpl();
+            lxdApiService.setLinuxCliService(linuxCliService);
+            service.setLxdApiService(lxdApiService);
             String remoteHostAndPort = null;
             for (int i=0; i<args.length; i++) {
             	if (args[i].equals("s")) {

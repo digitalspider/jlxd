@@ -18,7 +18,7 @@ import au.com.jcloud.lxd.model.Profile;
 /**
  * Created by david.vittor on 16/07/16.
  */
-public abstract class AbstractLxdService implements LxdService {
+public abstract class AbstractLxdService implements ILxdService {
 
 	private static final Logger LOG = Logger.getLogger(AbstractLxdService.class);
 
@@ -114,7 +114,7 @@ public abstract class AbstractLxdService implements LxdService {
 	}
 
 	@Override
-	public List<Network> getNetworks() {
+	public List<Network> getNetworks() throws IOException, InterruptedException {
 		if (!networkList.isEmpty()) {
 			return networkList;
 		}
@@ -128,7 +128,7 @@ public abstract class AbstractLxdService implements LxdService {
 	}
 
 	@Override
-	public Network getNetwork(String name) {
+	public Network getNetwork(String name) throws IOException, InterruptedException {
 		getNetworks();
 		return networkMap.get(name);
 	}
@@ -142,7 +142,7 @@ public abstract class AbstractLxdService implements LxdService {
 	}
 
 	@Override
-	public List<Profile> getProfiles() {
+	public List<Profile> getProfiles() throws IOException, InterruptedException {
 		if (!profileList.isEmpty()) {
 			return profileList;
 		}
@@ -156,7 +156,7 @@ public abstract class AbstractLxdService implements LxdService {
 	}
 
 	@Override
-	public Profile getProfile(String name) {
+	public Profile getProfile(String name) throws IOException, InterruptedException {
 		getProfiles();
 		return profileMap.get(name);
 	}
@@ -170,7 +170,7 @@ public abstract class AbstractLxdService implements LxdService {
 	}
 
 	@Override
-	public List<Certificate> getCertificates() {
+	public List<Certificate> getCertificates() throws IOException, InterruptedException {
 		if (!certificateList.isEmpty()) {
 			return certificateList;
 		}
@@ -184,7 +184,7 @@ public abstract class AbstractLxdService implements LxdService {
 	}
 
 	@Override
-	public Certificate getCertificate(String name) {
+	public Certificate getCertificate(String name) throws IOException, InterruptedException {
 		getCertificates();
 		return certificateMap.get(name);
 	}

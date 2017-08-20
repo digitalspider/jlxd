@@ -129,5 +129,12 @@
 		  <version>3.4</version>
 		</dependency>
 
+		<!-- Javax inject -->
+		<dependency>
+		    <groupId>javax.inject</groupId>
+		    <artifactId>javax.inject</artifactId>
+		    <version>1</version>
+		</dependency>
+
 	</dependencies>
 </project>

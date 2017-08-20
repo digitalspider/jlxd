@@ -18,8 +18,11 @@ import au.com.jcloud.lxd.model.State;
 /**
  * Created by david.vittor on 12/07/16.
  */
-public interface LxdService {
+public interface ILxdService {
 	
+    // Dependencies
+    public void setLxdApiService(ILxdApiService lxdApiService);
+
 	// RemoteHostAndPort
 	public String getRemoteHostAndPort();
 	public void setRemoteHostAndPort(String remoteHostAndPort);
@@ -82,5 +85,5 @@ public interface LxdService {
     public ImageAlias getImageAlias(String name) throws IOException, InterruptedException;
 
     // File Ops
-    public String getFile(String containerName, String filepath) throws IOException, InterruptedException;
+    public String getFile(String containerName, String filepath) throws IOException, InterruptedException;    
 }
