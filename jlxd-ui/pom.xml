@@ -3,10 +3,10 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>au.com.jcloud</groupId>
-	<artifactId>jlxd-core</artifactId>
+	<artifactId>jlxd-ui</artifactId>
 	<packaging>jar</packaging>
-	<version>1.0-SNAPSHOT</version>
-	<name>Java LXD Core Packages</name>
+	<version>0.1.0-SNAPSHOT</version>
+	<name>Java LXD UI</name>
 	<url>http://jcloud.com.au</url>
 
 	<properties>
