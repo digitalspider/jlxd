@@ -1,4 +1,4 @@
-package au.com.jcloud.lxd.util;
+package au.com.jcloud.lxd.enums;
 
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_GET_CERTIFICATE;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_GET_CONTAINER;

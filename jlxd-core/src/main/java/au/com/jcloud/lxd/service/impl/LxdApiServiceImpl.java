@@ -12,14 +12,14 @@ import javax.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
-import au.com.jcloud.lxd.RemoteServer;
+import au.com.jcloud.lxd.enums.LxdCall;
+import au.com.jcloud.lxd.enums.RemoteServer;
 import au.com.jcloud.lxd.model.StatusCode;
 import au.com.jcloud.lxd.model.response.AbstractResponse;
 import au.com.jcloud.lxd.model.response.ListOperationResponse;
 import au.com.jcloud.lxd.model.response.ListResponse;
 import au.com.jcloud.lxd.service.ILinuxCliService;
 import au.com.jcloud.lxd.service.ILxdApiService;
-import au.com.jcloud.lxd.util.LxdCall;
 
 /**
  * Created by david.vittor on 12/07/16.
@@ -110,7 +110,7 @@ public class LxdApiServiceImpl implements ILxdApiService {
 		String url = getBaseUrl(remoteHostAndPort) + lxdCall.getCommand();
 		url = getParameterisedUrl(url, containerName);
 		LOG.debug("url=" + url);
-		AbstractResponse response = linuxCliService.executeLinuxCmdWithResultJsonObject(url, responseClassType);
+		AbstractResponse response = (AbstractResponse) linuxCliService.executeLinuxCmdWithResultJsonObject(url, responseClassType);
 		Map<String, T> results = new HashMap<String, T>();
 		if (response != null) {
 			LOG.debug("statusCode=" + response.getStatusCode());

@@ -17,7 +17,6 @@ import au.com.jcloud.lxd.model.Profile;
 import au.com.jcloud.lxd.model.ServerInfo;
 import au.com.jcloud.lxd.model.Snapshot;
 import au.com.jcloud.lxd.model.State;
-import au.com.jcloud.lxd.service.AbstractLxdService;
 import au.com.jcloud.lxd.service.ILinuxCliService;
 import au.com.jcloud.lxd.service.ILxdApiService;
 import au.com.jcloud.lxd.service.ILxdService;

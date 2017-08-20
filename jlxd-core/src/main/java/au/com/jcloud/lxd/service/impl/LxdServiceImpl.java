@@ -7,11 +7,12 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import org.apache.log4j.Logger;
 
-import au.com.jcloud.lxd.RemoteServer;
+import au.com.jcloud.lxd.annotation.DefaultLxdService;
+import au.com.jcloud.lxd.enums.LxdCall;
+import au.com.jcloud.lxd.enums.RemoteServer;
 import au.com.jcloud.lxd.model.Certificate;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
@@ -22,14 +23,12 @@ import au.com.jcloud.lxd.model.Profile;
 import au.com.jcloud.lxd.model.ServerInfo;
 import au.com.jcloud.lxd.model.Snapshot;
 import au.com.jcloud.lxd.model.State;
-import au.com.jcloud.lxd.service.AbstractLxdService;
 import au.com.jcloud.lxd.service.ILxdApiService;
-import au.com.jcloud.lxd.util.LxdCall;
 
 /**
  * Created by david.vittor on 12/07/16.
  */
-@Named
+@DefaultLxdService
 public class LxdServiceImpl extends AbstractLxdService {
 
 	private static final Logger LOG = Logger.getLogger(LxdServiceImpl.class);

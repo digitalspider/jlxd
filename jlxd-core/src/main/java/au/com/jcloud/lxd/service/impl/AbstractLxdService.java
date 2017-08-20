@@ -1,4 +1,4 @@
-package au.com.jcloud.lxd.service;
+package au.com.jcloud.lxd.service.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -14,6 +14,7 @@ import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
 import au.com.jcloud.lxd.model.Network;
 import au.com.jcloud.lxd.model.Profile;
+import au.com.jcloud.lxd.service.ILxdService;
 
 /**
  * Created by david.vittor on 16/07/16.

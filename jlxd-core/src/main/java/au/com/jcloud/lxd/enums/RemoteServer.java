@@ -1,4 +1,4 @@
-package au.com.jcloud.lxd;
+package au.com.jcloud.lxd.enums;
 
 public enum RemoteServer {
 	LOCAL("","unix://", "lxd"),

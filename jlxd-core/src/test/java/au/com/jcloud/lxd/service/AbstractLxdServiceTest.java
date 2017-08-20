@@ -19,6 +19,7 @@ import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
 import au.com.jcloud.lxd.model.Network;
 import au.com.jcloud.lxd.model.Profile;
+import au.com.jcloud.lxd.service.impl.AbstractLxdService;
 
 public class AbstractLxdServiceTest {
 

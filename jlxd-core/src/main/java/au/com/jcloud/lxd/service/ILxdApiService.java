@@ -3,8 +3,8 @@ package au.com.jcloud.lxd.service;
 import java.io.IOException;
 import java.util.Map;
 
-import au.com.jcloud.lxd.RemoteServer;
-import au.com.jcloud.lxd.util.LxdCall;
+import au.com.jcloud.lxd.enums.LxdCall;
+import au.com.jcloud.lxd.enums.RemoteServer;
 
 /**
  * Created by david.vittor on 21/08/17.
