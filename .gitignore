@@ -1,8 +1,10 @@
-target/**
-.classpath
-.project
-.settings
-jlxd.iml
-jlxd.ipr
-jlxd.iws
+**/target
+**/build
+**/dist
+**/.classpath
+**/.project
+**/.settings
+**/*.iml
+**/*.ipr
+**/*.iws
 
