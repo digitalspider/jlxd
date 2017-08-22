@@ -92,6 +92,12 @@ public class LxdServiceCliImpl extends AbstractLxdService implements ILxdService
 			throws IOException, InterruptedException {
 		linuxCliService.executeLinuxCmd("lxc launch " + imageAlias + " " + newContainerName);
 	}
+	
+	@Override
+	public void copyContainer(String newContainerName, Boolean containerOnly, String existingContainerName)
+			throws IOException, InterruptedException {
+		lxdServiceDelegate.copyContainer(newContainerName, containerOnly, existingContainerName);
+	}
 
 	// ** Operations **//
 	@Override
@@ -274,3 +280,4 @@ public class LxdServiceCliImpl extends AbstractLxdService implements ILxdService
 		this.linuxCliService = linuxCliService;
 	}
 }
+
