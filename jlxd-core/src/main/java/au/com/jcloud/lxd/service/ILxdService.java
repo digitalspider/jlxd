@@ -79,7 +79,9 @@ public interface ILxdService {
     // Snapshots
     Map<String,Snapshot> loadSnapshots(Container container) throws IOException, InterruptedException;
     List<Snapshot> getSnapshots(Container container) throws IOException, InterruptedException;
-    Snapshot getSnapshot(Container container, String name) throws IOException, InterruptedException;
+    Snapshot getSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException;
+    void createSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException;
+    void deleteSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException;
 
     // Image Aliases
     Map<String,ImageAlias> loadImageAliases() throws IOException, InterruptedException;

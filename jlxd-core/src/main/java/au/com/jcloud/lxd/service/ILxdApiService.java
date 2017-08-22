@@ -36,6 +36,8 @@ public interface ILxdApiService {
 	public static final String URL_POST_CONTAINER_CREATE = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", \"source\": {\"type\": \"image\", \"protocol\": \"${PROTOCOL}\", \"server\": \"${SERVERURL}\", \"alias\": \"${ALIAS}\"}}'";
 	public static final String URL_POST_CONTAINER_COPY = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", \"source\": {\"type\": \"copy\", \"container_only\": \"${CONTAINERONLY}\", \"source\": \"${CONTAINER}\"}}'";
 	public static final String URL_POST_CONTAINER_DELETE = URL_GET_CONTAINER + "/${ID} -X DELETE";
+	public static final String URL_POST_SNAPSHOT_CREATE = URL_GET_SNAPSHOTS + "-X POST -d '{\"name\": \"${SNAPNAME}\", \"stateful\": \"${STATEFULE}\"}'";
+	public static final String URL_POST_SNAPSHOT_DELETE = URL_GET_SNAPSHOTS + "/${SNAPNAME} -X DELETE";
     public static final String URL_POST_FILES = "/1.0/containers/${ID}/files?path=${PATH} -X POST";
     public static final String URL_POST_EXEC = "/1.0/containers/${ID}/exec -X POST -d { \"command\": [\"${CMD}\"], \"environment\": {${ENV}}, \"wait-for-websocket\": ${WAIT}, \"interactive\": false }";
 
@@ -75,9 +77,20 @@ public interface ILxdApiService {
 	 * 
 	 * @param credential the remote server credentials, or null for local
 	 * @param lxdCall the type of operation to perform
+	 * @param containerName the name of the container
 	 */
 	void executeCurlPostOrPutCmd(LxdServerCredential credential, LxdCall lxdCall, String containerName) throws IOException, InterruptedException;
-	
+
+	/**
+	 * Execute the curl command to create or delete a snapshot for a container
+	 * 
+	 * @param credential the remote server credentials, or null for local
+	 * @param lxdCall the type of operation to perform
+	 * @param containerName the name of the container
+	 * @param snapshotName the name of the snapshot
+	 */
+	void executeCurlPostOrPutCmdForSnapshot(LxdServerCredential credential, LxdCall lxdCall, String containerName, String snapshotName) throws IOException, InterruptedException;
+
 	/**
 	 * Execute the curl command to start, stop, create or delete a container
 	 * 

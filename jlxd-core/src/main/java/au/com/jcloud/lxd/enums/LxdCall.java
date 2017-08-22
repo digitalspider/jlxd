@@ -14,6 +14,8 @@ import static au.com.jcloud.lxd.service.ILxdApiService.URL_GET_STATE;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_COPY;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_CREATE;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_DELETE;
+import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_SNAPSHOT_CREATE;
+import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_SNAPSHOT_DELETE;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_PUT_STATE_START;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_PUT_STATE_STOP;
 
@@ -46,7 +48,9 @@ public enum LxdCall {
 	PUT_STATE_STOP(URL_PUT_STATE_STOP, OperationResponse.class),
 	POST_CONTAINER_CREATE(URL_POST_CONTAINER_CREATE, OperationResponse.class),
 	POST_CONTAINER_COPY(URL_POST_CONTAINER_COPY, OperationResponse.class),
-	POST_CONTAINER_DELETE(URL_POST_CONTAINER_DELETE, OperationResponse.class);
+	POST_CONTAINER_DELETE(URL_POST_CONTAINER_DELETE, OperationResponse.class),
+	POST_SNAPSHOT_CREATE(URL_POST_SNAPSHOT_CREATE, SnapshotResponse.class),
+	POST_SNAPSHOT_DELETE(URL_POST_SNAPSHOT_DELETE, SnapshotResponse.class);
 
 	LxdCall(String command, Class<? extends AbstractResponse> classType) {
 		this.command = command;

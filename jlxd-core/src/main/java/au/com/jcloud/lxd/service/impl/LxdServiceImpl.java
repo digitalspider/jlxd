@@ -235,9 +235,19 @@ public class LxdServiceImpl extends AbstractLxdService {
 	}
 
 	@Override
-	public Snapshot getSnapshot(Container container, String name) throws IOException, InterruptedException {
-		Snapshot snapshot = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_SNAPSHOTS, name);
+	public Snapshot getSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException {
+		Snapshot snapshot = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_SNAPSHOTS, snapshotName, containerName);
 		return snapshot;
+	}
+	
+	@Override
+	public void createSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException {
+		lxdApiService.executeCurlPostOrPutCmdForSnapshot(credential, LxdCall.POST_SNAPSHOT_CREATE, containerName, snapshotName);
+	}
+	
+	@Override
+	public void deleteSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException {
+		lxdApiService.executeCurlPostOrPutCmdForSnapshot(credential, LxdCall.POST_SNAPSHOT_DELETE, containerName, snapshotName);
 	}
 
 	// ** Image Aliases **//

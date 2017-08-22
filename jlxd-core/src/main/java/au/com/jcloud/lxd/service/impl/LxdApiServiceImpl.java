@@ -172,6 +172,29 @@ public class LxdApiServiceImpl implements ILxdApiService {
 			}
 		}
 	}
+	
+	@Override
+	public void executeCurlPostOrPutCmdForSnapshot(LxdServerCredential credential, LxdCall lxdCall,
+			String containerName, String snapshotName) throws IOException, InterruptedException {
+		String url = getBaseUrl(credential) + lxdCall.getCommand();
+
+		if (lxdCall.equals(LxdCall.POST_SNAPSHOT_CREATE) || lxdCall.equals(LxdCall.POST_SNAPSHOT_DELETE)) {
+			url = getParameterisedUrl(url, containerName);
+			url = url.replaceAll("\\$\\{SNAPNAME\\}", snapshotName);
+		} else {
+			throw new IOException("This call is not implemented! " + lxdCall);
+		}
+		LOG.debug("url=" + url);
+		AbstractResponse response = linuxCliService.executeLinuxCmdWithResultJsonObject(url, lxdCall.getClassType());
+		LOG.info("repsonse=" + response);
+		if (response != null) {
+			LOG.debug("statusCode=" + response.getStatusCode());
+			if (StatusCode.OPERATION_CREATED.equals(StatusCode.parse(response.getStatusCode()))) {
+				return;
+			}
+		}
+	}
+
 
 	/**
 	 * Execute the curl command to start, stop, create or delete a container

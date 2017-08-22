@@ -150,9 +150,20 @@ public class LxdServiceCliImpl extends AbstractLxdService implements ILxdService
 	}
 
 	@Override
-	public Snapshot getSnapshot(Container container, String name) throws IOException, InterruptedException {
-		return lxdServiceDelegate.getSnapshot(container, name);
+	public Snapshot getSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException {
+		return lxdServiceDelegate.getSnapshot(containerName, snapshotName);
 	}
+	
+	@Override
+	public void createSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException {
+		lxdServiceDelegate.createSnapshot(containerName, snapshotName);		
+	}
+
+	@Override
+	public void deleteSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException {
+		lxdServiceDelegate.deleteSnapshot(containerName, snapshotName);
+	}
+
 
 	// ** Image Aliases **//
 	@Override
