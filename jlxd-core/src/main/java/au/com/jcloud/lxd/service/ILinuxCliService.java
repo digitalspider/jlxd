@@ -8,7 +8,16 @@ public interface ILinuxCliService {
 	
 	public static final String OS_NAME = System.getProperty("os.name");
 
-	boolean isWindows();	
+	public static final boolean IS_WINDOWS = OS_NAME.toLowerCase().startsWith("win");
+
+	/**
+	 * Execute a linux command
+	 * 
+	 * @param cmd the command to execute
+	 * @return the result of the execution
+	 * @throws IOException
+	 * @throws InterruptedException
+	 */
 	String executeLinuxCmd(String cmd) throws IOException, InterruptedException;
 
 	/**

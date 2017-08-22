@@ -23,21 +23,14 @@ public class LinuxCliServiceImpl implements ILinuxCliService {
 	private static final Logger LOG = Logger.getLogger(LinuxCliServiceImpl.class);
 
 	@Override
-	public boolean isWindows() {
-		if (OS_NAME!=null && OS_NAME.toLowerCase().startsWith("win")) {
-			return true;
-		}
-		return false;
-	}
-	
-	@Override
 	public String executeLinuxCmd(String cmd) throws IOException, InterruptedException {
 		StringBuffer result = new StringBuffer();
 		BufferedReader in = null;
 		LOG.debug("cmd=" + cmd);
 		try {
 			Process process = null;
-			if (isWindows()) {
+			if (IS_WINDOWS) {
+				LOG.warn("Trying to execute linux command in Windows environment: "+cmd);
 				process = Runtime.getRuntime().exec(cmd);
 			} else {
 				String[] cmdArray = { "/bin/sh", "-c", cmd };
