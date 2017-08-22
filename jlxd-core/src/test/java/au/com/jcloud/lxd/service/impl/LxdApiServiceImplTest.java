@@ -3,7 +3,7 @@ package au.com.jcloud.lxd.service.impl;
 import org.junit.Assert;
 import org.junit.Test;
 
-import au.com.jcloud.lxd.service.impl.LxdApiServiceImpl;
+import au.com.jcloud.lxd.bean.LxdServerCredential;
 
 /**
  * Created by david.vittor on 12/07/16.
@@ -17,14 +17,24 @@ public class LxdApiServiceImplTest {
 		String result = lxdApiService.getBaseUrl(null);
 		Assert.assertEquals(lxdApiService.CURL_URL_BASE_LOCAL, result);
 		
-		result = lxdApiService.getBaseUrl("");
+		result = lxdApiService.getBaseUrl(new LxdServerCredential());
 		Assert.assertEquals(lxdApiService.CURL_URL_BASE_LOCAL, result);
 		
-		result = lxdApiService.getBaseUrl("test");
+		LxdServerCredential credential = new LxdServerCredential();
+		credential.setRemoteHostAndPort("test");
+		result = lxdApiService.getBaseUrl(credential);
 		Assert.assertEquals("curl -s -k --cert ~/.config/lxc/client.crt --key ~/.config/lxc/client.key https://test:8443", result);
-		
-		result = lxdApiService.getBaseUrl("10.1.1.5:8080");
+
+		credential.setRemoteHostAndPort("10.1.1.5:8080");
+		result = lxdApiService.getBaseUrl(credential);
 		Assert.assertEquals("curl -s -k --cert ~/.config/lxc/client.crt --key ~/.config/lxc/client.key https://10.1.1.5:8080", result);
+		
+		credential.setRemoteHostAndPort("10.1.1.5");
+		credential.setRemoteCert("/test/client.crt");
+		credential.setRemoteKey("/test/client.key");
+		result = lxdApiService.getBaseUrl(credential);
+		Assert.assertEquals("curl -s -k --cert /test/client.crt --key /test/client.key https://10.1.1.5:8443", result);
+
 	}
 	
 	@Test

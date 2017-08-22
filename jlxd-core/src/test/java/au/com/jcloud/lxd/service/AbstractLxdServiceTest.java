@@ -14,6 +14,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import au.com.jcloud.lxd.bean.LxdServerCredential;
 import au.com.jcloud.lxd.model.Certificate;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
@@ -32,8 +33,10 @@ public class AbstractLxdServiceTest {
 
 	@Test
 	public void testRemoteHostAndPort() {
-		service.setRemoteHostAndPort("test");
-		assertEquals("test", service.getRemoteHostAndPort());
+		LxdServerCredential credential = new LxdServerCredential();
+		credential.setRemoteHostAndPort("test");
+		service.setLxdServerCredential(credential);
+		assertEquals("test", service.getLxdServerCredential().getRemoteHostAndPort());
 	}
 
 	@Test

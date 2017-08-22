@@ -3,6 +3,7 @@ package au.com.jcloud.lxd.service;
 import java.io.IOException;
 import java.util.Map;
 
+import au.com.jcloud.lxd.bean.LxdServerCredential;
 import au.com.jcloud.lxd.enums.LxdCall;
 import au.com.jcloud.lxd.enums.RemoteServer;
 
@@ -11,7 +12,7 @@ import au.com.jcloud.lxd.enums.RemoteServer;
  */
 public interface ILxdApiService {
 
-	public static final String CURL_URL_BASE_REMOTE = "curl -s -k --cert ${KEYPATH}client.crt --key ${KEYPATH}client.key https://${HOSTANDPORT}";
+	public static final String CURL_URL_BASE_REMOTE = "curl -s -k ${KEYPATHCERT} ${KEYPATHKEY} https://${HOSTANDPORT}";
 	public static final String CURL_URL_BASE_LOCAL = "curl -s --unix-socket /var/lib/lxd/unix.socket a";
 
 	// Get commands
@@ -45,12 +46,12 @@ public interface ILxdApiService {
 	/**
 	 * Execute the curl command to get a single "LXD Object" e.g. Container, Image, Profile, etc
 	 */
-	<T> T executeCurlGetCmd(String remoteHostAndPort, LxdCall lxdCall, String id) throws IOException, InterruptedException;
+	<T> T executeCurlGetCmd(LxdServerCredential credential, LxdCall lxdCall, String id) throws IOException, InterruptedException;
 
 	/**
 	 * Execute the curl command to get a single "LXD Object" e.g. Container, Image, Profile, etc
 	 */
-	<T> T executeCurlGetCmd(String remoteHostAndPort, LxdCall lxdCall, String id, String containerName, String... additionalParams) throws IOException, InterruptedException;
+	<T> T executeCurlGetCmd(LxdServerCredential credential, LxdCall lxdCall, String id, String containerName, String... additionalParams) throws IOException, InterruptedException;
 
 	/**
 	 * Execute the base curl command to get a list of "LXD Objects" e.g. Containers, Images, Profiles, etc
@@ -58,7 +59,7 @@ public interface ILxdApiService {
 	 * @param remoteHostAndPort see {@link #getBaseUrl(String)}
 	 * @param lxdCall the type of operation to perform
      */
-	<T> Map<String,T> executeCurlGetListCmd(String remoteHostAndPort, LxdCall lxdCall) throws IOException, InterruptedException;
+	<T> Map<String,T> executeCurlGetListCmd(LxdServerCredential credential, LxdCall lxdCall) throws IOException, InterruptedException;
 
 	/**
 	 * Execute the base curl command to get a list of "LXD Objects" e.g. Containers, Images, Profiles, etc
@@ -66,7 +67,7 @@ public interface ILxdApiService {
 	 * @param remoteHostAndPort see {@link #getBaseUrl(String)}
 	 * @param lxdCall the type of operation to perform
 	 */
-	<T> Map<String,T> executeCurlGetListCmd(String remoteHostAndPort, LxdCall lxdCall, String containerName) throws IOException, InterruptedException;
+	<T> Map<String,T> executeCurlGetListCmd(LxdServerCredential credential, LxdCall lxdCall, String containerName) throws IOException, InterruptedException;
 
 	/**
 	 * Execute the curl command to start, stop, create or delete a container
@@ -74,7 +75,7 @@ public interface ILxdApiService {
 	 * @param remoteHostAndPort see {@link #getBaseUrl(String)}
 	 * @param lxdCall the type of operation to perform
 	 */
-	void executeCurlPostOrPutCmd(String remoteHostAndPort, LxdCall lxdCall, String containerName) throws IOException, InterruptedException;
+	void executeCurlPostOrPutCmd(LxdServerCredential credential, LxdCall lxdCall, String containerName) throws IOException, InterruptedException;
 	
 	/**
 	 * Execute the curl command to start, stop, create or delete a container
@@ -82,7 +83,7 @@ public interface ILxdApiService {
 	 * @param remoteHostAndPort see {@link #getBaseUrl(String)}
 	 * @param lxdCall the type of operation to perform
 	 */
-	void executeCurlPostCmdToCreateNewContainerFromImage(String remoteHostAndPort, RemoteServer remoteServer, String containerName, String imageAlias) throws IOException, InterruptedException;
+	void executeCurlPostCmdToCreateNewContainerFromImage(LxdServerCredential credential, RemoteServer remoteServer, String containerName, String imageAlias) throws IOException, InterruptedException;
 
 	/**
 	 * Perform a replace all on the url replacing ${ID}.
@@ -98,13 +99,9 @@ public interface ILxdApiService {
 	 * provided will use the base url {@link #CURL_URL_BASE_REMOTE}
 	 * 
 	 * @param remoteHostAndPort format should be <host>:<port>, if no port provided will default to 8443
-	 * 
+	 * @param keypath the path to the remote key
 	 * @return return the base url for curl calls
 	 */
-	String getBaseUrl(String remoteHostAndPort);
-
-	String getKeypath();
-
-	void setKeypath(String keypath);
+	String getBaseUrl(LxdServerCredential credential);
 }
 

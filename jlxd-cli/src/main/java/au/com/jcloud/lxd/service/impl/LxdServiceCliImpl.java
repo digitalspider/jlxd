@@ -7,6 +7,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import au.com.jcloud.lxd.bean.LxdServerCredential;
 import au.com.jcloud.lxd.model.Certificate;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
@@ -29,6 +30,12 @@ public class LxdServiceCliImpl extends AbstractLxdService implements ILxdService
 
 	private ILxdService lxdServiceDelegate;
 	private ILinuxCliService linuxCliService;
+	
+	@Override
+	public void setLxdServerCredential(LxdServerCredential credential) {
+		super.setLxdServerCredential(credential);
+		lxdServiceDelegate.setLxdServerCredential(credential);
+	}
 
 	@Inject
 	public LxdServiceCliImpl(ILxdService lxdServiceDelegate) {
@@ -170,17 +177,6 @@ public class LxdServiceCliImpl extends AbstractLxdService implements ILxdService
 		if (lxdServiceDelegate != null) {
 			lxdServiceDelegate.setLxdApiService(lxdApiService);
 		}
-	}
-
-	@Override
-	public String getRemoteHostAndPort() {
-		return lxdServiceDelegate.getRemoteHostAndPort();
-	}
-
-
-	@Override
-	public void setRemoteHostAndPort(String remoteHostAndPort) {
-		lxdServiceDelegate.setRemoteHostAndPort(remoteHostAndPort);
 	}
 
 

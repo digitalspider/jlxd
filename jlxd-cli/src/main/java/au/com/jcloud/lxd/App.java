@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import au.com.jcloud.lxd.bean.LxdServerCredential;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
 import au.com.jcloud.lxd.model.Operation;
@@ -143,7 +144,9 @@ public class App {
                 else {
                 	if (StringUtils.isBlank(remoteHostAndPort)) {
                 		remoteHostAndPort = args[i];
-                		service.setRemoteHostAndPort(remoteHostAndPort);
+                		LxdServerCredential credential = new LxdServerCredential();
+                		credential.setRemoteHostAndPort(remoteHostAndPort);
+                		service.setLxdServerCredential(credential);
                 	}
                 }
             }

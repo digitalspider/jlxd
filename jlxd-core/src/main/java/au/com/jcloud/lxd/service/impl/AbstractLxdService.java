@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 
+import au.com.jcloud.lxd.bean.LxdServerCredential;
 import au.com.jcloud.lxd.model.Certificate;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
@@ -38,16 +39,19 @@ public abstract class AbstractLxdService implements ILxdService {
 	private List<Certificate> certificateList = new ArrayList<Certificate>();
 	private Map<String, Certificate> certificateMap = new HashMap<String, Certificate>();
 
-	protected String remoteHostAndPort;
+	protected LxdServerCredential credential;
+	
+	protected String keypath = "~/.config/lxc/";
+
 
 	@Override
-	public String getRemoteHostAndPort() {
-		return remoteHostAndPort;
+	public LxdServerCredential getLxdServerCredential() {
+		return credential;
 	}
 
 	@Override
-	public void setRemoteHostAndPort(String remoteHostAndPort) {
-		this.remoteHostAndPort = remoteHostAndPort;
+	public void setLxdServerCredential(LxdServerCredential credential) {
+		this.credential = credential;
 	}
 	
 	@Override

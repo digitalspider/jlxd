@@ -38,14 +38,14 @@ public class LxdServiceImpl extends AbstractLxdService {
 	// ** ServerInfo **//
 	@Override
 	public ServerInfo getServerInfo() throws IOException, InterruptedException {
-		ServerInfo serverInfo = lxdApiService.executeCurlGetCmd(remoteHostAndPort, LxdCall.GET_SERVERINFO, null);
+		ServerInfo serverInfo = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_SERVERINFO, null);
 		return serverInfo;
 	}
 	
 	// ** Containers **//
 	@Override
 	public Map<String, Container> loadContainers() throws IOException, InterruptedException {
-		Map<String, Container> containers = lxdApiService.executeCurlGetListCmd(remoteHostAndPort, LxdCall.GET_CONTAINER);
+		Map<String, Container> containers = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_CONTAINER);
 		return containers;
 	}
 
@@ -53,7 +53,7 @@ public class LxdServiceImpl extends AbstractLxdService {
 	public State getContainerState(String name) throws IOException, InterruptedException {
 		Container container = getContainer(name);
 		if (container != null) {
-			State state = lxdApiService.executeCurlGetCmd(remoteHostAndPort, LxdCall.GET_STATE, name);
+			State state = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_STATE, name);
 			return state;
 		}
 		return null;
@@ -62,7 +62,7 @@ public class LxdServiceImpl extends AbstractLxdService {
 	// ** Images **//
 	@Override
 	public Map<String, Image> loadImages() throws IOException, InterruptedException {
-		Map<String, Image> images = lxdApiService.executeCurlGetListCmd(remoteHostAndPort, LxdCall.GET_IMAGE);
+		Map<String, Image> images = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_IMAGE);
 		Map<String, Image> imageAliasMap = new HashMap<>();
 		for (Image image : images.values()) {
 			LOG.debug("image=" + image);
@@ -90,7 +90,7 @@ public class LxdServiceImpl extends AbstractLxdService {
 	public void startContainer(String name) throws IOException, InterruptedException {
 		State state = getContainerState(name);
 		if (state != null && !state.isRunning()) {
-			lxdApiService.executeCurlPostOrPutCmd(remoteHostAndPort, LxdCall.PUT_STATE_START, name);
+			lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.PUT_STATE_START, name);
 		}
 	}
 
@@ -99,7 +99,7 @@ public class LxdServiceImpl extends AbstractLxdService {
 		State state = getContainerState(name);
 		LOG.info(state);
 		if (state != null && state.isRunning()) {
-			lxdApiService.executeCurlPostOrPutCmd(remoteHostAndPort, LxdCall.PUT_STATE_STOP, name);
+			lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.PUT_STATE_STOP, name);
 		}
 	}
 
@@ -109,7 +109,7 @@ public class LxdServiceImpl extends AbstractLxdService {
 		if (!imageAlias.contains(":")) {
 			Image image = getImage(imageAlias);
 			if (image != null) {
-				lxdApiService.executeCurlPostCmdToCreateNewContainerFromImage(remoteHostAndPort, RemoteServer.LOCAL, newContainerName, imageAlias);
+				lxdApiService.executeCurlPostCmdToCreateNewContainerFromImage(credential, RemoteServer.LOCAL, newContainerName, imageAlias);
 			} else {
 				throw new IOException("Could not find local image with alias: "+imageAlias);
 			}
@@ -118,7 +118,7 @@ public class LxdServiceImpl extends AbstractLxdService {
 			for (RemoteServer remoteServer : RemoteServer.values()) {
 				if (remoteServer!=RemoteServer.LOCAL && imageAlias.startsWith(remoteServer.getName()+":")) {
 					imageAlias = imageAlias.substring((remoteServer.getName()+":").length());
-					lxdApiService.executeCurlPostCmdToCreateNewContainerFromImage(remoteHostAndPort, remoteServer, newContainerName, imageAlias);
+					lxdApiService.executeCurlPostCmdToCreateNewContainerFromImage(credential, remoteServer, newContainerName, imageAlias);
 					found = true;
 					break;
 				}
@@ -137,14 +137,14 @@ public class LxdServiceImpl extends AbstractLxdService {
 				throw new IOException(
 						"Cannot delete a container that is not stopped. Container=" + name + " status=" + state);
 			}
-			lxdApiService.executeCurlPostOrPutCmd(remoteHostAndPort, LxdCall.POST_CONTAINER_DELETE, name);
+			lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.POST_CONTAINER_DELETE, name);
 		}
 	}
 
 	// ** Operations **//
 	@Override
 	public Map<String, Operation> loadOperations() throws IOException, InterruptedException {
-		Map<String, Operation> opertaions = lxdApiService.executeCurlGetListCmd(remoteHostAndPort, LxdCall.GET_OPERATION);
+		Map<String, Operation> opertaions = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_OPERATION);
 		return opertaions;
 	}
 
@@ -156,14 +156,14 @@ public class LxdServiceImpl extends AbstractLxdService {
 
 	@Override
 	public Operation getOperation(String name) throws IOException, InterruptedException {
-		Operation opertaion = lxdApiService.executeCurlGetCmd(remoteHostAndPort, LxdCall.GET_OPERATION, name);
+		Operation opertaion = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_OPERATION, name);
 		return opertaion;
 	}
 
 	// ** Networks **//
 	@Override
 	public Map<String, Network> loadNetworks() throws IOException, InterruptedException {
-		Map<String, Network> networks = lxdApiService.executeCurlGetListCmd(remoteHostAndPort, LxdCall.GET_NETWORK);
+		Map<String, Network> networks = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_NETWORK);
 		return networks;
 	}
 
@@ -182,22 +182,21 @@ public class LxdServiceImpl extends AbstractLxdService {
 	// ** Profiles **//
 	@Override
 	public Map<String, Profile> loadProfiles() throws IOException, InterruptedException {
-		Map<String, Profile> profiles = lxdApiService.executeCurlGetListCmd(remoteHostAndPort, LxdCall.GET_PROFILE);
+		Map<String, Profile> profiles = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_PROFILE);
 		return profiles;
 	}
 
 	// ** Certificates **//
 	@Override
 	public Map<String, Certificate> loadCertificates() throws IOException, InterruptedException {
-		Map<String, Certificate> certificates = lxdApiService.executeCurlGetListCmd(remoteHostAndPort,
-				LxdCall.GET_CERTIFICATE);
+		Map<String, Certificate> certificates = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_CERTIFICATE);
 		return certificates;
 	}
 
 	// ** Snapshots **//
 	@Override
 	public Map<String, Snapshot> loadSnapshots(Container container) throws IOException, InterruptedException {
-		Map<String, Snapshot> snapshots = lxdApiService.executeCurlGetListCmd(remoteHostAndPort, LxdCall.GET_SNAPSHOTS,
+		Map<String, Snapshot> snapshots = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_SNAPSHOTS,
 				container.getName());
 		return snapshots;
 	}
@@ -210,14 +209,14 @@ public class LxdServiceImpl extends AbstractLxdService {
 
 	@Override
 	public Snapshot getSnapshot(Container container, String name) throws IOException, InterruptedException {
-		Snapshot snapshot = lxdApiService.executeCurlGetCmd(remoteHostAndPort, LxdCall.GET_SNAPSHOTS, name);
+		Snapshot snapshot = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_SNAPSHOTS, name);
 		return snapshot;
 	}
 
 	// ** Image Aliases **//
 	@Override
 	public Map<String, ImageAlias> loadImageAliases() throws IOException, InterruptedException {
-		Map<String, ImageAlias> aliases = lxdApiService.executeCurlGetListCmd(remoteHostAndPort, LxdCall.GET_IMAGEALIAS);
+		Map<String, ImageAlias> aliases = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_IMAGEALIAS);
 		return aliases;
 	}
 
@@ -229,14 +228,14 @@ public class LxdServiceImpl extends AbstractLxdService {
 
 	@Override
 	public ImageAlias getImageAlias(String name) throws IOException, InterruptedException {
-		ImageAlias alias = lxdApiService.executeCurlGetCmd(remoteHostAndPort, LxdCall.GET_IMAGEALIAS, name);
+		ImageAlias alias = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_IMAGEALIAS, name);
 		return alias;
 	}
 	
 	// ** File Ops **//
 	@Override
 	public String getFile(String containerName, String filepath) throws IOException, InterruptedException {
-		String response = lxdApiService.executeCurlGetCmd(remoteHostAndPort, LxdCall.GET_FILE, null, containerName, filepath);
+		String response = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_FILE, null, containerName, filepath);
 		return response;
 	}
 

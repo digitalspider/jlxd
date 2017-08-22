@@ -12,6 +12,7 @@ import javax.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import au.com.jcloud.lxd.bean.LxdServerCredential;
 import au.com.jcloud.lxd.enums.LxdCall;
 import au.com.jcloud.lxd.enums.RemoteServer;
 import au.com.jcloud.lxd.model.StatusCode;
@@ -31,16 +32,14 @@ public class LxdApiServiceImpl implements ILxdApiService {
 
 	private ILinuxCliService linuxCliService;
 	
-	private String keypath = "~/.config/lxc/";
-	
 	/**
 	 * Execute the curl command to get a single "LXD Object" e.g. Container, Image,
 	 * Profile, etc
 	 */
 	@Override
-	public <T> T executeCurlGetCmd(String remoteHostAndPort, LxdCall lxdCall, String id)
+	public <T> T executeCurlGetCmd(LxdServerCredential credential, LxdCall lxdCall, String id)
 			throws IOException, InterruptedException {
-		return executeCurlGetCmd(remoteHostAndPort, lxdCall, id, null);
+		return executeCurlGetCmd(credential, lxdCall, id, null);
 	}
 
 	/**
@@ -48,9 +47,9 @@ public class LxdApiServiceImpl implements ILxdApiService {
 	 * Profile, etc
 	 */
 	@Override
-	public <T> T executeCurlGetCmd(String remoteHostAndPort, LxdCall lxdCall, String id, String containerName,
+	public <T> T executeCurlGetCmd(LxdServerCredential credential, LxdCall lxdCall, String id, String containerName,
 			String... additionalParams) throws IOException, InterruptedException {
-		String url = getBaseUrl(remoteHostAndPort) + lxdCall.getCommand();
+		String url = getBaseUrl(credential) + lxdCall.getCommand();
 		if (containerName != null) {
 			url = getParameterisedUrl(url, containerName);
 		}
@@ -81,14 +80,14 @@ public class LxdApiServiceImpl implements ILxdApiService {
 	 * Images, Profiles, etc
 	 * 
 	 * @param remoteHostAndPort
-	 *            see {@link #getBaseUrl(String)}
+	 *            see {@link #getBaseUrl(String, String)}
 	 * @param lxdCall
 	 *            the type of operation to perform
 	 */
 	@Override
-	public <T> Map<String, T> executeCurlGetListCmd(String remoteHostAndPort, LxdCall lxdCall)
+	public <T> Map<String, T> executeCurlGetListCmd(LxdServerCredential credential, LxdCall lxdCall)
 			throws IOException, InterruptedException {
-		return executeCurlGetListCmd(remoteHostAndPort, lxdCall, null);
+		return executeCurlGetListCmd(credential, lxdCall, null);
 	}
 
 	/**
@@ -96,18 +95,19 @@ public class LxdApiServiceImpl implements ILxdApiService {
 	 * Images, Profiles, etc
 	 * 
 	 * @param remoteHostAndPort
-	 *            see {@link #getBaseUrl(String)}
+	 *            see {@link #getBaseUrl(String, String)}
+	 * @param keypath the path to the key for the remoteHostAndPort
 	 * @param lxdCall
 	 *            the type of operation to perform
 	 */
 	@Override
-	public <T> Map<String, T> executeCurlGetListCmd(String remoteHostAndPort, LxdCall lxdCall, String containerName)
+	public <T> Map<String, T> executeCurlGetListCmd(LxdServerCredential credential, LxdCall lxdCall, String containerName)
 			throws IOException, InterruptedException {
 		Class responseClassType = ListResponse.class;
 		if (lxdCall.equals(LxdCall.GET_OPERATION)) {
 			responseClassType = ListOperationResponse.class;
 		}
-		String url = getBaseUrl(remoteHostAndPort) + lxdCall.getCommand();
+		String url = getBaseUrl(credential) + lxdCall.getCommand();
 		url = getParameterisedUrl(url, containerName);
 		LOG.debug("url=" + url);
 		AbstractResponse response = (AbstractResponse) linuxCliService.executeLinuxCmdWithResultJsonObject(url, responseClassType);
@@ -131,7 +131,7 @@ public class LxdApiServiceImpl implements ILxdApiService {
 				for (String stringName : stringNames) {
 					int index = stringName.lastIndexOf("/");
 					String id = stringName.substring(index + 1);
-					T instance = executeCurlGetCmd(remoteHostAndPort, lxdCall, id, containerName);
+					T instance = executeCurlGetCmd(credential, lxdCall, id, containerName);
 					if (instance != null) {
 						results.put(id, instance);
 					}
@@ -152,9 +152,9 @@ public class LxdApiServiceImpl implements ILxdApiService {
 	 *            the type of operation to perform
 	 */
 	@Override
-	public void executeCurlPostOrPutCmd(String remoteHostAndPort, LxdCall lxdCall, String containerName)
+	public void executeCurlPostOrPutCmd(LxdServerCredential credential, LxdCall lxdCall, String containerName)
 			throws IOException, InterruptedException {
-		String url = getBaseUrl(remoteHostAndPort) + lxdCall.getCommand();
+		String url = getBaseUrl(credential) + lxdCall.getCommand();
 
 		if (lxdCall.equals(LxdCall.PUT_STATE_START) || lxdCall.equals(LxdCall.PUT_STATE_STOP)
 				|| lxdCall.equals(LxdCall.POST_CONTAINER_CREATE) || lxdCall.equals(LxdCall.POST_CONTAINER_DELETE)) {
@@ -182,13 +182,13 @@ public class LxdApiServiceImpl implements ILxdApiService {
 	 *            the type of operation to perform
 	 */
 	@Override
-	public void executeCurlPostCmdToCreateNewContainerFromImage(String remoteHostAndPort, RemoteServer remoteServer,
+	public void executeCurlPostCmdToCreateNewContainerFromImage(LxdServerCredential credential, RemoteServer remoteServer,
 			String containerName, String imageAlias) throws IOException, InterruptedException {
 		if (remoteServer == null) {
 			throw new IOException("Cannot create a container without a remoteServer.");
 		}
 		LxdCall lxdCall = LxdCall.POST_CONTAINER_CREATE;
-		String url = getBaseUrl(remoteHostAndPort) + lxdCall.getCommand();
+		String url = getBaseUrl(credential) + lxdCall.getCommand();
 		url = getParameterisedUrl(url, containerName);
 		url = url.replaceAll("\\$\\{ALIAS\\}", imageAlias);
 		url = url.replaceAll("\\$\\{PROTOCOL\\}", remoteServer.getProtocol());
@@ -228,32 +228,34 @@ public class LxdApiServiceImpl implements ILxdApiService {
 	 * @param remoteHostAndPort
 	 *            format should be <host>:<port>, if no port provided will default
 	 *            to 8443
+	 * @param keypath format "~/path/cert.crt|~/path/cert.key", pipe separated certificate and key to be used for the remoteHostAndPort
 	 * 
 	 * @return return the base url for curl calls
 	 */
 	@Override
-	public String getBaseUrl(String remoteHostAndPort) {
+	public String getBaseUrl(LxdServerCredential credential) {
 		String url = CURL_URL_BASE_LOCAL;
-		if (StringUtils.isNotBlank(remoteHostAndPort)) {
+		if (credential != null && StringUtils.isNotBlank(credential.getRemoteHostAndPort())) {
+			String remoteHostAndPort = credential.getRemoteHostAndPort();
 			if (!remoteHostAndPort.contains(":")) {
 				remoteHostAndPort += ":8443";
 			}
 			url = CURL_URL_BASE_REMOTE.replaceAll("\\$\\{HOSTANDPORT}", remoteHostAndPort);
-			url = url.replaceAll("\\$\\{KEYPATH}", keypath);
+			if (StringUtils.isNotBlank(credential.getRemoteCert())) {
+				url = url.replaceAll("\\$\\{KEYPATHCERT}", "--cert "+credential.getRemoteCert());
+			} else {
+				url = url.replaceAll("\\$\\{KEYPATHCERT}", "");
+			}
+			if (StringUtils.isNotBlank(credential.getRemoteKey())) {
+				url = url.replaceAll("\\$\\{KEYPATHKEY}", "--key "+credential.getRemoteKey());
+			} else {
+				url = url.replaceAll("\\$\\{KEYPATHKEY}", "");
+			}
+			
 		}
 		return url;
 	}
 
-	@Override
-	public String getKeypath() {
-		return keypath;
-	}
-
-	@Override
-	public void setKeypath(String keypath) {
-		this.keypath = keypath;
-	}
-	
 	@Override
 	@Inject
 	public void setLinuxCliService(ILinuxCliService linuxCliService) {
