@@ -7,10 +7,10 @@ import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import org.apache.log4j.Logger;
 
-import au.com.jcloud.lxd.annotation.DefaultLxdService;
 import au.com.jcloud.lxd.enums.LxdCall;
 import au.com.jcloud.lxd.enums.RemoteServer;
 import au.com.jcloud.lxd.model.Certificate;
@@ -28,7 +28,7 @@ import au.com.jcloud.lxd.service.ILxdApiService;
 /**
  * Created by david.vittor on 12/07/16.
  */
-@DefaultLxdService
+@Named
 public class LxdServiceImpl extends AbstractLxdService {
 
 	private static final Logger LOG = Logger.getLogger(LxdServiceImpl.class);
