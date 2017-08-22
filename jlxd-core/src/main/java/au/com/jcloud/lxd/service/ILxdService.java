@@ -51,7 +51,7 @@ public interface ILxdService {
 	void deleteContainer(String name) throws IOException, InterruptedException;
 	void createContainer(String newContainerName, String imageAlias) throws IOException, InterruptedException;
 	void renameContainer(String name, String newContainerName) throws IOException, InterruptedException;
-	void copyContainer(String newContainerName, Boolean containerOnly, String existingContainerName) throws IOException, InterruptedException;
+	void copyContainer(String name, String newContainerName, Boolean containerOnly) throws IOException, InterruptedException;
 	void execOnContainer(String name, String[] commandAndArgs, String env, Boolean waitForSocket) throws IOException, InterruptedException;
 
 	// Operations

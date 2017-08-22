@@ -122,11 +122,11 @@ public interface ILxdApiService {
 	 * Execute the curl command to copy a container
 	 * 
 	 * @param credential the remote server credentials, or null for local
+	 * @param existingContainerName the name of the existing container to be copied
 	 * @param newContainerName the name of the new container
 	 * @param containerOnly whether to copy snapshots also, default is true
-	 * @param existingContainerName the name of the existing container to be copied
 	 */
-	void executeCurlPostCmdToCopyContainer(LxdServerCredential credential, String newContainerName, Boolean containerOnly, String existingContainerName) throws IOException, InterruptedException;
+	void executeCurlPostCmdToCopyContainer(LxdServerCredential credential, String existingContainerName, String newContainerName, Boolean containerOnly) throws IOException, InterruptedException;
 
 	/**
 	 * Perform a replace all on the url replacing ${ID}.

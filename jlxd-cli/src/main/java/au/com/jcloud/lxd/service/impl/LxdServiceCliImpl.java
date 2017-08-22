@@ -97,9 +97,9 @@ public class LxdServiceCliImpl extends AbstractLxdService implements ILxdService
 	}
 
 	@Override
-	public void copyContainer(String newContainerName, Boolean containerOnly, String existingContainerName)
+	public void copyContainer(String name, String newContainerName, Boolean containerOnly)
 			throws IOException, InterruptedException {
-		lxdServiceDelegate.copyContainer(newContainerName, containerOnly, existingContainerName);
+		lxdServiceDelegate.copyContainer(name, newContainerName, containerOnly);
 	}
 
 	@Override

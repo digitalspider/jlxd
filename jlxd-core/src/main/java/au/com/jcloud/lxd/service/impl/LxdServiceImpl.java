@@ -170,19 +170,19 @@ public class LxdServiceImpl extends AbstractLxdService {
 	}
 
 	@Override
-	public void copyContainer(String newContainerName, Boolean containerOnly, String existingContainerName) throws IOException, InterruptedException {		
-		if (StringUtils.isBlank(existingContainerName)) {
-			throw new IllegalArgumentException("Cannot copy container where existingContainerName is blank");
+	public void copyContainer(String name, String newContainerName, Boolean containerOnly) throws IOException, InterruptedException {		
+		if (StringUtils.isBlank(name)) {
+			throw new IllegalArgumentException("Cannot copy container where name is blank");
 		}
 		if (StringUtils.isBlank(newContainerName)) {
 			throw new IllegalArgumentException("Cannot copy container where newContainerName is blank");
 		}
 		
-		Container container = getContainer(existingContainerName);
+		Container container = getContainer(name);
 		if (container == null) {
-			throw new IOException("Could not find existing container with name: "+existingContainerName);
+			throw new IOException("Could not find existing container with name: "+name);
 		}
-		lxdApiService.executeCurlPostCmdToCopyContainer(credential, newContainerName, containerOnly, existingContainerName);
+		lxdApiService.executeCurlPostCmdToCopyContainer(credential, name, newContainerName, containerOnly);
 		reloadContainerCache();
 	}
 	

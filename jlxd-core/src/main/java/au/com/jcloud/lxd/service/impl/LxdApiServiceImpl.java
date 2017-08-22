@@ -262,8 +262,8 @@ public class LxdApiServiceImpl implements ILxdApiService {
 	}
 	
 	@Override
-	public void executeCurlPostCmdToCopyContainer(LxdServerCredential credential, String newContainerName, Boolean containerOnly, 
-			String existingContainerName) throws IOException, InterruptedException {
+	public void executeCurlPostCmdToCopyContainer(LxdServerCredential credential, String existingContainerName, 
+			String newContainerName, Boolean containerOnly) throws IOException, InterruptedException {
 
 		LxdCall lxdCall = LxdCall.POST_CONTAINER_COPY;
 		String url = getBaseUrl(credential) + lxdCall.getCommand();
