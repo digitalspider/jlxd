@@ -1,9 +1,9 @@
 package au.com.jcloud.lxd.model;
 
-import com.google.gson.annotations.SerializedName;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import com.google.gson.annotations.SerializedName;
 
 import au.com.jcloud.lxd.model.extra.NetworkInterface;
 
@@ -80,18 +80,20 @@ public class State {
 		if (!memoryData.isEmpty()) {
 			return memoryData;
 		}
-		for (String key : memory.keySet()) {
-			if (key.equals(MEM_USAGE)) {
-				memoryData.put(MemoryEnum.USAGE, memory.get(key));
-			}
-			else if (key.equals(MEM_USAGE_PEAK)) {
-				memoryData.put(MemoryEnum.USAGE_PEAK, memory.get(key));
-			}
-			else if (key.equals(MEM_SWAP_USAGE)) {
-				memoryData.put(MemoryEnum.SWAP_USAGE, memory.get(key));
-			}
-			else if (key.equals(MEM_SWAP_USAGE_PEAK)) {
-				memoryData.put(MemoryEnum.SWAP_USAGE_PEAK, memory.get(key));
+		if (memory!=null) {
+			for (String key : memory.keySet()) {
+				if (key.equals(MEM_USAGE)) {
+					memoryData.put(MemoryEnum.USAGE, memory.get(key));
+				}
+				else if (key.equals(MEM_USAGE_PEAK)) {
+					memoryData.put(MemoryEnum.USAGE_PEAK, memory.get(key));
+				}
+				else if (key.equals(MEM_SWAP_USAGE)) {
+					memoryData.put(MemoryEnum.SWAP_USAGE, memory.get(key));
+				}
+				else if (key.equals(MEM_SWAP_USAGE_PEAK)) {
+					memoryData.put(MemoryEnum.SWAP_USAGE_PEAK, memory.get(key));
+				}
 			}
 		}
 		return memoryData;
