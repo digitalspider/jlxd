@@ -92,11 +92,22 @@ public class LxdServiceCliImpl extends AbstractLxdService implements ILxdService
 			throws IOException, InterruptedException {
 		linuxCliService.executeLinuxCmd("lxc launch " + imageAlias + " " + newContainerName);
 	}
-	
+
+	@Override
+	public void renameContainer(String name, String newContainerName) throws IOException, InterruptedException {
+		lxdServiceDelegate.renameContainer(name, newContainerName);
+	}
+
 	@Override
 	public void copyContainer(String newContainerName, Boolean containerOnly, String existingContainerName)
 			throws IOException, InterruptedException {
 		lxdServiceDelegate.copyContainer(newContainerName, containerOnly, existingContainerName);
+	}
+
+	@Override
+	public void execOnContainer(String name, String[] commandAndArgs, String env, Boolean waitForSocket)
+			throws IOException, InterruptedException {
+		lxdServiceDelegate.execOnContainer(name, commandAndArgs, env, waitForSocket);
 	}
 
 	// ** Operations **//
@@ -164,6 +175,11 @@ public class LxdServiceCliImpl extends AbstractLxdService implements ILxdService
 		lxdServiceDelegate.deleteSnapshot(containerName, snapshotName);
 	}
 
+	@Override
+	public void renameSnapshot(String containerName, String snapshotName, String newSnapshotName)
+			throws IOException, InterruptedException {
+		lxdServiceDelegate.renameSnapshot(containerName, snapshotName, newSnapshotName);
+	}
 
 	// ** Image Aliases **//
 	@Override
@@ -290,5 +306,6 @@ public class LxdServiceCliImpl extends AbstractLxdService implements ILxdService
 	public void setLinuxCliService(ILinuxCliService linuxCliService) {
 		this.linuxCliService = linuxCliService;
 	}
+	
 }
 

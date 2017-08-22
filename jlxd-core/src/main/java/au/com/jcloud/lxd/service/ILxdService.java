@@ -50,7 +50,9 @@ public interface ILxdService {
     void stopContainer(String name) throws IOException, InterruptedException;
     void deleteContainer(String name) throws IOException, InterruptedException;
     void createContainer(String newContainerName, String imageAlias) throws IOException, InterruptedException;
+    void renameContainer(String name, String newContainerName) throws IOException, InterruptedException;
     void copyContainer(String newContainerName, Boolean containerOnly, String existingContainerName) throws IOException, InterruptedException;
+    void execOnContainer(String name, String[] commandAndArgs, String env, Boolean waitForSocket) throws IOException, InterruptedException;
 
     // Operations
     Map<String,Operation> loadOperations() throws IOException, InterruptedException;
@@ -80,6 +82,7 @@ public interface ILxdService {
     Map<String,Snapshot> loadSnapshots(Container container) throws IOException, InterruptedException;
     List<Snapshot> getSnapshots(Container container) throws IOException, InterruptedException;
     Snapshot getSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException;
+    void renameSnapshot(String containerName, String snapshotName, String newSnapshotName) throws IOException, InterruptedException;
     void createSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException;
     void deleteSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException;
 

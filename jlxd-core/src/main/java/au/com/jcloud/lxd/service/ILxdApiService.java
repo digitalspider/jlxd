@@ -36,10 +36,13 @@ public interface ILxdApiService {
 	public static final String URL_POST_CONTAINER_CREATE = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", \"source\": {\"type\": \"image\", \"protocol\": \"${PROTOCOL}\", \"server\": \"${SERVERURL}\", \"alias\": \"${ALIAS}\"}}'";
 	public static final String URL_POST_CONTAINER_COPY = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", \"source\": {\"type\": \"copy\", \"container_only\": \"${CONTAINERONLY}\", \"source\": \"${CONTAINER}\"}}'";
 	public static final String URL_POST_CONTAINER_DELETE = URL_GET_CONTAINER + "/${ID} -X DELETE";
+    public static final String URL_POST_CONTAINER_RENAME = URL_GET_CONTAINER + "/${ID} -X POST -d { \"name\": \"${NEWNAME}\" }";
+    public static final String URL_POST_CONTAINER_FILES = URL_GET_CONTAINER + "/${ID}/files?path=${PATH} -X POST";
+    public static final String URL_POST_CONTAINER_EXEC = URL_GET_CONTAINER + "/${ID}/exec -X POST -d { \"command\": [\"${CMD}\"], \"environment\": {${ENV}}, \"wait-for-websocket\": ${WAIT}, \"interactive\": false }";
 	public static final String URL_POST_SNAPSHOT_CREATE = URL_GET_SNAPSHOTS + "-X POST -d '{\"name\": \"${SNAPNAME}\", \"stateful\": \"${STATEFULE}\"}'";
 	public static final String URL_POST_SNAPSHOT_DELETE = URL_GET_SNAPSHOTS + "/${SNAPNAME} -X DELETE";
-    public static final String URL_POST_FILES = "/1.0/containers/${ID}/files?path=${PATH} -X POST";
-    public static final String URL_POST_EXEC = "/1.0/containers/${ID}/exec -X POST -d { \"command\": [\"${CMD}\"], \"environment\": {${ENV}}, \"wait-for-websocket\": ${WAIT}, \"interactive\": false }";
+    public static final String URL_POST_SNAPSHOT_RENAME = URL_GET_SNAPSHOTS + "/${SNAPNAME} -X POST -d { \"name\": \"${NEWNAME}\" }";
+	public static final String URL_POST_IMAGE_DELETE = URL_GET_IMAGE + "/${ID} -X DELETE";
 
     /**
      * Set the linuxCliService used by this lxdApiService
@@ -78,8 +81,21 @@ public interface ILxdApiService {
 	 * @param credential the remote server credentials, or null for local
 	 * @param lxdCall the type of operation to perform
 	 * @param containerName the name of the container
+	 * @param additionalParams any additional parameters
 	 */
-	void executeCurlPostOrPutCmd(LxdServerCredential credential, LxdCall lxdCall, String containerName) throws IOException, InterruptedException;
+	void executeCurlPostOrPutCmd(LxdServerCredential credential, LxdCall lxdCall, String containerName, String... additionalParams) throws IOException, InterruptedException;
+
+	/**
+	 * Execute the curl command to start, stop, create or delete a container
+	 * 
+	 * @param credential the remote server credentials, or null for local
+	 * @param lxdCall the type of operation to perform
+	 * @param containerName the name of the container
+	 * @param commandAndArgs the command and arguments to execute on the container
+	 * @param env optional additional environment variables
+	 * @param waitForSocket waitForSocket connection, defaults to false
+	 */
+	void executeCurlPostOrPutCmdForExec(LxdServerCredential credential, LxdCall lxdCall, String containerName, String[] commandAndArgs, String env, Boolean waitForSocket) throws IOException, InterruptedException;
 
 	/**
 	 * Execute the curl command to create or delete a snapshot for a container
@@ -88,8 +104,9 @@ public interface ILxdApiService {
 	 * @param lxdCall the type of operation to perform
 	 * @param containerName the name of the container
 	 * @param snapshotName the name of the snapshot
+	 * @param additionalParams any additional parameters
 	 */
-	void executeCurlPostOrPutCmdForSnapshot(LxdServerCredential credential, LxdCall lxdCall, String containerName, String snapshotName) throws IOException, InterruptedException;
+	void executeCurlPostOrPutCmdForSnapshot(LxdServerCredential credential, LxdCall lxdCall, String containerName, String snapshotName, String... additionalParams) throws IOException, InterruptedException;
 
 	/**
 	 * Execute the curl command to start, stop, create or delete a container

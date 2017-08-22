@@ -14,8 +14,13 @@ import static au.com.jcloud.lxd.service.ILxdApiService.URL_GET_STATE;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_COPY;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_CREATE;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_DELETE;
+import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_EXEC;
+import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_FILES;
+import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_RENAME;
+import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_IMAGE_DELETE;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_SNAPSHOT_CREATE;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_SNAPSHOT_DELETE;
+import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_SNAPSHOT_RENAME;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_PUT_STATE_START;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_PUT_STATE_STOP;
 
@@ -49,8 +54,13 @@ public enum LxdCall {
 	POST_CONTAINER_CREATE(URL_POST_CONTAINER_CREATE, OperationResponse.class),
 	POST_CONTAINER_COPY(URL_POST_CONTAINER_COPY, OperationResponse.class),
 	POST_CONTAINER_DELETE(URL_POST_CONTAINER_DELETE, OperationResponse.class),
+	POST_CONTAINER_RENAME(URL_POST_CONTAINER_RENAME, OperationResponse.class),
+	POST_CONTAINER_EXEC(URL_POST_CONTAINER_EXEC, OperationResponse.class),
+	POST_CONTAINER_FILES(URL_POST_CONTAINER_FILES, OperationResponse.class),
 	POST_SNAPSHOT_CREATE(URL_POST_SNAPSHOT_CREATE, SnapshotResponse.class),
-	POST_SNAPSHOT_DELETE(URL_POST_SNAPSHOT_DELETE, SnapshotResponse.class);
+	POST_SNAPSHOT_DELETE(URL_POST_SNAPSHOT_DELETE, SnapshotResponse.class),
+	POST_SNAPSHOT_RENAME(URL_POST_SNAPSHOT_RENAME, SnapshotResponse.class),
+	POST_IMAGE_DELETE(URL_POST_IMAGE_DELETE, ImageResponse.class);
 
 	LxdCall(String command, Class<? extends AbstractResponse> classType) {
 		this.command = command;

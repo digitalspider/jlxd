@@ -83,7 +83,7 @@ public class LxdServiceImpl extends AbstractLxdService {
 
 	@Override
 	public void deleteImage(Image image) throws IOException, InterruptedException {
-		// TODO: Implement
+		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.POST_IMAGE_DELETE, image.getFingerprint());
 	}
 
 	// ** Container operations **//
@@ -149,7 +149,20 @@ public class LxdServiceImpl extends AbstractLxdService {
 		}
 		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.POST_CONTAINER_DELETE, name);
 	}
-	
+
+	@Override
+	public void renameContainer(String name, String newContainerName) throws IOException, InterruptedException {
+		if (StringUtils.isBlank(name)) {
+			LOG.warn("Cannot rename container where name is blank");
+			return;
+		}
+		if (StringUtils.isBlank(newContainerName)) {
+			LOG.warn("Cannot rename container where newContainerName is blank");
+			return;
+		}
+		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.POST_CONTAINER_RENAME, name, newContainerName);
+	}
+
 	@Override
 	public void copyContainer(String newContainerName, Boolean containerOnly, String existingContainerName) throws IOException, InterruptedException {		
 		if (StringUtils.isBlank(existingContainerName)) {
@@ -167,6 +180,26 @@ public class LxdServiceImpl extends AbstractLxdService {
 		}
 		lxdApiService.executeCurlPostCmdToCopyContainer(credential, newContainerName, containerOnly, existingContainerName);
 	}
+	
+	@Override
+	public void execOnContainer(String name, String[] commandAndArgs, String env, Boolean waitForSocket)
+			throws IOException, InterruptedException {
+		if (StringUtils.isBlank(name)) {
+			LOG.warn("Cannot execute command where containerName is blank");
+			return;
+		}
+		if (commandAndArgs==null || commandAndArgs.length==0) {
+			LOG.warn("Cannot execute empty command on container: "+name);
+			return;
+		}
+		
+		Container container = getContainer(name);
+		if (container == null) {
+			throw new IOException("Could not find container with name: "+name);
+		}
+		lxdApiService.executeCurlPostOrPutCmdForExec(credential, LxdCall.POST_CONTAINER_EXEC, name, commandAndArgs, env, waitForSocket);		
+	}
+
 
 	// ** Operations **//
 	@Override
@@ -238,6 +271,24 @@ public class LxdServiceImpl extends AbstractLxdService {
 	public Snapshot getSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException {
 		Snapshot snapshot = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_SNAPSHOTS, snapshotName, containerName);
 		return snapshot;
+	}
+
+	@Override
+	public void renameSnapshot(String containerName, String snapshotName, String newSnapshotName)
+			throws IOException, InterruptedException {
+		if (StringUtils.isBlank(containerName)) {
+			LOG.warn("Cannot rename snapshot where containerName is blank");
+			return;
+		}
+		if (StringUtils.isBlank(snapshotName)) {
+			LOG.warn("Cannot rename snapshot where snapshotName is blank");
+			return;
+		}
+		if (StringUtils.isBlank(newSnapshotName)) {
+			LOG.warn("Cannot rename snapshot where newSnapshotName is blank");
+			return;
+		}
+		lxdApiService.executeCurlPostOrPutCmdForSnapshot(credential, LxdCall.POST_CONTAINER_RENAME, containerName, snapshotName, newSnapshotName);
 	}
 	
 	@Override

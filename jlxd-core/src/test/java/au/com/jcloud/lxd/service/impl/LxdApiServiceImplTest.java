@@ -42,7 +42,6 @@ public class LxdApiServiceImplTest {
 		String url = "a${ID}:${ID}";
 		String id = "b";
 		String result = lxdApiService.getParameterisedUrl(url,id);
-		url = url.replaceAll("\\$\\{ID\\}", id);
 		Assert.assertEquals("ab:b", result);
 	}
 	
