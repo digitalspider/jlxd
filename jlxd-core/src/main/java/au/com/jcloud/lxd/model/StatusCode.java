@@ -22,10 +22,14 @@ public enum StatusCode {
     FAILURE(400),
     CANCELLED(401);
 
-    public int value;
+    private int value;
 
     StatusCode(int value) {
         this.value = value;
+    }
+    
+    public int getValue() {
+    	return value;
     }
 
     public static StatusCode parse(int value) {
