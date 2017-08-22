@@ -1,5 +1,6 @@
 package au.com.jcloud.jlxd.ui.controller;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,6 +19,7 @@ import au.com.jcloud.jlxd.ui.SearchCriteria;
 import au.com.jcloud.jlxd.ui.model.AjaxResponseBody;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.State;
+import au.com.jcloud.lxd.model.StatusCode;
 import au.com.jcloud.lxd.service.ILxdService;
 
 @RestController
@@ -56,22 +58,41 @@ public class ContainerController {
 			Map<String,Container> containers = new HashMap<>();
 			Container c = new Container();
 			c.setName("david");
+			c.setStatus("Running");
+			c.setStatusCode(StatusCode.RUNNING.getValue());
 			State s = new State();
 			s.setStatusCode(State.STATUS_CODE_RUNNING);
+			s.setPid(123);
 			c.setState(s);
 			c.setArchitecture("x64");
 			containers.put(c.getName(), c);
 			
-			if (containers!=null) {
-				result.setResult(containers.values());
+			Container c2 = new Container();
+			c2.setName("test");
+			c2.setStatus("Frozen");
+			c2.setStatusCode(StatusCode.FROZEN.getValue());
+			State s2 = new State();
+			s2.setStatusCode(State.STATUS_CODE_STOPPED);
+			s2.setPid(456);
+			c2.setState(s2);
+			c2.setArchitecture("win");
+			containers.put(c2.getName(), c2);
+			
+			String searchTerm = search.getSearchTerm();
+			if ("ALL".equalsIgnoreCase(searchTerm)) {
+				result.setMsg("Showing all containers!");
+				result.setResult(containers.values());				
 			}
-	        if (containers.isEmpty()) {
+			else if (containers.isEmpty()) {
 	            result.setMsg("no containers found!");
-	        } else {
-	        	if (containers.containsKey(search.getSearchTerm())) {
-	        		result.setMsg("success. found conatiner: "+containers.get(search.getSearchTerm()));
+	        }
+			else {
+	        	if (containers.containsKey(searchTerm)) {
+	        		result.setResult(new ArrayList<Container>());
+	        		result.getResult().add(containers.get(searchTerm));
+	        		result.setMsg("success. found conatiner: "+containers.get(searchTerm));
 	        	} else {
-	        		result.setMsg("success. No specific container found");
+	        		result.setMsg("No container found with name: "+searchTerm);
 	        	}
 	        }
 		} catch (Exception e) {
