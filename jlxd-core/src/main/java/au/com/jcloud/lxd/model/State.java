@@ -73,7 +73,8 @@ public class State {
 
 	public String getMemoryInMB(MemoryEnum type) {
 		getMemoryData();
-		return "" + memoryData.get(type) / 1000 / 1000;
+		Integer memoryValue = memoryData.get(type);
+		return (memoryValue!=null) ? String.valueOf(memoryValue / 1000 / 1000) : "0";
 	}
 
 	public Map<MemoryEnum, Integer> getMemoryData() {
