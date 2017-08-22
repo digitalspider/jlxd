@@ -1,26 +1,17 @@
-# Java LXD Rest API Client
+# Java LXD Application
 
-A java rest API client for LXD (Linux Container Daemon) that allows Java applications to interact with Linux based lxd/lxc commands
-To test, use the CLI:
-* bin/jlxd.sh
+This application is made up of 4 sub projects including:
+* [jlxd-core|(https://github.com/digitalspider/jlxd/tree/master/jlxd-core)] - A Java based REST API for LXD
+* [jlxd-cli|(https://github.com/digitalspider/jlxd/tree/master/jlxd-cli)] - A Simple Command Line application using the jlxd-core
+* [jlxd-cli-boot|(https://github.com/digitalspider/jlxd/tree/master/jlxd-cli-boot)] - A Simple Command Line application using the jlxd-core, built using spring boot
+* [jlxd-ui|(https://github.com/digitalspider/jlxd/tree/master/jlxd-ui)] - A Spring Boot Web Application that allows you to administor LXD through the web.
 
-The main interface is here:
-* [LxdService.java](https://github.com/digitalspider/jlxd/blob/master/src/main/java/au/com/jcloud/lxd/service/LxdService.java)
-
-Sample code (and the command line interface (CLI)) is here:
-* [App.java](https://github.com/digitalspider/jlxd/blob/master/src/main/java/au/com/jcloud/lxd/App.java)
-
-To use run use [Maven](https://maven.apache.org):
-* mvn install
-* bin/jlxd.sh
-
-See:
+For more information about LXD see:
 * https://www.stgraber.org/2016/04/18/lxd-api-direct-interaction
 * http://www.ubuntu.com/cloud/lxd
 * https://linuxcontainers.org/lxd/getting-started-cli
 * https://github.com/lxc/lxd/blob/master/doc/rest-api.md
 
-Note:
-* This now works on a both local and remote LXD instances
-* Most GET operations are implemented, but only a few of the POST/PUT are
-* Cannot create containers from existing images - some things are hard coded here
+Notes:
+* This project is still a work in progress, although much of the jlxd-core is pretty stable
+* The UI part is actively being worked on at the moment
