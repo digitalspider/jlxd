@@ -4,14 +4,20 @@ import org.hibernate.validator.constraints.NotBlank;
 
 public class SearchCriteria {
 
-    @NotBlank(message = "username can't empty!")
-    String username;
+    @NotBlank(message = "searchTerm can't empty!")
+    private String searchTerm;
+    
+    @Override
+	public String toString() {
+		return "SearchCriteria [searchTerm=" + searchTerm + "]";
+	}
 
-    public String getUsername() {
-        return username;
-    }
+	public String getSearchTerm() {
+		return searchTerm;
+	}
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
+	public void setSearchTerm(String searchTerm) {
+		this.searchTerm = searchTerm;
+	}
+
 }

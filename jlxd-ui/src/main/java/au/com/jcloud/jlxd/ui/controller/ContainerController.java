@@ -1,6 +1,7 @@
 package au.com.jcloud.jlxd.ui.controller;
 
-import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.validation.Valid;
 
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import au.com.jcloud.jlxd.ui.SearchCriteria;
 import au.com.jcloud.jlxd.ui.model.AjaxResponseBody;
 import au.com.jcloud.lxd.model.Container;
+import au.com.jcloud.lxd.model.State;
 import au.com.jcloud.lxd.service.ILxdService;
 
 @RestController
@@ -26,7 +28,7 @@ public class ContainerController {
     ILxdService lxdService;
 
     @Autowired
-    public void setUserService(ILxdService lxdService) {
+    public void setLxdService(ILxdService lxdService) {
         this.lxdService = lxdService;
     }
 
@@ -50,15 +52,31 @@ public class ContainerController {
         }
 
 		try {
-			Collection<Container> containers = lxdService.loadContainers().values();
+//			Map<String,Container> containers = lxdService.loadContainers();
+			Map<String,Container> containers = new HashMap<>();
+			Container c = new Container();
+			c.setName("david");
+			State s = new State();
+			s.setStatusCode(State.STATUS_CODE_RUNNING);
+			c.setState(s);
+			c.setArchitecture("x64");
+			containers.put(c.getName(), c);
+			
+			if (containers!=null) {
+				result.setResult(containers.values());
+			}
 	        if (containers.isEmpty()) {
 	            result.setMsg("no containers found!");
 	        } else {
-	            result.setMsg("success");
+	        	if (containers.containsKey(search.getSearchTerm())) {
+	        		result.setMsg("success. found conatiner: "+containers.get(search.getSearchTerm()));
+	        	} else {
+	        		result.setMsg("success. No specific container found");
+	        	}
 	        }
-	        result.setResult(containers);
 		} catch (Exception e) {
 			LOG.error(e,e);
+			result.setMsg("Error occurred: "+e.getMessage());
 		}
 
         return ResponseEntity.ok(result);

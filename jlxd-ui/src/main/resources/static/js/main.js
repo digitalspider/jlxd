@@ -14,7 +14,7 @@ $(document).ready(function () {
 function fire_ajax_submit() {
 
     var search = {}
-    search["username"] = $("#username").val();
+    search["searchTerm"] = $("#searchTerm").val();
 
     $("#btn-search").prop("disabled", true);
 
