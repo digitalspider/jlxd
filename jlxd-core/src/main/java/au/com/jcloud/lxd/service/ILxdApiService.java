@@ -34,6 +34,7 @@ public interface ILxdApiService {
 	public static final String URL_PUT_STATE_STOP = URL_GET_STATE + " -X PUT -d '{\"action\": \"stop\", \"force\": true}'";
 	public static final String URL_PUT_STATE_START = URL_GET_STATE + " -X PUT -d '{\"action\": \"start\"}'";
 	public static final String URL_POST_CONTAINER_CREATE = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", \"source\": {\"type\": \"image\", \"protocol\": \"${PROTOCOL}\", \"server\": \"${SERVERURL}\", \"alias\": \"${ALIAS}\"}}'";
+	public static final String URL_POST_CONTAINER_COPY = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", \"source\": {\"type\": \"copy\", \"container_only\": \"${CONTAINERONLY}\", \"source\": \"${CONTAINER}\"}}'";
 	public static final String URL_POST_CONTAINER_DELETE = URL_GET_CONTAINER + "/${ID} -X DELETE";
     public static final String URL_POST_FILES = "/1.0/containers/${ID}/files?path=${PATH} -X POST";
     public static final String URL_POST_EXEC = "/1.0/containers/${ID}/exec -X POST -d { \"command\": [\"${CMD}\"], \"environment\": {${ENV}}, \"wait-for-websocket\": ${WAIT}, \"interactive\": false }";
@@ -56,7 +57,7 @@ public interface ILxdApiService {
 	/**
 	 * Execute the base curl command to get a list of "LXD Objects" e.g. Containers, Images, Profiles, etc
 	 * 
-	 * @param remoteHostAndPort see {@link #getBaseUrl(String)}
+	 * @param credential the remote server credentials, or null for local
 	 * @param lxdCall the type of operation to perform
      */
 	<T> Map<String,T> executeCurlGetListCmd(LxdServerCredential credential, LxdCall lxdCall) throws IOException, InterruptedException;
@@ -64,7 +65,7 @@ public interface ILxdApiService {
 	/**
 	 * Execute the base curl command to get a list of "LXD Objects" e.g. Containers, Images, Profiles, etc
 	 * 
-	 * @param remoteHostAndPort see {@link #getBaseUrl(String)}
+	 * @param credential the remote server credentials, or null for local
 	 * @param lxdCall the type of operation to perform
 	 */
 	<T> Map<String,T> executeCurlGetListCmd(LxdServerCredential credential, LxdCall lxdCall, String containerName) throws IOException, InterruptedException;
@@ -72,7 +73,7 @@ public interface ILxdApiService {
 	/**
 	 * Execute the curl command to start, stop, create or delete a container
 	 * 
-	 * @param remoteHostAndPort see {@link #getBaseUrl(String)}
+	 * @param credential the remote server credentials, or null for local
 	 * @param lxdCall the type of operation to perform
 	 */
 	void executeCurlPostOrPutCmd(LxdServerCredential credential, LxdCall lxdCall, String containerName) throws IOException, InterruptedException;
@@ -80,10 +81,20 @@ public interface ILxdApiService {
 	/**
 	 * Execute the curl command to start, stop, create or delete a container
 	 * 
-	 * @param remoteHostAndPort see {@link #getBaseUrl(String)}
+	 * @param credential the remote server credentials, or null for local
 	 * @param lxdCall the type of operation to perform
 	 */
 	void executeCurlPostCmdToCreateNewContainerFromImage(LxdServerCredential credential, RemoteServer remoteServer, String containerName, String imageAlias) throws IOException, InterruptedException;
+
+	/**
+	 * Execute the curl command to copy a container
+	 * 
+	 * @param credential the remote server credentials, or null for local
+	 * @param newContainerName the name of the new container
+	 * @param containerOnly whether to copy snapshots also, default is true
+	 * @param existingContainerName the name of the existing container to be copied
+	 */
+	void executeCurlPostCmdToCopyContainer(LxdServerCredential credential, String newContainerName, Boolean containerOnly, String existingContainerName) throws IOException, InterruptedException;
 
 	/**
 	 * Perform a replace all on the url replacing ${ID}.

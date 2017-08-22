@@ -11,6 +11,7 @@ import static au.com.jcloud.lxd.service.ILxdApiService.URL_GET_PROFILE;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_GET_SERVERINFO;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_GET_SNAPSHOTS;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_GET_STATE;
+import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_COPY;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_CREATE;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_DELETE;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_PUT_STATE_START;
@@ -44,6 +45,7 @@ public enum LxdCall {
 	PUT_STATE_START(URL_PUT_STATE_START, OperationResponse.class),
 	PUT_STATE_STOP(URL_PUT_STATE_STOP, OperationResponse.class),
 	POST_CONTAINER_CREATE(URL_POST_CONTAINER_CREATE, OperationResponse.class),
+	POST_CONTAINER_COPY(URL_POST_CONTAINER_COPY, OperationResponse.class),
 	POST_CONTAINER_DELETE(URL_POST_CONTAINER_DELETE, OperationResponse.class);
 
 	LxdCall(String command, Class<? extends AbstractResponse> classType) {

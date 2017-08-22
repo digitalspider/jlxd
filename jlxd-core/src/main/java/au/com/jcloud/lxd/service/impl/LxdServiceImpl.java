@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Named;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import au.com.jcloud.lxd.enums.LxdCall;
@@ -48,7 +49,7 @@ public class LxdServiceImpl extends AbstractLxdService {
 		Map<String, Container> containers = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_CONTAINER);
 		return containers;
 	}
-
+	
 	@Override
 	public State getContainerState(String name) throws IOException, InterruptedException {
 		Container container = getContainer(name);
@@ -105,14 +106,20 @@ public class LxdServiceImpl extends AbstractLxdService {
 
 	@Override
 	public void createContainer(String newContainerName, String imageAlias) throws IOException, InterruptedException {
-		
+		if (StringUtils.isBlank(imageAlias)) {
+			LOG.warn("Cannot create container where imageAlias is blank");
+			return;
+		}
+		if (StringUtils.isBlank(newContainerName)) {
+			LOG.warn("Cannot create container where newContainerName is blank");
+			return;
+		}
 		if (!imageAlias.contains(":")) {
 			Image image = getImage(imageAlias);
-			if (image != null) {
-				lxdApiService.executeCurlPostCmdToCreateNewContainerFromImage(credential, RemoteServer.LOCAL, newContainerName, imageAlias);
-			} else {
+			if (image == null) {
 				throw new IOException("Could not find local image with alias: "+imageAlias);
 			}
+			lxdApiService.executeCurlPostCmdToCreateNewContainerFromImage(credential, RemoteServer.LOCAL, newContainerName, imageAlias);
 		} else {
 			boolean found = false;
 			for (RemoteServer remoteServer : RemoteServer.values()) {
@@ -132,13 +139,33 @@ public class LxdServiceImpl extends AbstractLxdService {
 	@Override
 	public void deleteContainer(String name) throws IOException, InterruptedException {
 		State state = getContainerState(name);
-		if (state != null) {
-			if (!state.isStopped()) {
-				throw new IOException(
-						"Cannot delete a container that is not stopped. Container=" + name + " status=" + state);
-			}
-			lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.POST_CONTAINER_DELETE, name);
+		if (state == null) {
+			LOG.warn("Cannot find a valid state for container name: "+name);
+			return;
 		}
+			
+		if (!state.isStopped()) {
+			throw new IOException("Cannot delete a container that is not stopped. Container=" + name + " status=" + state);
+		}
+		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.POST_CONTAINER_DELETE, name);
+	}
+	
+	@Override
+	public void copyContainer(String newContainerName, Boolean containerOnly, String existingContainerName) throws IOException, InterruptedException {		
+		if (StringUtils.isBlank(existingContainerName)) {
+			LOG.warn("Cannot copy container where existingContainerName is blank");
+			return;
+		}
+		if (StringUtils.isBlank(newContainerName)) {
+			LOG.warn("Cannot copy container where newContainerName is blank");
+			return;
+		}
+		
+		Container container = getContainer(existingContainerName);
+		if (container == null) {
+			throw new IOException("Could not find existing container with name: "+existingContainerName);
+		}
+		lxdApiService.executeCurlPostCmdToCopyContainer(credential, newContainerName, containerOnly, existingContainerName);
 	}
 
 	// ** Operations **//

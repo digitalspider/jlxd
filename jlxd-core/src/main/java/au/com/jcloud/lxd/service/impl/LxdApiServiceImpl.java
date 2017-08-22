@@ -204,6 +204,28 @@ public class LxdApiServiceImpl implements ILxdApiService {
 			}
 		}
 	}
+	
+	@Override
+	public void executeCurlPostCmdToCopyContainer(LxdServerCredential credential, String newContainerName, Boolean containerOnly, 
+			String existingContainerName) throws IOException, InterruptedException {
+
+		LxdCall lxdCall = LxdCall.POST_CONTAINER_COPY;
+		String url = getBaseUrl(credential) + lxdCall.getCommand();
+		url = getParameterisedUrl(url, newContainerName);
+		url = url.replaceAll("\\$\\{CONTAINERONLY\\}", containerOnly==null ? "true" : containerOnly.toString().toLowerCase());
+		url = url.replaceAll("\\$\\{CONTAINER\\}", existingContainerName);
+
+		LOG.debug("url=" + url);
+		AbstractResponse response = linuxCliService.executeLinuxCmdWithResultJsonObject(url, lxdCall.getClassType());
+		LOG.info("repsonse=" + response);
+		if (response != null) {
+			LOG.debug("statusCode=" + response.getStatusCode());
+			if (StatusCode.OPERATION_CREATED.equals(StatusCode.parse(response.getStatusCode()))) {
+				return;
+			}
+		}
+	}
+
 
 	/**
 	 * Perform a replace all on the url replacing ${ID}.

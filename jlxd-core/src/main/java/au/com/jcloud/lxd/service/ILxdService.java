@@ -50,6 +50,7 @@ public interface ILxdService {
     void stopContainer(String name) throws IOException, InterruptedException;
     void deleteContainer(String name) throws IOException, InterruptedException;
     void createContainer(String newContainerName, String imageAlias) throws IOException, InterruptedException;
+    void copyContainer(String newContainerName, Boolean containerOnly, String existingContainerName) throws IOException, InterruptedException;
 
     // Operations
     Map<String,Operation> loadOperations() throws IOException, InterruptedException;
