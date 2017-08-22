@@ -82,8 +82,13 @@ public class LxdServiceImpl extends AbstractLxdService {
 	}
 
 	@Override
-	public void deleteImage(Image image) throws IOException, InterruptedException {
+	public void deleteImage(String imageNameOrId) throws IOException, InterruptedException {
+		Image image = getImage(imageNameOrId);
+		if (image == null) {
+			throw new IllegalArgumentException("Cannot find image with name or id: "+imageNameOrId);
+		}
 		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.POST_IMAGE_DELETE, image.getFingerprint());
+		reloadImageCache();
 	}
 
 	// ** Container operations **//
@@ -107,12 +112,10 @@ public class LxdServiceImpl extends AbstractLxdService {
 	@Override
 	public void createContainer(String newContainerName, String imageAlias) throws IOException, InterruptedException {
 		if (StringUtils.isBlank(imageAlias)) {
-			LOG.warn("Cannot create container where imageAlias is blank");
-			return;
+			throw new IllegalArgumentException("Cannot create container where imageAlias is blank");
 		}
 		if (StringUtils.isBlank(newContainerName)) {
-			LOG.warn("Cannot create container where newContainerName is blank");
-			return;
+			throw new IllegalArgumentException("Cannot create container where newContainerName is blank");
 		}
 		if (!imageAlias.contains(":")) {
 			Image image = getImage(imageAlias);
@@ -134,44 +137,45 @@ public class LxdServiceImpl extends AbstractLxdService {
 				throw new IOException("Could not find remote image server: "+imageAlias);
 			}
 		}
+		reloadContainerCache();
 	}
 
 	@Override
 	public void deleteContainer(String name) throws IOException, InterruptedException {
 		State state = getContainerState(name);
 		if (state == null) {
-			LOG.warn("Cannot find a valid state for container name: "+name);
-			return;
+			throw new IllegalArgumentException("Cannot find a valid state for container name: "+name);
 		}
 			
 		if (!state.isStopped()) {
 			throw new IOException("Cannot delete a container that is not stopped. Container=" + name + " status=" + state);
 		}
 		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.POST_CONTAINER_DELETE, name);
+		reloadContainerCache();
 	}
 
 	@Override
 	public void renameContainer(String name, String newContainerName) throws IOException, InterruptedException {
 		if (StringUtils.isBlank(name)) {
-			LOG.warn("Cannot rename container where name is blank");
-			return;
+			throw new IllegalArgumentException("Cannot rename container where name is blank");
 		}
 		if (StringUtils.isBlank(newContainerName)) {
-			LOG.warn("Cannot rename container where newContainerName is blank");
-			return;
+			throw new IllegalArgumentException("Cannot rename container where newContainerName is blank");
 		}
 		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.POST_CONTAINER_RENAME, name, newContainerName);
+		Container container = getContainerMap().remove(name);
+		if (container!=null) {
+			getContainerMap().put(newContainerName, container);
+		}
 	}
 
 	@Override
 	public void copyContainer(String newContainerName, Boolean containerOnly, String existingContainerName) throws IOException, InterruptedException {		
 		if (StringUtils.isBlank(existingContainerName)) {
-			LOG.warn("Cannot copy container where existingContainerName is blank");
-			return;
+			throw new IllegalArgumentException("Cannot copy container where existingContainerName is blank");
 		}
 		if (StringUtils.isBlank(newContainerName)) {
-			LOG.warn("Cannot copy container where newContainerName is blank");
-			return;
+			throw new IllegalArgumentException("Cannot copy container where newContainerName is blank");
 		}
 		
 		Container container = getContainer(existingContainerName);
@@ -179,18 +183,17 @@ public class LxdServiceImpl extends AbstractLxdService {
 			throw new IOException("Could not find existing container with name: "+existingContainerName);
 		}
 		lxdApiService.executeCurlPostCmdToCopyContainer(credential, newContainerName, containerOnly, existingContainerName);
+		reloadContainerCache();
 	}
 	
 	@Override
 	public void execOnContainer(String name, String[] commandAndArgs, String env, Boolean waitForSocket)
 			throws IOException, InterruptedException {
 		if (StringUtils.isBlank(name)) {
-			LOG.warn("Cannot execute command where containerName is blank");
-			return;
+			throw new IllegalArgumentException("Cannot execute command where containerName is blank");
 		}
 		if (commandAndArgs==null || commandAndArgs.length==0) {
-			LOG.warn("Cannot execute empty command on container: "+name);
-			return;
+			throw new IllegalArgumentException("Cannot execute empty command on container: "+name);
 		}
 		
 		Container container = getContainer(name);
@@ -238,12 +241,38 @@ public class LxdServiceImpl extends AbstractLxdService {
 		}
 		return usedByContainers;
 	}
+	
+	@Override
+	public void deleteNetwork(String name) throws IOException, InterruptedException {
+		if(StringUtils.isBlank(name)) {
+			throw new IllegalArgumentException("Cannot delete a network with an empty name");
+		}
+		Network network = getNetwork(name);
+		if (network==null) {
+			throw new IllegalArgumentException("Cannot find a network with name: "+name);
+		}
+		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.POST_NETWORK_DELETE, name);
+		reloadNetworkCache();
+	}
 
 	// ** Profiles **//
 	@Override
 	public Map<String, Profile> loadProfiles() throws IOException, InterruptedException {
 		Map<String, Profile> profiles = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_PROFILE);
 		return profiles;
+	}
+	
+	@Override
+	public void deleteProfile(String name) throws IOException, InterruptedException {
+		if(StringUtils.isBlank(name)) {
+			throw new IllegalArgumentException("Cannot delete a profile with an empty name");
+		}
+		Profile profile = getProfile(name);
+		if (profile==null) {
+			throw new IllegalArgumentException("Cannot find a profile with name: "+name);
+		}
+		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.POST_PROFILE_DELETE, name);
+		reloadProfileCache();
 	}
 
 	// ** Certificates **//
@@ -277,16 +306,13 @@ public class LxdServiceImpl extends AbstractLxdService {
 	public void renameSnapshot(String containerName, String snapshotName, String newSnapshotName)
 			throws IOException, InterruptedException {
 		if (StringUtils.isBlank(containerName)) {
-			LOG.warn("Cannot rename snapshot where containerName is blank");
-			return;
+			throw new IllegalArgumentException("Cannot rename snapshot where containerName is blank");
 		}
 		if (StringUtils.isBlank(snapshotName)) {
-			LOG.warn("Cannot rename snapshot where snapshotName is blank");
-			return;
+			throw new IllegalArgumentException("Cannot rename snapshot where snapshotName is blank");
 		}
 		if (StringUtils.isBlank(newSnapshotName)) {
-			LOG.warn("Cannot rename snapshot where newSnapshotName is blank");
-			return;
+			throw new IllegalArgumentException("Cannot rename snapshot where newSnapshotName is blank");
 		}
 		lxdApiService.executeCurlPostOrPutCmdForSnapshot(credential, LxdCall.POST_CONTAINER_RENAME, containerName, snapshotName, newSnapshotName);
 	}

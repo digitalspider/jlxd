@@ -43,7 +43,7 @@ public interface ILxdService {
     void reloadImageCache() throws IOException, InterruptedException;
     List<Image> getImages();
     Image getImage(String nameOrId);
-    void deleteImage(Image image) throws IOException, InterruptedException;
+    void deleteImage(String nameOrId) throws IOException, InterruptedException;
 
     // Container operations
     void startContainer(String name) throws IOException, InterruptedException;
@@ -65,12 +65,14 @@ public interface ILxdService {
     List<Network> getNetworks() throws IOException, InterruptedException;
     Network getNetwork(String name) throws IOException, InterruptedException;
     List<Container> getContainersUsedByNetwork(Network network) throws IOException, InterruptedException;
+    void deleteNetwork(String name) throws IOException, InterruptedException;
 
     // Profiles
     Map<String,Profile> loadProfiles() throws IOException, InterruptedException;
     void reloadProfileCache() throws IOException, InterruptedException;
     List<Profile> getProfiles() throws IOException, InterruptedException;
     Profile getProfile(String name) throws IOException, InterruptedException;
+    void deleteProfile(String name) throws IOException, InterruptedException;
 
     // Certificates
     Map<String,Certificate> loadCertificates() throws IOException, InterruptedException;

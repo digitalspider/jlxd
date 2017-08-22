@@ -41,9 +41,6 @@ public abstract class AbstractLxdService implements ILxdService {
 
 	protected LxdServerCredential credential;
 	
-	protected String keypath = "~/.config/lxc/";
-
-
 	@Override
 	public LxdServerCredential getLxdServerCredential() {
 		return credential;
@@ -192,5 +189,25 @@ public abstract class AbstractLxdService implements ILxdService {
 	public Certificate getCertificate(String name) throws IOException, InterruptedException {
 		getCertificates();
 		return certificateMap.get(name);
+	}
+
+	public Map<String, Container> getContainerMap() {
+		return containerMap;
+	}
+
+	public Map<String, Image> getImageMap() {
+		return imageMap;
+	}
+
+	public Map<String, Network> getNetworkMap() {
+		return networkMap;
+	}
+
+	public Map<String, Profile> getProfileMap() {
+		return profileMap;
+	}
+
+	public Map<String, Certificate> getCertificateMap() {
+		return certificateMap;
 	}
 }

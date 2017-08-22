@@ -30,7 +30,7 @@ public class LxdServiceCliImpl extends AbstractLxdService implements ILxdService
 
 	private ILxdService lxdServiceDelegate;
 	private ILinuxCliService linuxCliService;
-	
+
 	@Override
 	public void setLxdServerCredential(LxdServerCredential credential) {
 		super.setLxdServerCredential(credential);
@@ -42,13 +42,12 @@ public class LxdServiceCliImpl extends AbstractLxdService implements ILxdService
 		this.lxdServiceDelegate = lxdServiceDelegate;
 	}
 
-
 	// ** ServerInfo **//
 	@Override
 	public ServerInfo getServerInfo() throws IOException, InterruptedException {
 		return lxdServiceDelegate.getServerInfo(); // TODO: could use "lxd info", but need to do mapping
 	}
-	
+
 	// ** Containers **//
 	@Override
 	public Map<String, Container> loadContainers() throws IOException, InterruptedException {
@@ -67,8 +66,8 @@ public class LxdServiceCliImpl extends AbstractLxdService implements ILxdService
 	}
 
 	@Override
-	public void deleteImage(Image image) throws IOException, InterruptedException {
-		linuxCliService.executeLinuxCmd("lxc image delete " + image.getFingerprint());
+	public void deleteImage(String imageOrId) throws IOException, InterruptedException {
+		linuxCliService.executeLinuxCmd("lxc image delete " + imageOrId);
 	}
 
 	// ** Container Operations **//
@@ -88,8 +87,7 @@ public class LxdServiceCliImpl extends AbstractLxdService implements ILxdService
 	}
 
 	@Override
-	public void createContainer(String newContainerName, String imageAlias)
-			throws IOException, InterruptedException {
+	public void createContainer(String newContainerName, String imageAlias) throws IOException, InterruptedException {
 		linuxCliService.executeLinuxCmd("lxc launch " + imageAlias + " " + newContainerName);
 	}
 
@@ -164,10 +162,10 @@ public class LxdServiceCliImpl extends AbstractLxdService implements ILxdService
 	public Snapshot getSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException {
 		return lxdServiceDelegate.getSnapshot(containerName, snapshotName);
 	}
-	
+
 	@Override
 	public void createSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException {
-		lxdServiceDelegate.createSnapshot(containerName, snapshotName);		
+		lxdServiceDelegate.createSnapshot(containerName, snapshotName);
 	}
 
 	@Override
@@ -196,14 +194,13 @@ public class LxdServiceCliImpl extends AbstractLxdService implements ILxdService
 	public ImageAlias getImageAlias(String name) throws IOException, InterruptedException {
 		return lxdServiceDelegate.getImageAlias(name);
 	}
-	
+
 	// ** File Ops **//
 	@Override
 	public String getFile(String containerName, String filepath) throws IOException, InterruptedException {
-		linuxCliService.executeLinuxCmd("lxc file pull "+containerName+filepath+" .");
+		linuxCliService.executeLinuxCmd("lxc file pull " + containerName + filepath + " .");
 		return "";
 	}
-
 
 	@Override
 	public void setLxdApiService(ILxdApiService lxdApiService) {
@@ -212,100 +209,92 @@ public class LxdServiceCliImpl extends AbstractLxdService implements ILxdService
 		}
 	}
 
-
 	@Override
 	public void reloadContainerCache() throws IOException, InterruptedException {
 		lxdServiceDelegate.reloadCertificateCache();
 	}
-
 
 	@Override
 	public List<Container> getContainers() {
 		return lxdServiceDelegate.getContainers();
 	}
 
-
 	@Override
 	public Container getContainer(String name) {
 		return lxdServiceDelegate.getContainer(name);
 	}
-
 
 	@Override
 	public void reloadImageCache() throws IOException, InterruptedException {
 		lxdServiceDelegate.reloadImageCache();
 	}
 
-
 	@Override
 	public List<Image> getImages() {
 		return lxdServiceDelegate.getImages();
 	}
-
 
 	@Override
 	public Image getImage(String nameOrId) {
 		return lxdServiceDelegate.getImage(nameOrId);
 	}
 
-
 	@Override
 	public void reloadNetworkCache() throws IOException, InterruptedException {
 		lxdServiceDelegate.reloadNetworkCache();
 	}
-
 
 	@Override
 	public List<Network> getNetworks() throws IOException, InterruptedException {
 		return lxdServiceDelegate.getNetworks();
 	}
 
-
 	@Override
 	public Network getNetwork(String name) throws IOException, InterruptedException {
 		return lxdServiceDelegate.getNetwork(name);
 	}
 
+	@Override
+	public void deleteNetwork(String name) throws IOException, InterruptedException {
+		lxdServiceDelegate.deleteNetwork(name);
+	}
 
 	@Override
 	public void reloadProfileCache() throws IOException, InterruptedException {
 		lxdServiceDelegate.reloadProfileCache();
 	}
 
-
 	@Override
 	public List<Profile> getProfiles() throws IOException, InterruptedException {
 		return lxdServiceDelegate.getProfiles();
 	}
-
 
 	@Override
 	public Profile getProfile(String name) throws IOException, InterruptedException {
 		return lxdServiceDelegate.getProfile(name);
 	}
 
+	@Override
+	public void deleteProfile(String name) throws IOException, InterruptedException {
+		lxdServiceDelegate.deleteProfile(name);
+	}
 
 	@Override
 	public void reloadCertificateCache() throws IOException, InterruptedException {
 		lxdServiceDelegate.reloadCertificateCache();
 	}
 
-
 	@Override
 	public List<Certificate> getCertificates() throws IOException, InterruptedException {
 		return lxdServiceDelegate.getCertificates();
 	}
-
 
 	@Override
 	public Certificate getCertificate(String name) throws IOException, InterruptedException {
 		return lxdServiceDelegate.getCertificate(name);
 	}
 
-
 	public void setLinuxCliService(ILinuxCliService linuxCliService) {
 		this.linuxCliService = linuxCliService;
 	}
-	
 }
-
