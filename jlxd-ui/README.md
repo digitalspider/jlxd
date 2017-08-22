@@ -1,3 +1,6 @@
+* http://lxc-webpanel.github.io/features.html
+* http://lxc-webpanel.github.io/screenshots.html
+
 A web based UI for jlxd using SpringBoot, Thymeleaf and AJAX that has features:
 * Host details - 
 ** View = OS info, CPU Usage, Disk Usage, Mem Usage, Uptime
