@@ -294,7 +294,7 @@ public class LxdApiServiceImpl implements ILxdApiService {
 	 */
 	@Override
 	public String getParameterisedUrl(String url, String id) {
-		url = url.replace("${ID}", id);
+		url = url.replace("${ID}", id != null ? id : StringUtils.EMPTY);
 		return url;
 	}
 
@@ -322,12 +322,12 @@ public class LxdApiServiceImpl implements ILxdApiService {
 			if (StringUtils.isNotBlank(credential.getRemoteCert())) {
 				url = url.replace("${KEYPATHCERT}", "--cert "+credential.getRemoteCert());
 			} else {
-				url = url.replace("${KEYPATHCERT}", "");
+				url = url.replace("${KEYPATHCERT}", StringUtils.EMPTY);
 			}
 			if (StringUtils.isNotBlank(credential.getRemoteKey())) {
 				url = url.replace("${KEYPATHKEY}", "--key "+credential.getRemoteKey());
 			} else {
-				url = url.replace("${KEYPATHKEY}", "");
+				url = url.replace("${KEYPATHKEY}", StringUtils.EMPTY);
 			}
 			
 		}
