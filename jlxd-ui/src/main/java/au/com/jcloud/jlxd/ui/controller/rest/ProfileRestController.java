@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.validation.Valid;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import au.com.jcloud.jlxd.ui.SearchCriteria;
-import au.com.jcloud.jlxd.ui.model.AjaxResponseBody;
+import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
+import au.com.jcloud.jlxd.ui.search.SearchCriteria;
 import au.com.jcloud.lxd.model.Profile;
 import au.com.jcloud.lxd.service.ILinuxCliService;
 import au.com.jcloud.lxd.service.ILxdService;
@@ -68,20 +69,20 @@ public class ProfileRestController {
 			}
 			
 			String searchTerm = search.getSearchTerm();
-			if ("*".equalsIgnoreCase(searchTerm)) {
-				result.setMsg("Showing all containers!");
+			if (profiles.isEmpty()) {
+	            throw new Exception("no profiles found!");
+	        }
+			else if (StringUtils.isEmpty(searchTerm)) {
+				result.setMsg("Showing all profiles!");
 				result.setResult(profiles.values());				
 			}
-			else if (profiles.isEmpty()) {
-	            throw new Exception("no containers found!");
-	        }
 			else {
 	        	if (profiles.containsKey(searchTerm)) {
 	        		result.setResult(new ArrayList<Profile>());
 	        		result.getResult().add(profiles.get(searchTerm));
-	        		result.setMsg("success. found conatiner: "+profiles.get(searchTerm));
+	        		result.setMsg("success. found profile: "+profiles.get(searchTerm));
 	        	} else {
-	        		throw new Exception("No container found with name: "+searchTerm);
+	        		throw new Exception("No profile found with name: "+searchTerm);
 	        	}
 	        }
 		} catch (Exception e) {

@@ -2,26 +2,25 @@ $(document).ready(function () {
 
     $("#search-form").submit(function (event) {
         event.preventDefault();
-        fire_ajax_submit("/container/api/search","template/handlebars/container.html");
+        var placeholderEle = $("#containers");
+        var postUrl = "/container/api/search/"+$("#searchTerm").val();
+        var templatePath = "template/handlebars/container.html"
+        fire_ajax_submit(postUrl, templatePath, placeholderEle);
     });
 
     // Do a default search for all
-    $("#searchTerm").val("*");
     $("#bth-search").click();
 });
 
-function fire_ajax_submit(postUrl, templatePath) {
-
-    var search = {}
-    search["searchTerm"] = $("#searchTerm").val();
-
+function fire_ajax_submit(postUrl, templatePath, placeholderEle) {
+    placeholderEle.html("");
+	$("#feedback").html("");
     $("#btn-search").prop("disabled", true);
 
     $.ajax({
         type: "POST",
         contentType: "application/json",
         url: postUrl,
-        data: JSON.stringify(search),
         dataType: 'json',
         cache: false,
         timeout: 60000,
@@ -29,8 +28,6 @@ function fire_ajax_submit(postUrl, templatePath) {
 
             var json = "<h4>Ajax Response</h4><pre>" + JSON.stringify(data, null, 4) + "</pre>";
             //$('#feedback').html(json);
-            var placeholderEle = $("#containers");
-            placeholderEle.html("");
             if (data && data.result) {
 	            injectTemplatedContent(templatePath,data.result,placeholderEle);
             }

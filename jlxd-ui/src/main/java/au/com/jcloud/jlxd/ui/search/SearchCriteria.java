@@ -1,10 +1,7 @@
-package au.com.jcloud.jlxd.ui;
-
-import org.hibernate.validator.constraints.NotBlank;
+package au.com.jcloud.jlxd.ui.search;
 
 public class SearchCriteria {
 
-    @NotBlank(message = "searchTerm can't empty!")
     private String searchTerm;
     
     @Override

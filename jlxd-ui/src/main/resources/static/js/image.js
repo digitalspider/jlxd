@@ -2,19 +2,23 @@ $(document).ready(function () {
 
     $("#search-form").submit(function (event) {
         event.preventDefault();
-        fire_ajax_submit("/image/api/search", "template/handlebars/image.html");
+        var placeholderEle = $("#images");
+        var postUrl = "/image/api/search/";
+        var templatePath = "template/handlebars/image.html"
+        fire_ajax_submit(postUrl, templatePath, placeholderEle);
     });
 
     // Do a default search for all
-    $("#searchTerm").val("*");
     $("#bth-search").click();
 });
 
-function fire_ajax_submit(postUrl, templatePath) {
+function fire_ajax_submit(postUrl, templatePath, placeholderEle) {
 
     var search = {}
     search["searchTerm"] = $("#searchTerm").val();
 
+    placeholderEle.html("");
+    $("#feedback").html("");
     $("#btn-search").prop("disabled", true);
 
     $.ajax({
@@ -29,8 +33,6 @@ function fire_ajax_submit(postUrl, templatePath) {
 
             var json = "<h4>Ajax Response</h4><pre>" + JSON.stringify(data, null, 4) + "</pre>";
             //$('#feedback').html(json);
-            var placeholderEle = $("#containers");
-            placeholderEle.html("");
             if (data && data.result) {
 	            injectTemplatedContent(templatePath,data.result,placeholderEle);
             }

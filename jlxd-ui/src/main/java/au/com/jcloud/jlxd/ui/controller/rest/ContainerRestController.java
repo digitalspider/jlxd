@@ -4,20 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.validation.Valid;
-
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.Errors;
-import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import au.com.jcloud.jlxd.ui.SearchCriteria;
-import au.com.jcloud.jlxd.ui.model.AjaxResponseBody;
+import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.State;
 import au.com.jcloud.lxd.model.StatusCode;
@@ -38,23 +34,14 @@ public class ContainerRestController {
     }
 
     @PostMapping("/api/search")
-    public ResponseEntity<?> getSearchResultViaAjax(
-            @Valid @RequestBody SearchCriteria search, Errors errors) {
+    public ResponseEntity<?> getSearchResult() {
+    	return getSearchResult("");
+    }
+
+    @PostMapping("/api/search/{searchTerm}")
+    public ResponseEntity<?> getSearchResult(@PathVariable String searchTerm) {
 
         AjaxResponseBody<Container> result = new AjaxResponseBody<>();
-
-        //If error, just return a 400 bad request, along with the error message
-        if (errors.hasErrors()) {
-        	StringBuffer errorString = new StringBuffer();
-            for (ObjectError error : errors.getAllErrors()) {
-            	if (errorString.length()>0) {
-            		errorString.append(",");
-            	}
-            	errorString.append(error.getDefaultMessage());
-            }
-            result.setMsg(errorString.toString());
-            return ResponseEntity.badRequest().body(result);
-        }
 
 		try {
 			Map<String,Container> containers = new HashMap<>();
@@ -84,14 +71,13 @@ public class ContainerRestController {
 				containers = lxdService.loadContainers();
 			}
 			
-			String searchTerm = search.getSearchTerm();
-			if ("*".equalsIgnoreCase(searchTerm)) {
+			if (containers.isEmpty()) {
+	            throw new Exception("no containers found!");
+	        }
+			else if (StringUtils.isEmpty(searchTerm)) {
 				result.setMsg("Showing all containers!");
 				result.setResult(containers.values());				
 			}
-			else if (containers.isEmpty()) {
-	            throw new Exception("no containers found!");
-	        }
 			else {
 	        	if (containers.containsKey(searchTerm)) {
 	        		result.setResult(new ArrayList<Container>());
@@ -104,8 +90,35 @@ public class ContainerRestController {
 		} catch (Exception e) {
 			LOG.error(e,e);
 			result.setMsg(e.getMessage());
+			return ResponseEntity.badRequest().body(result);
 		}
 
         return ResponseEntity.ok(result);
     }
+    
+    @PostMapping("/api/create/{newContainerName}/{imageName}")
+    public ResponseEntity<?> createNew(@PathVariable String newContainerName, @PathVariable String imageName) {
+
+    	AjaxResponseBody<Container> result = new AjaxResponseBody<>();
+
+    	try {
+    		if (StringUtils.isBlank(newContainerName)) {
+    			throw new IllegalArgumentException("Cannot create new container if newContainerName is blank");
+    		}
+    		if (StringUtils.isBlank(imageName)) {
+    			throw new IllegalArgumentException("Cannot create new container if imageName is blank");
+    		}
+			lxdService.createContainer(newContainerName, imageName);
+			Container container = lxdService.getContainer(newContainerName);
+			if (container!=null) {
+				result.setResult(new ArrayList<Container>());
+				result.getResult().add(container);
+			}
+		} catch (Exception e) {
+			LOG.error(e,e);
+			result.setMsg(e.getMessage());
+			return ResponseEntity.badRequest().body(result);
+		}
+    	return ResponseEntity.ok(result);
+    }    
 }

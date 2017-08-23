@@ -1,4 +1,4 @@
-package au.com.jcloud.jlxd.ui.model;
+package au.com.jcloud.jlxd.ui.search;
 
 import java.util.Collection;
 
