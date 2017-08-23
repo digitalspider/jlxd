@@ -1,4 +1,4 @@
-package au.com.jcloud.jlxd.ui.controller;
+package au.com.jcloud.jlxd.ui.controller.rest;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -13,6 +13,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import au.com.jcloud.jlxd.ui.SearchCriteria;
@@ -23,10 +24,11 @@ import au.com.jcloud.lxd.model.StatusCode;
 import au.com.jcloud.lxd.service.ILinuxCliService;
 import au.com.jcloud.lxd.service.ILxdService;
 
+@RequestMapping("/container")
 @RestController
-public class ContainerController {
+public class ContainerRestController {
 
-	private static final Logger LOG = Logger.getLogger(ContainerController.class);
+	private static final Logger LOG = Logger.getLogger(ContainerRestController.class);
 	
     ILxdService lxdService;
 
@@ -39,7 +41,7 @@ public class ContainerController {
     public ResponseEntity<?> getSearchResultViaAjax(
             @Valid @RequestBody SearchCriteria search, Errors errors) {
 
-        AjaxResponseBody result = new AjaxResponseBody();
+        AjaxResponseBody<Container> result = new AjaxResponseBody<>();
 
         //If error, just return a 400 bad request, along with the error message
         if (errors.hasErrors()) {
@@ -83,12 +85,12 @@ public class ContainerController {
 			}
 			
 			String searchTerm = search.getSearchTerm();
-			if ("ALL".equalsIgnoreCase(searchTerm)) {
+			if ("*".equalsIgnoreCase(searchTerm)) {
 				result.setMsg("Showing all containers!");
 				result.setResult(containers.values());				
 			}
 			else if (containers.isEmpty()) {
-	            result.setMsg("no containers found!");
+	            throw new Exception("no containers found!");
 	        }
 			else {
 	        	if (containers.containsKey(searchTerm)) {
@@ -96,12 +98,12 @@ public class ContainerController {
 	        		result.getResult().add(containers.get(searchTerm));
 	        		result.setMsg("success. found conatiner: "+containers.get(searchTerm));
 	        	} else {
-	        		result.setMsg("No container found with name: "+searchTerm);
+	        		throw new Exception("No container found with name: "+searchTerm);
 	        	}
 	        }
 		} catch (Exception e) {
 			LOG.error(e,e);
-			result.setMsg("Error occurred: "+e.getMessage());
+			result.setMsg(e.getMessage());
 		}
 
         return ResponseEntity.ok(result);

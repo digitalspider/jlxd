@@ -1,0 +1,18 @@
+<table id="profileTable">
+	<thead id="profileTableHeader">
+		<tr>
+			<td>Type</td>
+			<td>Status</td>
+			<td>StatusCode</td>
+		</tr>
+	</thead>
+	<tbody id="profileTableData">
+		{{#each this}}
+		<tr>
+			<td id="type"><b>{{type}}</b></td>
+			<td id="status">{{status}}</td>
+			<td id="statusCode">{{statusCode}}</td>
+		</tr>
+		{{/each}}
+	</tbody>
+</table>

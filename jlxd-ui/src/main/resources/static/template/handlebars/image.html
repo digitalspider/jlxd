@@ -1,0 +1,18 @@
+<table id="imageTable">
+	<thead id="imageTableHeader">
+		<tr>
+			<td>Fingerprint</td>
+			<td>Architecture</td>
+			<td>Description</td>
+		</tr>
+	</thead>
+	<tbody id="imageTableData">
+		{{#each this}}
+		<tr>
+			<td id="fingerprint"><b>{{fingerprint}}</b></td>
+			<td id="arch">{{architecture}}</td>
+			<td id="desc">{{description}}</td>
+		</tr>
+		{{/each}}
+	</tbody>
+</table>

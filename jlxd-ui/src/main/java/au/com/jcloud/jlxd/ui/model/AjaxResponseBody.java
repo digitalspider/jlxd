@@ -2,24 +2,21 @@ package au.com.jcloud.jlxd.ui.model;
 
 import java.util.Collection;
 
-import au.com.jcloud.lxd.model.Container;
-
-public class AjaxResponseBody {
+public class AjaxResponseBody<T> {
 
     String msg;
-    Collection<Container> result;
+    Collection<T> result;
     
-    //getters and setters
 	public String getMsg() {
 		return msg;
 	}
 	public void setMsg(String msg) {
 		this.msg = msg;
 	}
-	public Collection<Container> getResult() {
+	public Collection<T> getResult() {
 		return result;
 	}
-	public void setResult(Collection<Container> result) {
+	public void setResult(Collection<T> result) {
 		this.result = result;
 	}
 }

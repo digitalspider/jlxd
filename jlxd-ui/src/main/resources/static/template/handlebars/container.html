@@ -1,0 +1,18 @@
+<table id="containerTable">
+	<thead id="containerTableHeader">
+		<tr>
+			<td>Name</td>
+			<td>Status</td>
+			<td>PID</td>
+		</tr>
+	</thead>
+	<tbody id="containerTableData">
+		{{#each this}}
+		<tr>
+			<td id="name"><b>{{name}}</b></td>
+			<td id="status">{{status}}</td>
+			<td id="pid">{{state.pid}}</td>
+		</tr>
+		{{/each}}
+	</tbody>
+</table>

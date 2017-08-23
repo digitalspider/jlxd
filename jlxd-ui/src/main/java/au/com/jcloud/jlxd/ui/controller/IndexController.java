@@ -11,7 +11,22 @@ public class IndexController {
 
     @GetMapping("/")
     public String index() {
-        return "ajax";
+        return "index";
+    }
+    
+    @GetMapping("/container")
+    public String container() {
+        return "container";
+    }
+    
+    @GetMapping("/image")
+    public String image() {
+        return "image";
+    }
+    
+    @GetMapping("/profile")
+    public String profile() {
+        return "profile";
     }
 
 }
