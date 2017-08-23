@@ -3,7 +3,7 @@ $(document).ready(function () {
     $("#search-form").submit(function (event) {
         event.preventDefault();
         var placeholderEle = $("#containers");
-        var postUrl = "/container/api/search/"+$("#searchTerm").val();
+        var postUrl = "/container/search/"+$("#searchTerm").val();
         var templatePath = "template/handlebars/container.html"
         fire_ajax_submit(postUrl, templatePath, placeholderEle);
     });

@@ -33,12 +33,12 @@ public class ContainerRestController {
         this.lxdService = lxdService;
     }
 
-    @PostMapping("/api/search")
+    @PostMapping("/search")
     public ResponseEntity<?> getSearchResult() {
     	return getSearchResult("");
     }
 
-    @PostMapping("/api/search/{searchTerm}")
+    @PostMapping("/search/{searchTerm}")
     public ResponseEntity<?> getSearchResult(@PathVariable String searchTerm) {
 
         AjaxResponseBody<Container> result = new AjaxResponseBody<>();
@@ -96,7 +96,7 @@ public class ContainerRestController {
         return ResponseEntity.ok(result);
     }
     
-    @PostMapping("/api/create/{newContainerName}/{imageName}")
+    @PostMapping("/create/{newContainerName}/{imageName}")
     public ResponseEntity<?> createNew(@PathVariable String newContainerName, @PathVariable String imageName) {
 
     	AjaxResponseBody<Container> result = new AjaxResponseBody<>();

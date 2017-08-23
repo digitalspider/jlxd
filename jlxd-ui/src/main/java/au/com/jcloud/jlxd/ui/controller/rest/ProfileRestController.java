@@ -36,7 +36,7 @@ public class ProfileRestController {
         this.lxdService = lxdService;
     }
 
-    @PostMapping("/api/search")
+    @PostMapping("/search")
     public ResponseEntity<?> getSearchResultViaAjax(
             @Valid @RequestBody SearchCriteria search, Errors errors) {
 
