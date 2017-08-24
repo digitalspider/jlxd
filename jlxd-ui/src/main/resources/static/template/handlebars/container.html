@@ -1,18 +1,25 @@
+{{#each this}}
+<h1>{{name}} - {{remoteHostAndPort}}</h1>
 <table id="containerTable">
 	<thead id="containerTableHeader">
 		<tr>
 			<td>Name</td>
 			<td>Status</td>
 			<td>PID</td>
+			<td>Start</td>
+			<td>Stop</td>
 		</tr>
 	</thead>
 	<tbody id="containerTableData">
-		{{#each this}}
+		{{#each containers}}
 		<tr>
 			<td id="name"><b>{{name}}</b></td>
 			<td id="status">{{status}}</td>
 			<td id="pid">{{state.pid}}</td>
+			<td id="startContainer"><a href="#" onclick="ajaxPost('/server/{{../name}}/containers/start/{{name}}')">START</a></td>
+			<td id="stopContainer"><a href="#" onclick="ajaxPost('/server/{{../name}}/containers/stop/{{name}}')">STOP</a></td>
 		</tr>
 		{{/each}}
 	</tbody>
 </table>
+{{/each}}

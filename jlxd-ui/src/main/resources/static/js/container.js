@@ -12,6 +12,23 @@ $(document).ready(function () {
     $("#bth-search").click();
 });
 
+function ajaxPost(postUrl) {
+    $.ajax({
+        type: "POST",
+        contentType: "application/json",
+        url: postUrl,
+        dataType: 'json',
+        cache: false,
+        timeout: 60000,
+        success: function (data) {
+            console.log("SUCCESS : ", data);
+        },
+        error: function (e) {
+            console.log("ERROR : ", e);
+        }
+    });
+}
+
 function fire_ajax_submit(postUrl, templatePath, placeholderEle) {
     placeholderEle.html("");
 	$("#feedback").html("");
