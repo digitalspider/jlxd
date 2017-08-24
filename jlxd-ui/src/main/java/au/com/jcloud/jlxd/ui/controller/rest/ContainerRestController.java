@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import au.com.jcloud.jlxd.ui.Constants;
@@ -39,12 +40,12 @@ public class ContainerRestController {
         this.lxdService = lxdService;
     }
 
-    @PostMapping("/search")
+    @RequestMapping(value="/search", method = {RequestMethod.GET, RequestMethod.POST})
     public ResponseEntity<?> getSearchResult(HttpServletRequest request) {
     	return getSearchResult(request, StringUtils.EMPTY);
     }
 
-    @PostMapping("/search/{searchTerm}")
+    @RequestMapping(value="/search/{searchTerm}", method = {RequestMethod.GET, RequestMethod.POST})
     public ResponseEntity<?> getSearchResult(HttpServletRequest request, @PathVariable String searchTerm) {
 
         AjaxResponseBody<Server> result = new AjaxResponseBody<>();
@@ -138,7 +139,7 @@ public class ContainerRestController {
 		return containers;
 	}
 
-    @PostMapping("/start/{containerName}")
+    @RequestMapping(value="/start/{containerName}", method = {RequestMethod.GET, RequestMethod.POST})
     public ResponseEntity<?> startContainer(HttpServletRequest request, @PathVariable String containerName) {
     	AjaxResponseBody<Container> result = new AjaxResponseBody<>();
 
@@ -155,7 +156,7 @@ public class ContainerRestController {
     	return ResponseEntity.ok(result);
 	}
 
-    @PostMapping("/stop/{containerName}")
+    @RequestMapping(value="/stop/{containerName}", method = {RequestMethod.GET, RequestMethod.POST})
     public ResponseEntity<?> stopContainer(HttpServletRequest request, @PathVariable String containerName) {
     	AjaxResponseBody<Container> result = new AjaxResponseBody<>();
 
