@@ -23,11 +23,16 @@ import au.com.jcloud.jlxd.ui.Constants;
 import au.com.jcloud.jlxd.ui.model.Server;
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
 import au.com.jcloud.jlxd.ui.service.RequestHelperService;
+import au.com.jcloud.lxd.bean.LxdServerCredential;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.State;
 import au.com.jcloud.lxd.model.StatusCode;
 import au.com.jcloud.lxd.service.ILinuxCliService;
+import au.com.jcloud.lxd.service.ILxdApiService;
 import au.com.jcloud.lxd.service.ILxdService;
+import au.com.jcloud.lxd.service.impl.LinuxCliServiceImpl;
+import au.com.jcloud.lxd.service.impl.LxdApiServiceImpl;
+import au.com.jcloud.lxd.service.impl.LxdServiceImpl;
 
 @RequestMapping("/container")
 @RestController
@@ -72,6 +77,24 @@ public class ContainerRestController {
 			defaultServer.setDescription("Default server on host");
 			defaultServer.setLxdService(lxdService);
 			serverMap.put(SERVER_NAME_DEFAULT, defaultServer);
+
+			Server server2 = new Server();
+			String serverName = "odr2";
+			String serverHost = "192.168.1.113";
+			server2.setName(serverName);
+			server2.setDescription(serverName);
+			ILxdService service = new LxdServiceImpl();
+			ILxdApiService apiService = new LxdApiServiceImpl();
+			service.setLxdApiService(apiService);
+			ILinuxCliService linuxCliService = new LinuxCliServiceImpl();
+			apiService.setLinuxCliService(linuxCliService);
+			LxdServerCredential credential = new LxdServerCredential();
+			credential.setRemoteHostAndPort(serverHost);
+			credential.setRemoteCert("C:/apps/lxd/client.crt");
+			credential.setRemoteKey("C:/apps/lxd/client.key");
+			service.setLxdServerCredential(credential);
+			server2.setLxdService(service);
+			serverMap.put(serverName, server2);
 		}
 
 		Collection<Server> servers = serverMap.values();
@@ -113,7 +136,7 @@ public class ContainerRestController {
 
 	private Map<String, Container> loadContainersForLxdService(ILxdService lxdService) throws IOException, InterruptedException {
 		Map<String, Container> containers = new HashMap<>();
-		if (ILinuxCliService.IS_WINDOWS) {
+		if (ILinuxCliService.IS_WINDOWS && this.lxdService.equals(lxdService)) {
 			Container c = new Container();
 			c.setName("david");
 			c.setStatus("Running");
@@ -178,7 +201,7 @@ public class ContainerRestController {
 
 	private ILxdService getLxdService(HttpServletRequest request) {
 		ILxdService lxdService = this.lxdService;
-		Server lxdServer = (Server) request.getAttribute(Constants.REQUEST_LXD_SERVER);
+		Server lxdServer = (Server) request.getSession().getAttribute(Constants.REQUEST_LXD_SERVER);
 		if (lxdServer != null) {
 			lxdService = lxdServer.getLxdService();
 		}

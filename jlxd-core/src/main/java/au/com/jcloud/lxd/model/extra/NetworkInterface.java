@@ -47,11 +47,12 @@ public class NetworkInterface {
 	}
 
 	public String getIp4Address() {
-		return getAddressDataMap().get(IPType.IP4).getAddress();
+		return getAddressDataMap().get(IPType.IP4) != null ? getAddressDataMap().get(IPType.IP4).getAddress() : "";
 	}
 
 	enum IPType {
-		IP4, IP6
+		IP4,
+		IP6
 	}
 
 	class Address {

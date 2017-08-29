@@ -34,13 +34,13 @@ public class ServerRestController {
 
 	@PostMapping("/{name}/**")
 	public void getServer(HttpServletRequest request, HttpServletResponse response, ModelMap model, @PathVariable String name) throws IOException, ServletException {
-		request.removeAttribute(Constants.REQUEST_LXD_SERVER);
+		request.getSession().removeAttribute(Constants.REQUEST_LXD_SERVER);
 		// Get all registered servers
 		Map<String, Server> serverMap = requestHelperService.getServerMapFromSession(request);
 		// find lxdService from id;
 		if (serverMap.containsKey(name)) {
 			Server server = serverMap.get(name);
-			request.setAttribute(Constants.REQUEST_LXD_SERVER, server);
+			request.getSession().setAttribute(Constants.REQUEST_LXD_SERVER, server);
 		}
 		else {
 			LOG.warn("Could not find server with name: " + name);
