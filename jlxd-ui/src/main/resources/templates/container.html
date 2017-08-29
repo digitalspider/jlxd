@@ -44,11 +44,11 @@
 		<div id="containers"></div>
 
 		<div id="serverControlDiv">
-			<form id="addServerForm" method="POST" action="@{/server/add/name/hostAndPort/description}">
-				<label for="name">Name:</label><input type="text" name="name"></input><br/>
-				<label for="hostAndPort">HostAndPort:</label><input type="text" name="hostAndPort"></input><br/>
-				<label for="descrption">Description:</label><input type="text" name="description"></input><br/>
-				<input type="submit" value="Add Server"></input>
+			<form id="addServerForm" action="#">
+				<label for="name">Name:</label><input type="text" id="name" name="name"></input><br/>
+				<label for="hostAndPort">HostAndPort:</label><input type="text" id="hostAndPort" name="hostAndPort"></input><br/>
+				<label for="descrption">Description:</label><input type="text" id="description" name="description"></input><br/>
+				<button type="submit" id="add-button" class="btn btn-primary">Add Server</button>
 			</form>
 		</div>
     </div>
