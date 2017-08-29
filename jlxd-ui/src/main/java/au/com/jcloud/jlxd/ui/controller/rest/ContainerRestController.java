@@ -71,20 +71,24 @@ public class ContainerRestController {
 
 		// initialise default server
 		if (serverMap.isEmpty() && lxdService != null) {
-//			Server defaultServer = serverService.createNewServer(SERVER_NAME_DEFAULT,"Default server on host",null,null,null);
-			Server defaultServer = new Server();
-			defaultServer.setName(SERVER_NAME_DEFAULT);
-			defaultServer.setDescription("Default server on host");
-			defaultServer.setLxdService(lxdService);
-			serverMap.put(SERVER_NAME_DEFAULT, defaultServer);
-
 			try {
+				Server defaultServer = serverService.createNewServer(SERVER_NAME_DEFAULT, "Default server on host", null, null, null);
+				serverMap.put(SERVER_NAME_DEFAULT, defaultServer);
+
 				String serverName = "odr1";
 				String serverDesc = "description";
 				String serverHost = "192.168.1.113";
 				String remoteCert = "C:/apps/lxd/client.crt";
 				String remoteKey = "C:/apps/lxd/client.key";
 				Server testServer = serverService.createNewServer(serverName, serverDesc, serverHost, remoteCert, remoteKey);
+				serverMap.put(serverName, testServer);
+
+				serverName = "odr2";
+				serverDesc = "description";
+				serverHost = "192.168.1.112";
+				remoteCert = "C:/apps/lxd/client.crt";
+				remoteKey = "C:/apps/lxd/client.key";
+				testServer = serverService.createNewServer(serverName, serverDesc, serverHost, remoteCert, remoteKey);
 				serverMap.put(serverName, testServer);
 			} catch (Exception e) {
 				LOG.error(e, e);
@@ -130,7 +134,7 @@ public class ContainerRestController {
 
 	private Map<String, Container> loadContainersForLxdService(ILxdService lxdService) throws IOException, InterruptedException {
 		Map<String, Container> containers = new HashMap<>();
-		if (ILinuxCliService.IS_WINDOWS && this.lxdService.equals(lxdService)) {
+		if (ILinuxCliService.IS_WINDOWS && StringUtils.isEmpty(lxdService.getLxdServerCredential().getRemoteHostAndPort())) {
 			Container c = new Container();
 			c.setName("david");
 			c.setStatus("Running");
