@@ -23,16 +23,12 @@ import au.com.jcloud.jlxd.ui.Constants;
 import au.com.jcloud.jlxd.ui.model.Server;
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
 import au.com.jcloud.jlxd.ui.service.RequestHelperService;
-import au.com.jcloud.lxd.bean.LxdServerCredential;
+import au.com.jcloud.jlxd.ui.service.ServerService;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.State;
 import au.com.jcloud.lxd.model.StatusCode;
 import au.com.jcloud.lxd.service.ILinuxCliService;
-import au.com.jcloud.lxd.service.ILxdApiService;
 import au.com.jcloud.lxd.service.ILxdService;
-import au.com.jcloud.lxd.service.impl.LinuxCliServiceImpl;
-import au.com.jcloud.lxd.service.impl.LxdApiServiceImpl;
-import au.com.jcloud.lxd.service.impl.LxdServiceImpl;
 
 @RequestMapping("/container")
 @RestController
@@ -43,6 +39,9 @@ public class ContainerRestController {
 
 	@Autowired
 	private ILxdService lxdService;
+
+	@Autowired
+	private ServerService serverService;
 
 	@Autowired
 	private RequestHelperService requestHelperService;
@@ -72,29 +71,24 @@ public class ContainerRestController {
 
 		// initialise default server
 		if (serverMap.isEmpty() && lxdService != null) {
+//			Server defaultServer = serverService.createNewServer(SERVER_NAME_DEFAULT,"Default server on host",null,null,null);
 			Server defaultServer = new Server();
 			defaultServer.setName(SERVER_NAME_DEFAULT);
 			defaultServer.setDescription("Default server on host");
 			defaultServer.setLxdService(lxdService);
 			serverMap.put(SERVER_NAME_DEFAULT, defaultServer);
 
-			Server server2 = new Server();
-			String serverName = "odr2";
-			String serverHost = "192.168.1.113";
-			server2.setName(serverName);
-			server2.setDescription(serverName);
-			ILxdService service = new LxdServiceImpl();
-			ILxdApiService apiService = new LxdApiServiceImpl();
-			service.setLxdApiService(apiService);
-			ILinuxCliService linuxCliService = new LinuxCliServiceImpl();
-			apiService.setLinuxCliService(linuxCliService);
-			LxdServerCredential credential = new LxdServerCredential();
-			credential.setRemoteHostAndPort(serverHost);
-			credential.setRemoteCert("C:/apps/lxd/client.crt");
-			credential.setRemoteKey("C:/apps/lxd/client.key");
-			service.setLxdServerCredential(credential);
-			server2.setLxdService(service);
-			serverMap.put(serverName, server2);
+			try {
+				String serverName = "odr1";
+				String serverDesc = "description";
+				String serverHost = "192.168.1.113";
+				String remoteCert = "C:/apps/lxd/client.crt";
+				String remoteKey = "C:/apps/lxd/client.key";
+				Server testServer = serverService.createNewServer(serverName, serverDesc, serverHost, remoteCert, remoteKey);
+				serverMap.put(serverName, testServer);
+			} catch (Exception e) {
+				LOG.error(e, e);
+			}
 		}
 
 		Collection<Server> servers = serverMap.values();
@@ -204,6 +198,7 @@ public class ContainerRestController {
 		Server lxdServer = (Server) request.getSession().getAttribute(Constants.REQUEST_LXD_SERVER);
 		if (lxdServer != null) {
 			lxdService = lxdServer.getLxdService();
+			request.getSession().removeAttribute(Constants.REQUEST_LXD_SERVER);
 		}
 		return lxdService;
 	}
@@ -238,7 +233,12 @@ public class ContainerRestController {
 		this.lxdService = lxdService;
 	}
 
+	public void setServerService(ServerService serverService) {
+		this.serverService = serverService;
+	}
+
 	public void setRequestHelperService(RequestHelperService requestHelperService) {
 		this.requestHelperService = requestHelperService;
 	}
+
 }

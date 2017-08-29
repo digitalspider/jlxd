@@ -24,6 +24,9 @@ public abstract class AbstractLxdService implements ILxdService {
 
 	private static final Logger LOG = Logger.getLogger(AbstractLxdService.class);
 
+	@Override
+	public abstract ILxdService clone() throws CloneNotSupportedException;
+
 	private List<Container> containerList = new ArrayList<Container>();
 	private Map<String, Container> containerMap = new HashMap<String, Container>();
 
@@ -40,7 +43,7 @@ public abstract class AbstractLxdService implements ILxdService {
 	private Map<String, Certificate> certificateMap = new HashMap<String, Certificate>();
 
 	protected LxdServerCredential credential;
-	
+
 	@Override
 	public LxdServerCredential getLxdServerCredential() {
 		return credential;
@@ -50,7 +53,7 @@ public abstract class AbstractLxdService implements ILxdService {
 	public void setLxdServerCredential(LxdServerCredential credential) {
 		this.credential = credential;
 	}
-	
+
 	@Override
 	public void reloadContainerCache() throws IOException, InterruptedException {
 		containerMap.clear();

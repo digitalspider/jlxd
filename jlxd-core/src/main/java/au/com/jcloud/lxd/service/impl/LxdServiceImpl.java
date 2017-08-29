@@ -25,6 +25,7 @@ import au.com.jcloud.lxd.model.ServerInfo;
 import au.com.jcloud.lxd.model.Snapshot;
 import au.com.jcloud.lxd.model.State;
 import au.com.jcloud.lxd.service.ILxdApiService;
+import au.com.jcloud.lxd.service.ILxdService;
 
 /**
  * Created by david.vittor on 12/07/16.
@@ -35,6 +36,13 @@ public class LxdServiceImpl extends AbstractLxdService {
 	private static final Logger LOG = Logger.getLogger(LxdServiceImpl.class);
 
 	private ILxdApiService lxdApiService;
+
+	@Override
+	public ILxdService clone() throws CloneNotSupportedException {
+		LxdServiceImpl newService = new LxdServiceImpl();
+		newService.setLxdApiService(lxdApiService);
+		return newService;
+	}
 
 	// ** ServerInfo **//
 	@Override
