@@ -1,6 +1,6 @@
 {{#each this}}
-<h3>Server: {{name}} {{remoteHostAndPort}} <a href="#" onclick="fire_ajax_submit('/server/delete/{{name}}','template/handlebars/container.html',$('#containers'))">DELETE</a></h3>
-<h4>List of containers <a href="#" onclick="fire_ajax_submit('/server/{{name}}/container/search','template/handlebars/container.html',$('#containers'))">Refresh</a></h4>
+<h3>Server: {{name}} {{remoteHostAndPort}} <button type="submit" class="btn btn-small btn-danger" onclick="fire_ajax_submit('/server/delete/{{name}}','template/handlebars/container.html',$('#containers'))">Remove</button></h3>
+<h4>List of containers <button type="submit" class="btn btn-small btn-info" onclick="fire_ajax_submit('/server/{{name}}/container/search','template/handlebars/container.html',$('#containers'))">Refresh</button></h4>
 <table id="containerTable" class="table table-striped">
 	<thead id="containerTableHeader">
 		<tr>
