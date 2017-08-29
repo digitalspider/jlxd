@@ -2,6 +2,7 @@ package au.com.jcloud.jlxd.ui.controller.rest;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import au.com.jcloud.jlxd.ui.Constants;
 import au.com.jcloud.jlxd.ui.model.Server;
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
+import au.com.jcloud.jlxd.ui.service.RequestHelperService;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.State;
 import au.com.jcloud.lxd.model.StatusCode;
@@ -32,13 +34,13 @@ import au.com.jcloud.lxd.service.ILxdService;
 public class ContainerRestController {
 
 	private static final Logger LOG = Logger.getLogger(ContainerRestController.class);
-
-    ILxdService lxdService;
+	public static final String SERVER_NAME_DEFAULT = "default";
 
     @Autowired
-    public void setLxdService(ILxdService lxdService) {
-        this.lxdService = lxdService;
-    }
+    private ILxdService lxdService;
+    
+	@Autowired
+	private RequestHelperService requestHelperService;
 
     @RequestMapping(value="/search", method = {RequestMethod.GET, RequestMethod.POST})
     public ResponseEntity<?> getSearchResult(HttpServletRequest request) {
@@ -50,37 +52,37 @@ public class ContainerRestController {
 
         AjaxResponseBody<Server> result = new AjaxResponseBody<>();
 
-		List<Server> servers = new ArrayList<>();
-
 		if (StringUtils.isEmpty(searchTerm)) {
 			result.setMsg("Showing all containers!");
 		}
 		int containersFound = 0;
 
 		// Get all servers
-		Map<String,ILxdService> serverMap = (Map<String,ILxdService>) request.getSession().getAttribute(Constants.SESSION_LXD_SERVERS);
-		if (serverMap==null) {
-			serverMap = new HashMap<>();
-			request.getSession().setAttribute(Constants.SESSION_LXD_SERVERS, serverMap);
+		Map<String,Server> serverMap = requestHelperService.getServerMapFromSession(request);
+		Server serverInRequest = (Server) request.getAttribute(Constants.REQUEST_LXD_SERVER);
+		if (serverInRequest!=null) {
+			serverMap.clear();
+			serverMap.put(serverInRequest.getName(), serverInRequest);
 		}
-
+		
 		// initialise default server
 		if (serverMap.isEmpty() && lxdService!=null) {
-			serverMap.put("default", lxdService);
+			Server defaultServer = new Server();
+			defaultServer.setName(SERVER_NAME_DEFAULT);
+			defaultServer.setDescription("Default server on host");
+			defaultServer.setLxdService(lxdService);
+			serverMap.put(SERVER_NAME_DEFAULT, defaultServer);
 		}
+		
+		Collection<Server> servers = serverMap.values();
 
 		for (String name : serverMap.keySet()) {
 			try {
-				Server server = new Server();
-				server.setName(name);
-				ILxdService lxdService = serverMap.get(name);
-				String remoteHostAndPort = (lxdService.getLxdServerCredential()!=null) ? lxdService.getLxdServerCredential().getRemoteHostAndPort() : null;
-				server.setRemoteHostAndPort(remoteHostAndPort);
-				List<Container> containers = findContainersForLxdService(lxdService, searchTerm);
+				Server server = serverMap.get(name);
+				List<Container> containers = findContainersForLxdService(server.getLxdService(), searchTerm);
 				containersFound += containers.size();
 				LOG.debug("Fonund "+containers.size()+" containers with name: "+searchTerm);
 				server.setContainers(containers);
-				servers.add(server);
 			} catch (Exception e) {
 				LOG.error(e,e);
 				result.setMsg(e.getMessage());
@@ -175,9 +177,9 @@ public class ContainerRestController {
 
 	private ILxdService getLxdService(HttpServletRequest request) {
 		ILxdService lxdService = this.lxdService;
-		ILxdService lxdServiceInRequest = (ILxdService) request.getAttribute(Constants.REQUEST_LXD_SERVICE);
-		if (lxdServiceInRequest!=null) {
-			lxdService = lxdServiceInRequest;
+		Server lxdServer = (Server) request.getAttribute(Constants.REQUEST_LXD_SERVER);
+		if (lxdServer!=null) {
+			lxdService = lxdServer.getLxdService();
 		}
 		return lxdService;
 	}
@@ -207,4 +209,12 @@ public class ContainerRestController {
 		}
     	return ResponseEntity.ok(result);
     }
+    
+    public void setLxdService(ILxdService lxdService) {
+        this.lxdService = lxdService;
+    }
+
+	public void setRequestHelperService(RequestHelperService requestHelperService) {
+		this.requestHelperService = requestHelperService;
+	}
 }

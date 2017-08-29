@@ -1,5 +1,5 @@
 {{#each this}}
-<h3>Server: {{name}} {{remoteHostAndPort}}</h3>
+<h3>Server: {{name}} {{remoteHostAndPort}} <a href="#" onclick="fire_ajax_submit('/server/delete/{{name}}','template/handlebars/container.html',$('#containers'))">DELETE</a></h3>
 <h4>List of containers <a href="#" onclick="fire_ajax_submit('/server/{{name}}/container/search','template/handlebars/container.html',$('#containers'))">Refresh</a></h4>
 <table id="containerTable" class="table table-striped">
 	<thead id="containerTableHeader">
