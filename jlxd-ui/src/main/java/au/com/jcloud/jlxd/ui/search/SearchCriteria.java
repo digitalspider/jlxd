@@ -2,9 +2,9 @@ package au.com.jcloud.jlxd.ui.search;
 
 public class SearchCriteria {
 
-    private String searchTerm;
-    
-    @Override
+	private String searchTerm;
+
+	@Override
 	public String toString() {
 		return "SearchCriteria [searchTerm=" + searchTerm + "]";
 	}

@@ -28,7 +28,7 @@ import au.com.jcloud.lxd.service.impl.LxdServiceImpl;
 public class ServerRestController {
 
 	public static final Logger LOG = Logger.getLogger(ServerRestController.class);
-	
+
 	@Autowired
 	private RequestHelperService requestHelperService;
 
@@ -41,23 +41,23 @@ public class ServerRestController {
 		if (serverMap.containsKey(name)) {
 			Server server = serverMap.get(name);
 			request.setAttribute(Constants.REQUEST_LXD_SERVER, server);
-		} else {
-			LOG.warn("Could not find server with name: "+name);
+		}
+		else {
+			LOG.warn("Could not find server with name: " + name);
 		}
 		// Forward to the actual controller
-		String forwardUrl = request.getServletPath().replace("/server/" + name,StringUtils.EMPTY);
+		String forwardUrl = request.getServletPath().replace("/server/" + name, StringUtils.EMPTY);
 
 		response.sendRedirect(forwardUrl); // This sends a GET
 	}
 
-	
 	@PostMapping("/add/{name}/{remoteHostAndPort}/{description}")
-	public void addServer(HttpServletRequest request, HttpServletResponse response, ModelMap model, 
-			@PathVariable String name, @PathVariable String remoteHostAndPort, @PathVariable String description) 
-					throws IOException, ServletException {
+	public void addServer(HttpServletRequest request, HttpServletResponse response, ModelMap model,
+			@PathVariable String name, @PathVariable String remoteHostAndPort, @PathVariable String description)
+			throws IOException, ServletException {
 		Map<String, Server> serverMap = requestHelperService.getServerMapFromSession(request);
 		if (serverMap.containsKey(name)) {
-			throw new ServletException("The server with name: "+name+" already exists");
+			throw new ServletException("The server with name: " + name + " already exists");
 		}
 		Server server = new Server();
 		server.setName(name);
@@ -73,9 +73,9 @@ public class ServerRestController {
 		server.setLxdService(lxdService);
 		serverMap.put(server.getName(), server);
 	}
-	
+
 	@PostMapping("/delete/{name}")
-	public void deleteServer(HttpServletRequest request, HttpServletResponse response, ModelMap model, 
+	public void deleteServer(HttpServletRequest request, HttpServletResponse response, ModelMap model,
 			@PathVariable String name) throws IOException, ServletException {
 		Map<String, Server> serverMap = requestHelperService.getServerMapFromSession(request);
 		if (serverMap.containsKey(name)) {

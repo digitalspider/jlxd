@@ -15,7 +15,7 @@ public class RequestHelperService {
 
 	public Map<String, Server> getServerMapFromSession(HttpServletRequest request) {
 		Map<String, Server> serverMap = (Map<String, Server>) request.getSession().getAttribute(Constants.SESSION_LXD_SERVERS);
-		if (serverMap==null) {
+		if (serverMap == null) {
 			serverMap = new HashMap<>();
 			request.getSession().setAttribute(Constants.SESSION_LXD_SERVERS, serverMap);
 		}

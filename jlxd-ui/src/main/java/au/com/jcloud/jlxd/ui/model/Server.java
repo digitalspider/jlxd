@@ -23,18 +23,23 @@ public class Server {
 	public String getName() {
 		return name;
 	}
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 	public String getRemoteHostAndPort() {
 		return remoteHostAndPort;
 	}
+
 	public void setRemoteHostAndPort(String remoteHostAndPort) {
 		this.remoteHostAndPort = remoteHostAndPort;
 	}
+
 	public List<Container> getContainers() {
 		return containers;
 	}
+
 	public void setContainers(List<Container> containers) {
 		this.containers = containers;
 	}
@@ -53,8 +58,7 @@ public class Server {
 
 	public void setLxdService(ILxdService lxdService) {
 		this.lxdService = lxdService;
-		String remoteHostAndPort = (lxdService!=null && lxdService.getLxdServerCredential()!=null) ? lxdService.getLxdServerCredential().getRemoteHostAndPort() : null;
+		String remoteHostAndPort = (lxdService != null && lxdService.getLxdServerCredential() != null) ? lxdService.getLxdServerCredential().getRemoteHostAndPort() : null;
 		this.setRemoteHostAndPort(remoteHostAndPort);
 	}
 }
-

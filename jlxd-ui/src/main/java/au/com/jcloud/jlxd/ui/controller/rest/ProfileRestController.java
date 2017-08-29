@@ -28,35 +28,35 @@ import au.com.jcloud.lxd.service.ILxdService;
 public class ProfileRestController {
 
 	private static final Logger LOG = Logger.getLogger(ProfileRestController.class);
-	
-    ILxdService lxdService;
 
-    @Autowired
-    public void setLxdService(ILxdService lxdService) {
-        this.lxdService = lxdService;
-    }
+	ILxdService lxdService;
 
-    @PostMapping("/search")
-    public ResponseEntity<?> getSearchResultViaAjax(
-            @Valid @RequestBody SearchCriteria search, Errors errors) {
+	@Autowired
+	public void setLxdService(ILxdService lxdService) {
+		this.lxdService = lxdService;
+	}
 
-        AjaxResponseBody<Profile> result = new AjaxResponseBody<>();
+	@PostMapping("/search")
+	public ResponseEntity<?> getSearchResultViaAjax(
+			@Valid @RequestBody SearchCriteria search, Errors errors) {
 
-        //If error, just return a 400 bad request, along with the error message
-        if (errors.hasErrors()) {
-        	StringBuffer errorString = new StringBuffer();
-            for (ObjectError error : errors.getAllErrors()) {
-            	if (errorString.length()>0) {
-            		errorString.append(",");
-            	}
-            	errorString.append(error.getDefaultMessage());
-            }
-            result.setMsg(errorString.toString());
-            return ResponseEntity.badRequest().body(result);
-        }
+		AjaxResponseBody<Profile> result = new AjaxResponseBody<>();
+
+		//If error, just return a 400 bad request, along with the error message
+		if (errors.hasErrors()) {
+			StringBuffer errorString = new StringBuffer();
+			for (ObjectError error : errors.getAllErrors()) {
+				if (errorString.length() > 0) {
+					errorString.append(",");
+				}
+				errorString.append(error.getDefaultMessage());
+			}
+			result.setMsg(errorString.toString());
+			return ResponseEntity.badRequest().body(result);
+		}
 
 		try {
-			Map<String,Profile> profiles = new HashMap<>();
+			Map<String, Profile> profiles = new HashMap<>();
 			if (ILinuxCliService.IS_WINDOWS) {
 				Profile p = new Profile();
 //				p.setName("david");
@@ -64,32 +64,34 @@ public class ProfileRestController {
 				p.setStatusCode("statusCode");
 				p.setType("type");
 				profiles.put(p.getType(), p);
-			} else {
-				profiles = lxdService.loadProfiles();
-			}
-			
-			String searchTerm = search.getSearchTerm();
-			if (profiles.isEmpty()) {
-	            throw new Exception("no profiles found!");
-	        }
-			else if (StringUtils.isEmpty(searchTerm)) {
-				result.setMsg("Showing all profiles!");
-				result.setResult(profiles.values());				
 			}
 			else {
-	        	if (profiles.containsKey(searchTerm)) {
-	        		result.setResult(new ArrayList<Profile>());
-	        		result.getResult().add(profiles.get(searchTerm));
-	        		result.setMsg("success. found profile: "+profiles.get(searchTerm));
-	        	} else {
-	        		throw new Exception("No profile found with name: "+searchTerm);
-	        	}
-	        }
+				profiles = lxdService.loadProfiles();
+			}
+
+			String searchTerm = search.getSearchTerm();
+			if (profiles.isEmpty()) {
+				throw new Exception("no profiles found!");
+			}
+			else if (StringUtils.isEmpty(searchTerm)) {
+				result.setMsg("Showing all profiles!");
+				result.setResult(profiles.values());
+			}
+			else {
+				if (profiles.containsKey(searchTerm)) {
+					result.setResult(new ArrayList<Profile>());
+					result.getResult().add(profiles.get(searchTerm));
+					result.setMsg("success. found profile: " + profiles.get(searchTerm));
+				}
+				else {
+					throw new Exception("No profile found with name: " + searchTerm);
+				}
+			}
 		} catch (Exception e) {
-			LOG.error(e,e);
+			LOG.error(e, e);
 			result.setMsg(e.getMessage());
 		}
 
-        return ResponseEntity.ok(result);
-    }
+		return ResponseEntity.ok(result);
+	}
 }
