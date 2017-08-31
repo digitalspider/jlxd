@@ -297,4 +297,9 @@ public class LxdServiceCliImpl extends AbstractLxdService implements ILxdService
 	public void setLinuxCliService(ILinuxCliService linuxCliService) {
 		this.linuxCliService = linuxCliService;
 	}
+
+	@Override
+	public ILxdService clone() throws CloneNotSupportedException {
+		throw new CloneNotSupportedException();
+	}
 }
