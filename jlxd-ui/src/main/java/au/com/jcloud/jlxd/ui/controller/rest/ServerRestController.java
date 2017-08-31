@@ -16,9 +16,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import au.com.jcloud.jlxd.ui.Constants;
 import au.com.jcloud.jlxd.ui.model.Server;
-import au.com.jcloud.jlxd.ui.service.RequestHelperService;
+import au.com.jcloud.jlxd.ui.service.ServerService;
 import au.com.jcloud.lxd.bean.LxdServerCredential;
 import au.com.jcloud.lxd.service.ILxdService;
 import au.com.jcloud.lxd.service.impl.LxdServiceImpl;
@@ -30,17 +29,17 @@ public class ServerRestController {
 	public static final Logger LOG = Logger.getLogger(ServerRestController.class);
 
 	@Autowired
-	private RequestHelperService requestHelperService;
+	private ServerService serverService;
 
 	@PostMapping("/{name}/**")
 	public void getServer(HttpServletRequest request, HttpServletResponse response, ModelMap model, @PathVariable String name) throws IOException, ServletException {
-		request.getSession().removeAttribute(Constants.REQUEST_LXD_SERVER);
+		serverService.clearServerInSession(request);
 		// Get all registered servers
-		Map<String, Server> serverMap = requestHelperService.getServerMapFromSession(request);
+		Map<String, Server> serverMap = serverService.getServerMap(request);
 		// find lxdService from id;
 		if (serverMap.containsKey(name)) {
 			Server server = serverMap.get(name);
-			request.getSession().setAttribute(Constants.REQUEST_LXD_SERVER, server);
+			serverService.setServerInSession(request, server);
 		}
 		else {
 			LOG.warn("Could not find server with name: " + name);
@@ -55,7 +54,7 @@ public class ServerRestController {
 	public void addServer(HttpServletRequest request, HttpServletResponse response, ModelMap model,
 			@PathVariable String name, @PathVariable String remoteHostAndPort, @PathVariable String description)
 			throws IOException, ServletException {
-		Map<String, Server> serverMap = requestHelperService.getServerMapFromSession(request);
+		Map<String, Server> serverMap = serverService.getServerMap(request);
 		if (serverMap.containsKey(name)) {
 			throw new ServletException("The server with name: " + name + " already exists");
 		}
@@ -77,13 +76,13 @@ public class ServerRestController {
 	@PostMapping("/delete/{name}")
 	public void deleteServer(HttpServletRequest request, HttpServletResponse response, ModelMap model,
 			@PathVariable String name) throws IOException, ServletException {
-		Map<String, Server> serverMap = requestHelperService.getServerMapFromSession(request);
+		Map<String, Server> serverMap = serverService.getServerMap(request);
 		if (serverMap.containsKey(name)) {
 			serverMap.remove(name);
 		}
 	}
 
-	public void setRequestHelperService(RequestHelperService requestHelperService) {
-		this.requestHelperService = requestHelperService;
+	public void setServerService(ServerService serverService) {
+		this.serverService = serverService;
 	}
 }

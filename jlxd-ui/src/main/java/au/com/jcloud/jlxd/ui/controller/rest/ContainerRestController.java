@@ -19,10 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import au.com.jcloud.jlxd.ui.Constants;
 import au.com.jcloud.jlxd.ui.model.Server;
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
-import au.com.jcloud.jlxd.ui.service.RequestHelperService;
 import au.com.jcloud.jlxd.ui.service.ServerService;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.State;
@@ -43,9 +41,6 @@ public class ContainerRestController {
 	@Autowired
 	private ServerService serverService;
 
-	@Autowired
-	private RequestHelperService requestHelperService;
-
 	@RequestMapping(value = "/search", method = { RequestMethod.GET, RequestMethod.POST })
 	public ResponseEntity<?> getSearchResult(HttpServletRequest request) {
 		return getSearchResult(request, StringUtils.EMPTY);
@@ -62,8 +57,8 @@ public class ContainerRestController {
 		int containersFound = 0;
 
 		// Get all servers
-		Map<String, Server> serverMap = requestHelperService.getServerMapFromSession(request);
-		Server serverInRequest = (Server) request.getAttribute(Constants.REQUEST_LXD_SERVER);
+		Map<String, Server> serverMap = serverService.getServerMap(request);
+		Server serverInRequest = serverService.getServerFromSession(request);
 		if (serverInRequest != null) {
 			serverMap.clear();
 			serverMap.put(serverInRequest.getName(), serverInRequest);
@@ -199,10 +194,9 @@ public class ContainerRestController {
 
 	private ILxdService getLxdService(HttpServletRequest request) {
 		ILxdService lxdService = this.lxdService;
-		Server lxdServer = (Server) request.getSession().getAttribute(Constants.REQUEST_LXD_SERVER);
+		Server lxdServer = serverService.getServerFromSession(request);
 		if (lxdServer != null) {
 			lxdService = lxdServer.getLxdService();
-			request.getSession().removeAttribute(Constants.REQUEST_LXD_SERVER);
 		}
 		return lxdService;
 	}
@@ -240,9 +234,4 @@ public class ContainerRestController {
 	public void setServerService(ServerService serverService) {
 		this.serverService = serverService;
 	}
-
-	public void setRequestHelperService(RequestHelperService requestHelperService) {
-		this.requestHelperService = requestHelperService;
-	}
-
 }

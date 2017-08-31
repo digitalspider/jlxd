@@ -1,25 +1,24 @@
 package au.com.jcloud.jlxd.ui.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.stereotype.Service;
 
-import au.com.jcloud.jlxd.ui.Constants;
-import au.com.jcloud.jlxd.ui.model.Server;
-
 @Service
 public class RequestHelperService {
 
-	public Map<String, Server> getServerMapFromSession(HttpServletRequest request) {
-		Map<String, Server> serverMap = (Map<String, Server>) request.getSession().getAttribute(Constants.SESSION_LXD_SERVERS);
-		if (serverMap == null) {
-			serverMap = new HashMap<>();
-			request.getSession().setAttribute(Constants.SESSION_LXD_SERVERS, serverMap);
-		}
-		return serverMap;
+	public <T> T getAttributeFromSession(HttpServletRequest request, String key) {
+		@SuppressWarnings("unchecked")
+		T value = (T) request.getSession().getAttribute(key);
+		return value;
+	}
+
+	public void setAttributeInSession(HttpServletRequest request, String key, Object value) {
+		request.getSession().setAttribute(key, value);
+	}
+
+	public void removeAttributeFromSession(HttpServletRequest request, String key) {
+		request.getSession().removeAttribute(key);
 	}
 
 }
