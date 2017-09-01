@@ -11,13 +11,14 @@ public class Server {
 	private String name;
 	private String remoteHostAndPort;
 	private String description;
+	private boolean active = false;
 	private List<Container> containers;
 	@JsonIgnore
 	private ILxdService lxdService;
 
 	@Override
 	public String toString() {
-		return "Server [name=" + name + ", remoteHostAndPort=" + remoteHostAndPort + ", description=" + description + ", lxdService=" + lxdService + ", containers=" + containers + "]";
+		return "Server [name=" + name + ", remoteHostAndPort=" + remoteHostAndPort + ", description=" + description + ", lxdService=" + lxdService + ", containers=" + (containers != null ? containers.size() : "0") + "]";
 	}
 
 	public String getName() {
@@ -60,5 +61,13 @@ public class Server {
 		this.lxdService = lxdService;
 		String remoteHostAndPort = (lxdService != null && lxdService.getLxdServerCredential() != null) ? lxdService.getLxdServerCredential().getRemoteHostAndPort() : null;
 		this.setRemoteHostAndPort(remoteHostAndPort);
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 }

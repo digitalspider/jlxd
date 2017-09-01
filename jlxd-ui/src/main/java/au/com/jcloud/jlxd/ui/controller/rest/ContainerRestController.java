@@ -33,7 +33,6 @@ import au.com.jcloud.lxd.service.ILxdService;
 public class ContainerRestController {
 
 	private static final Logger LOG = Logger.getLogger(ContainerRestController.class);
-	public static final String SERVER_NAME_DEFAULT = "default";
 
 	@Autowired
 	private ILxdService lxdService;
@@ -49,7 +48,7 @@ public class ContainerRestController {
 	@RequestMapping(value = "/search/{searchTerm}", method = { RequestMethod.GET, RequestMethod.POST })
 	public ResponseEntity<?> getSearchResult(HttpServletRequest request, @PathVariable String searchTerm) {
 
-		AjaxResponseBody<Server> result = new AjaxResponseBody<>();
+		AjaxResponseBody<Container> result = new AjaxResponseBody<>();
 
 		if (StringUtils.isEmpty(searchTerm)) {
 			result.setMsg("Showing all containers!");
@@ -59,46 +58,27 @@ public class ContainerRestController {
 		// Get all servers
 		Map<String, Server> serverMap = serverService.getServerMap(request);
 		Server serverInRequest = serverService.getServerFromSession(request);
+		Collection<Server> serversToSearch = new ArrayList<>();
 		if (serverInRequest != null) {
-			serverMap.clear();
-			serverMap.put(serverInRequest.getName(), serverInRequest);
+			serversToSearch.add(serverInRequest);
+		}
+		else {
+			serversToSearch.addAll(serverMap.values());
 		}
 
-		// initialise default server
-		if (serverMap.isEmpty() && lxdService != null) {
+		Collection<Container> resultContainers = new ArrayList<>();
+		StringBuilder serverString = new StringBuilder();
+		for (Server server : serversToSearch) {
 			try {
-				Server defaultServer = serverService.createNewServer(SERVER_NAME_DEFAULT, "Default server on host", null, null, null);
-				serverMap.put(SERVER_NAME_DEFAULT, defaultServer);
-
-				String serverName = "odr1";
-				String serverDesc = "description";
-				String serverHost = "192.168.1.113";
-				String remoteCert = "C:/apps/lxd/client.crt";
-				String remoteKey = "C:/apps/lxd/client.key";
-				Server testServer = serverService.createNewServer(serverName, serverDesc, serverHost, remoteCert, remoteKey);
-				serverMap.put(serverName, testServer);
-
-				serverName = "odr2";
-				serverDesc = "description";
-				serverHost = "192.168.1.112";
-				remoteCert = "C:/apps/lxd/client.crt";
-				remoteKey = "C:/apps/lxd/client.key";
-				testServer = serverService.createNewServer(serverName, serverDesc, serverHost, remoteCert, remoteKey);
-				serverMap.put(serverName, testServer);
-			} catch (Exception e) {
-				LOG.error(e, e);
-			}
-		}
-
-		Collection<Server> servers = serverMap.values();
-
-		for (String name : serverMap.keySet()) {
-			try {
-				Server server = serverMap.get(name);
 				List<Container> containers = findContainersForLxdService(server.getLxdService(), searchTerm);
 				containersFound += containers.size();
 				LOG.debug("Fonund " + containers.size() + " containers with name: " + searchTerm);
 				server.setContainers(containers);
+				resultContainers.addAll(containers);
+				if (serverString.length() > 0) {
+					serverString.append(",");
+				}
+				serverString.append(server.getName());
 			} catch (Exception e) {
 				LOG.error(e, e);
 				result.setMsg(e.getMessage());
@@ -106,8 +86,8 @@ public class ContainerRestController {
 			}
 		}
 
-		result.setResult(servers);
-		result.setMsg("success. found " + containersFound + " conatiners for searchTerm: " + searchTerm);
+		result.setResult(resultContainers);
+		result.setMsg("success. found " + containersFound + " conatiners in server(s) " + serverString + " for searchTerm: " + searchTerm);
 
 		return ResponseEntity.ok(result);
 	}

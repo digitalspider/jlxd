@@ -1,6 +1,4 @@
-{{#each this}}
-<h3>Server: {{name}} {{remoteHostAndPort}} <button type="submit" class="btn btn-small btn-danger" onclick="fire_ajax_submit('/server/delete/{{name}}','template/handlebars/container.html',$('#containers'))">Remove</button></h3>
-<h4>List of containers <button type="submit" class="btn btn-small btn-info" onclick="fire_ajax_submit('/server/{{name}}/container/search','template/handlebars/container.html',$('#containers'))">Refresh</button></h4>
+<h4>List of containers <button type="submit" class="btn btn-small btn-info" onclick="reloadContainers()">Refresh</button></h4>
 <table id="containerTable" class="table table-striped">
 	<thead id="containerTableHeader">
 		<tr>
@@ -12,7 +10,7 @@
 		</tr>
 	</thead>
 	<tbody id="containerTableData">
-		{{#each containers}}
+		{{#each this}}
 		<tr>
 			<td id="name"><b>{{name}}</b></td>
 			<td id="status">{{status}}</td>
@@ -23,4 +21,3 @@
 		{{/each}}
 	</tbody>
 </table>
-{{/each}}

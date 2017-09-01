@@ -19,9 +19,43 @@ $(document).ready(function () {
 	    alert(postUrl);
 	});
 
-    // Do a default search for all
-    $("#bth-search").click();
+    // initialise the page
+	getAllServers();
+	reloadContainers();
 });
+
+function getAllServers() {
+    var placeholderEle = $("#servers");
+    var postUrl = "/server";
+    var templatePath = "template/handlebars/server.html";
+
+	fire_ajax_submit(postUrl, templatePath, placeholderEle);
+}
+
+function reloadContainers() {
+    var placeholderEle = $("#containers");
+    var postUrl = "/container/search";
+    var templatePath = "template/handlebars/container.html";
+
+	fire_ajax_submit(postUrl, templatePath, placeholderEle);
+}
+
+function selectServer(name) {
+    var placeholderEle = $("#servers");
+    var postUrl = "/server/"+name;
+    var templatePath = "template/handlebars/server.html";
+
+	fire_ajax_submit(postUrl, templatePath, placeholderEle);
+	reloadContainers();
+}
+
+function removeServer(name) {
+    var placeholderEle = $("#servers");
+    var postUrl = "/server/delete/"+name;
+    var templatePath = "template/handlebars/server.html";
+
+	fire_ajax_submit(postUrl, templatePath, placeholderEle);
+}
 
 function ajaxPost(postUrl) {
     $.ajax({
