@@ -13,6 +13,7 @@ import org.apache.log4j.Logger;
 
 import com.google.gson.Gson;
 
+import au.com.jcloud.lxd.LxdConstants;
 import au.com.jcloud.lxd.service.ILinuxCliService;
 
 /**
@@ -29,10 +30,11 @@ public class LinuxCliServiceImpl implements ILinuxCliService {
 		LOG.debug("cmd=" + cmd);
 		try {
 			Process process = null;
-			if (IS_WINDOWS) {
-				LOG.warn("Trying to execute linux command in Windows environment: "+cmd);
+			if (LxdConstants.IS_WINDOWS) {
+				LOG.warn("Trying to execute linux command in Windows environment: " + cmd);
 				process = Runtime.getRuntime().exec(cmd);
-			} else {
+			}
+			else {
 				String[] cmdArray = { "/bin/sh", "-c", cmd };
 				process = Runtime.getRuntime().exec(cmdArray);
 			}

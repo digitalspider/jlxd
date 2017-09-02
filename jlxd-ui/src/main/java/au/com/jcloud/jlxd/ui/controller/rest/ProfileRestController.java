@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
 import au.com.jcloud.jlxd.ui.search.SearchCriteria;
+import au.com.jcloud.lxd.LxdConstants;
 import au.com.jcloud.lxd.model.Profile;
-import au.com.jcloud.lxd.service.ILinuxCliService;
 import au.com.jcloud.lxd.service.ILxdService;
 
 @RequestMapping("/profile")
@@ -57,9 +57,8 @@ public class ProfileRestController {
 
 		try {
 			Map<String, Profile> profiles = new HashMap<>();
-			if (ILinuxCliService.IS_WINDOWS) {
+			if (LxdConstants.IS_WINDOWS) {
 				Profile p = new Profile();
-//				p.setName("david");
 				p.setStatus("status");
 				p.setStatusCode("statusCode");
 				p.setType("type");

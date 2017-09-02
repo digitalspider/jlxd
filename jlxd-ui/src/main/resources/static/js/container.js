@@ -16,9 +16,13 @@ $(document).ready(function () {
 	    var hostAndPort = $("#addServerForm #hostAndPort").val();
 	    var description = $("#addServerForm #description").val();
 	    var postUrl = "/server/add/"+name+"/"+hostAndPort+"/"+description;
-	    alert(postUrl);
-	});
 
+	    var placeholderEle = $("#servers");
+	    var templatePath = "template/handlebars/server.html";
+
+		fire_ajax_submit(postUrl, templatePath, placeholderEle);
+	});
+	
     // initialise the page
 	getAllServers();
 	reloadContainers();
@@ -55,6 +59,7 @@ function removeServer(name) {
     var templatePath = "template/handlebars/server.html";
 
 	fire_ajax_submit(postUrl, templatePath, placeholderEle);
+	return false;
 }
 
 function ajaxPost(postUrl) {

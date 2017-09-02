@@ -15,8 +15,8 @@
 			<td id="name"><b>{{name}}</b></td>
 			<td id="status">{{status}}</td>
 			<td id="pid">{{state.pid}}</td>
-			<td id="startContainer"><a href="#" onclick="ajaxPost('/server/{{../name}}/container/start/{{name}}')">START</a></td>
-			<td id="stopContainer"><a href="#" onclick="ajaxPost('/server/{{../name}}/container/stop/{{name}}')">STOP</a></td>
+			<td id="startContainer"><a href="#" onclick="ajaxPost('/container/start/{{name}}')">START</a></td>
+			<td id="stopContainer"><a href="#" onclick="ajaxPost('/container/stop/{{name}}')">STOP</a></td>
 		</tr>
 		{{/each}}
 	</tbody>

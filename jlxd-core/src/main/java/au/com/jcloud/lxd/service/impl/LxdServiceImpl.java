@@ -41,6 +41,7 @@ public class LxdServiceImpl extends AbstractLxdService {
 	public ILxdService clone() throws CloneNotSupportedException {
 		LxdServiceImpl newService = new LxdServiceImpl();
 		newService.setLxdApiService(lxdApiService);
+		newService.setLxdServerCredential(getLxdServerCredential());
 		return newService;
 	}
 
@@ -103,18 +104,26 @@ public class LxdServiceImpl extends AbstractLxdService {
 	@Override
 	public void startContainer(String name) throws IOException, InterruptedException {
 		State state = getContainerState(name);
-		if (state != null && !state.isRunning()) {
-			lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.PUT_STATE_START, name);
+		if (state == null) {
+			throw new IllegalArgumentException("container: " + name + " has state null");
 		}
+		if (state.isRunning()) {
+			throw new IllegalArgumentException("container: " + name + " has is already running");
+		}
+		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.PUT_STATE_START, name);
 	}
 
 	@Override
 	public void stopContainer(String name) throws IOException, InterruptedException {
 		State state = getContainerState(name);
 		LOG.info("container " + name + " has state " + state);
-		if (state != null && state.isRunning()) {
-			lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.PUT_STATE_STOP, name);
+		if (state == null) {
+			throw new IllegalArgumentException("container: " + name + " has state null");
 		}
+		if (!state.isRunning()) {
+			throw new IllegalArgumentException("container: " + name + " has is not running");
+		}
+		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.PUT_STATE_STOP, name);
 	}
 
 	@Override

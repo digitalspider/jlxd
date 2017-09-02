@@ -2,8 +2,8 @@
 <ul class="nav nav-pills">
 {{#each this}}
 <li {{#if active}}class="active"{{/if}}>
-<a href="#" onclick="selectServer('{{name}}')">{{name}} {{remoteHostAndPort}}</a>
-<a href="#" class="btn btn-small btn-danger" onclick="removeServer('{{name}}')">Remove</a>
+<a href="#" onclick="selectServer('{{name}}')">{{name}} {{remoteHostAndPort}} 
+<span id="removeServer" class="glyphicon glyphicon-remove" style="color: red" data-name="{{name}}" onclick="removeServer('{{name}}')"></span></a>
 </li>
 {{/each}}
 </ul>

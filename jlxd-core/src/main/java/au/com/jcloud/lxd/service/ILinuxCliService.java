@@ -5,10 +5,6 @@ import java.io.IOException;
 import java.util.List;
 
 public interface ILinuxCliService {
-	
-	public static final String OS_NAME = System.getProperty("os.name");
-
-	public static final boolean IS_WINDOWS = OS_NAME.toLowerCase().startsWith("win");
 
 	/**
 	 * Execute a linux command
@@ -44,15 +40,15 @@ public interface ILinuxCliService {
 	 * Get the last n lines from a file
 	 */
 	List<String> getLastNFileLines(File readFile, int linesToRead);
-	
+
 	/**
 	 * Get last n lines from a file, returning only the first few lines from
 	 * that set.
 	 */
 	List<String> getLastNFileLines(File readFile, int linesToRead, int headSize);
-	
+
 	String getFileNameWithoutExtension(String filename);
-	
+
 	String getFileExtension(String filename);
 
 	String firstCharUpperCase(String input);

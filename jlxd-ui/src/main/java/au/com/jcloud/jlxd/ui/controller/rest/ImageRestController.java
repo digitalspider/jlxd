@@ -19,8 +19,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
 import au.com.jcloud.jlxd.ui.search.SearchCriteria;
+import au.com.jcloud.lxd.LxdConstants;
 import au.com.jcloud.lxd.model.Image;
-import au.com.jcloud.lxd.service.ILinuxCliService;
 import au.com.jcloud.lxd.service.ILxdService;
 
 @RequestMapping("/image")
@@ -57,7 +57,7 @@ public class ImageRestController {
 
 		try {
 			Map<String, Image> images = new HashMap<>();
-			if (ILinuxCliService.IS_WINDOWS) {
+			if (LxdConstants.IS_WINDOWS) {
 				Image image = new Image();
 				image.setFingerprint("123");
 				image.setArchitecture("x64");

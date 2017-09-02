@@ -22,10 +22,10 @@ import org.springframework.web.bind.annotation.RestController;
 import au.com.jcloud.jlxd.ui.model.Server;
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
 import au.com.jcloud.jlxd.ui.service.ServerService;
+import au.com.jcloud.lxd.LxdConstants;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.State;
 import au.com.jcloud.lxd.model.StatusCode;
-import au.com.jcloud.lxd.service.ILinuxCliService;
 import au.com.jcloud.lxd.service.ILxdService;
 
 @RequestMapping("/container")
@@ -109,7 +109,7 @@ public class ContainerRestController {
 
 	private Map<String, Container> loadContainersForLxdService(ILxdService lxdService) throws IOException, InterruptedException {
 		Map<String, Container> containers = new HashMap<>();
-		if (ILinuxCliService.IS_WINDOWS && StringUtils.isEmpty(lxdService.getLxdServerCredential().getRemoteHostAndPort())) {
+		if (LxdConstants.IS_WINDOWS && StringUtils.isEmpty(lxdService.getLxdServerCredential().getRemoteHostAndPort())) {
 			Container c = new Container();
 			c.setName("david");
 			c.setStatus("Running");
@@ -134,6 +134,10 @@ public class ContainerRestController {
 		}
 		else {
 			containers = lxdService.loadContainers();
+			for (Container container : containers.values()) {
+				State state = lxdService.getContainerState(container.getName());
+				container.setState(state);
+			}
 		}
 		return containers;
 	}
@@ -147,6 +151,7 @@ public class ContainerRestController {
 				throw new IllegalArgumentException("Cannot start container if containerName is blank");
 			}
 			getLxdService(request).startContainer(containerName);
+			result.setMsg("container started: " + containerName);
 		} catch (Exception e) {
 			LOG.error(e, e);
 			result.setMsg(e.getMessage());
@@ -164,6 +169,7 @@ public class ContainerRestController {
 				throw new IllegalArgumentException("Cannot start container if containerName is blank");
 			}
 			getLxdService(request).stopContainer(containerName);
+			result.setMsg("container stopped: " + containerName);
 		} catch (Exception e) {
 			LOG.error(e, e);
 			result.setMsg(e.getMessage());

@@ -5,6 +5,7 @@ import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -44,7 +45,6 @@ public class ServerService {
 				Server defaultServer = createNewServer(SERVER_NAME_DEFAULT, "Default server on host", null, null, null);
 				serverMap.put(SERVER_NAME_DEFAULT, defaultServer);
 				setServerInSession(request, defaultServer);
-				defaultServer.setActive(true);
 
 				String serverName = "odr1";
 				String serverDesc = "description";
@@ -72,6 +72,7 @@ public class ServerService {
 	}
 
 	public void setServerInSession(HttpServletRequest request, Server server) {
+		server.setActive(true);
 		requestHelperService.setAttributeInSession(request, Constants.SESSION_LXD_SERVER, server);
 	}
 
@@ -85,10 +86,17 @@ public class ServerService {
 		server.setName(name);
 		server.setDescription(description);
 		ILxdService service = lxdService.clone();
-		LxdServerCredential credential = new LxdServerCredential();
+		LxdServerCredential credential = service.getLxdServerCredential();
+		if (credential == null) {
+			credential = new LxdServerCredential();
+		}
 		credential.setRemoteHostAndPort(hostAndPort);
-		credential.setRemoteCert(remoteCert);
-		credential.setRemoteKey(remoteKey);
+		if (StringUtils.isNotBlank(remoteCert)) {
+			credential.setRemoteCert(remoteCert);
+		}
+		if (StringUtils.isNotBlank(remoteKey)) {
+			credential.setRemoteKey(remoteKey);
+		}
 		service.setLxdServerCredential(credential);
 		server.setLxdService(service);
 		return server;

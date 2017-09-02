@@ -58,7 +58,6 @@ public class ServerRestController {
 			if (currentServer != null) {
 				currentServer.setActive(false);
 			}
-			server.setActive(true);
 			serverService.setServerInSession(request, server);
 
 			Collection<Server> servers = serverService.getServerMap(request).values();
@@ -83,6 +82,12 @@ public class ServerRestController {
 		if (serverMap.containsKey(name)) {
 			throw new ServletException("The server with name: " + name + " already exists");
 		}
+		for (Server server : serverMap.values()) {
+			if (remoteHostAndPort.equalsIgnoreCase(server.getRemoteHostAndPort())) {
+				throw new ServletException("The server with remoteHostAndPort: " + remoteHostAndPort + " already exists");
+			}
+		}
+
 		// TODO: How to upload these
 		String remoteCert = null;
 		String remoteKey = null;
@@ -102,12 +107,19 @@ public class ServerRestController {
 			@PathVariable String name) throws IOException, ServletException {
 		AjaxResponseBody<Server> result = new AjaxResponseBody<>();
 
+		Server currentServer = serverService.getServerFromSession(request);
 		Map<String, Server> serverMap = serverService.getServerMap(request);
 		if (serverMap.containsKey(name)) {
-			serverMap.remove(name);
+			Server serverRemoved = serverMap.remove(name);
+			if (currentServer != null && currentServer.equals(serverRemoved)) {
+				if (!serverMap.isEmpty()) {
+					currentServer = serverMap.values().iterator().next();
+					serverService.setServerInSession(request, currentServer);
+				}
+			}
 		}
 
-		Collection<Server> servers = serverService.getServerMap(request).values();
+		Collection<Server> servers = serverMap.values();
 		result.setResult(servers);
 		return ResponseEntity.ok(result);
 	}
