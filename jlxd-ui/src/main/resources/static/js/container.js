@@ -10,7 +10,7 @@ $(document).ready(function () {
     });
     
     // Add Server Form
-	$("#addServerForm").submit(function (event) {
+	$("#addServerButton").click(function (event) {
 		event.preventDefault();
 	    var name = $("#addServerForm #name").val();
 	    var hostAndPort = $("#addServerForm #hostAndPort").val();

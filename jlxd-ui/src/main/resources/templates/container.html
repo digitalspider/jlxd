@@ -49,6 +49,58 @@
 
 </div>
 
+<!-- Modal -->
+<div id="addServer" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Add Server</h4>
+      </div>
+      <div class="modal-body">
+		<form id="addServerForm" action="#">
+			<label for="name">Name:</label><input type="text" id="name" name="name"></input><br/>
+			<label for="hostAndPort">HostAndPort:</label><input type="text" id="hostAndPort" name="hostAndPort"></input><br/>
+			<label for="descrption">Description:</label><input type="text" id="description" name="description"></input><br/>
+		</form>
+      </div>
+      <div class="modal-footer">
+		<button type="button" id="addServerButton" class="btn btn-primary" data-dismiss="modal">Add Server</button>
+        <button type="button" id="addServerModalCloseButton" class="btn btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal -->
+<div id="addContainer" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Add Container</h4>
+      </div>
+      <div class="modal-body">
+		<form id="addContainerForm" action="#">
+			<label for="name">Name:</label><input type="text" id="name" name="name"></input><br/>
+			<label for="hostAndPort">HostAndPort:</label><input type="text" id="hostAndPort" name="hostAndPort"></input><br/>
+			<label for="descrption">Description:</label><input type="text" id="description" name="description"></input><br/>
+		</form>
+      </div>
+      <div class="modal-footer">
+		<button type="button" class="btn btn-primary" id="addContainerButton" data-dismiss="modal">Add Server</button>
+        <button type="button" class="btn btn-default" id="addContainerModalCloseButton" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <div class="container">
     <footer>
         <p>

@@ -8,29 +8,3 @@
 {{/each}}
 <li><button type="button" class="btn btn-info" data-toggle="modal" data-target="#addServer">Add Server</button></li>
 </ul>
-
-<!-- Modal -->
-<div id="addServer" class="modal fade" role="dialog">
-  <div class="modal-dialog">
-
-    <!-- Modal content-->
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal">&times;</button>
-        <h4 class="modal-title">Add Server</h4>
-      </div>
-      <div class="modal-body">
-		<form id="addServerForm" action="#">
-			<label for="name">Name:</label><input type="text" id="name" name="name"></input><br/>
-			<label for="hostAndPort">HostAndPort:</label><input type="text" id="hostAndPort" name="hostAndPort"></input><br/>
-			<label for="descrption">Description:</label><input type="text" id="description" name="description"></input><br/>
-		</form>
-      </div>
-      <div class="modal-footer">
-		<button type="button" class="btn btn-primary" id="addServerButton" onclick='$("#addServerForm").submit()'>Add Server</button>
-        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-
-  </div>
-</div>

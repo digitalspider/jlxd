@@ -97,6 +97,11 @@ public class ServerRestController {
 		}
 		serverMap.put(server.getName(), server);
 
+		// Set the active server as the newly added server
+		Server currentServer = serverService.getServerFromSession(request);
+		currentServer.setActive(false);
+		server.setActive(true);
+
 		Collection<Server> servers = serverService.getServerMap(request).values();
 		result.setResult(servers);
 		return ResponseEntity.ok(result);
