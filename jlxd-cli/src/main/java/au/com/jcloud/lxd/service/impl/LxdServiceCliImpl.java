@@ -1,70 +1,36 @@
 package au.com.jcloud.lxd.service.impl;
 
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
-import javax.inject.Inject;
 import javax.inject.Named;
 
-import au.com.jcloud.lxd.bean.LxdServerCredential;
+import org.apache.commons.lang3.StringUtils;
+
 import au.com.jcloud.lxd.model.Certificate;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
 import au.com.jcloud.lxd.model.ImageAlias;
 import au.com.jcloud.lxd.model.Network;
-import au.com.jcloud.lxd.model.Operation;
 import au.com.jcloud.lxd.model.Profile;
 import au.com.jcloud.lxd.model.ServerInfo;
-import au.com.jcloud.lxd.model.Snapshot;
-import au.com.jcloud.lxd.model.State;
 import au.com.jcloud.lxd.service.ILinuxCliService;
-import au.com.jcloud.lxd.service.ILxdApiService;
 import au.com.jcloud.lxd.service.ILxdService;
 
 /**
  * Created by david.vittor on 16/07/16.
  */
 @Named
-public class LxdServiceCliImpl extends AbstractLxdService implements ILxdService {
+public class LxdServiceCliImpl extends LxdServiceImpl implements ILxdService {
 
-	private ILxdService lxdServiceDelegate;
 	private ILinuxCliService linuxCliService;
-
-	@Override
-	public void setLxdServerCredential(LxdServerCredential credential) {
-		super.setLxdServerCredential(credential);
-		lxdServiceDelegate.setLxdServerCredential(credential);
-	}
-
-	@Inject
-	public LxdServiceCliImpl(ILxdService lxdServiceDelegate) {
-		this.lxdServiceDelegate = lxdServiceDelegate;
-	}
 
 	// ** ServerInfo **//
 	@Override
 	public ServerInfo getServerInfo() throws IOException, InterruptedException {
-		return lxdServiceDelegate.getServerInfo(); // TODO: could use "lxd info", but need to do mapping
-	}
-
-	// ** Containers **//
-	@Override
-	public Map<String, Container> loadContainers() throws IOException, InterruptedException {
-		return lxdServiceDelegate.loadContainers();
-	}
-
-	@Override
-	public State getContainerState(String name) throws IOException, InterruptedException {
-		return lxdServiceDelegate.getContainerState(name);
+		return super.getServerInfo(); // TODO: could use "lxd info", but need to do mapping
 	}
 
 	// ** Images **//
-	@Override
-	public Map<String, Image> loadImages() throws IOException, InterruptedException {
-		return lxdServiceDelegate.loadImages();
-	}
-
 	@Override
 	public void deleteImage(String imageOrId) throws IOException, InterruptedException {
 		linuxCliService.executeLinuxCmd("lxc image delete " + imageOrId);
@@ -92,107 +58,32 @@ public class LxdServiceCliImpl extends AbstractLxdService implements ILxdService
 	}
 
 	@Override
-	public void renameContainer(String name, String newContainerName) throws IOException, InterruptedException {
-		lxdServiceDelegate.renameContainer(name, newContainerName);
-	}
-
-	@Override
-	public void copyContainer(String name, String newContainerName, Boolean containerOnly)
-			throws IOException, InterruptedException {
-		lxdServiceDelegate.copyContainer(name, newContainerName, containerOnly);
-	}
-
-	@Override
 	public void execOnContainer(String name, String[] commandAndArgs, String env, Boolean waitForSocket)
 			throws IOException, InterruptedException {
-		lxdServiceDelegate.execOnContainer(name, commandAndArgs, env, waitForSocket);
+		linuxCliService.executeLinuxCmd("lxc exec " + name + " " + StringUtils.join(commandAndArgs, " "));
 	}
 
 	// ** Operations **//
-	@Override
-	public Map<String, Operation> loadOperations() throws IOException, InterruptedException {
-		return lxdServiceDelegate.loadOperations();
-	}
-
-	@Override
-	public List<Operation> getOperations() throws IOException, InterruptedException {
-		return lxdServiceDelegate.getOperations();
-	}
-
-	@Override
-	public Operation getOperation(String name) throws IOException, InterruptedException {
-		return lxdServiceDelegate.getOperation(name);
-	}
 
 	// ** Networks **//
-	@Override
-	public Map<String, Network> loadNetworks() throws IOException, InterruptedException {
-		return lxdServiceDelegate.loadNetworks();
-	}
-
-	@Override
-	public List<Container> getContainersUsedByNetwork(Network network) throws IOException, InterruptedException {
-		return lxdServiceDelegate.getContainersUsedByNetwork(network);
-	}
-
-	// ** Profiles **//
-	@Override
-	public Map<String, Profile> loadProfiles() throws IOException, InterruptedException {
-		return lxdServiceDelegate.loadProfiles();
-	}
 
 	// ** Certificates **//
-	@Override
-	public Map<String, Certificate> loadCertificates() throws IOException, InterruptedException {
-		return lxdServiceDelegate.loadCertificates();
-	}
 
 	// ** Snapshots **//
 	@Override
-	public Map<String, Snapshot> loadSnapshots(Container container) throws IOException, InterruptedException {
-		return lxdServiceDelegate.loadSnapshots(container);
-	}
-
-	@Override
-	public List<Snapshot> getSnapshots(Container container) throws IOException, InterruptedException {
-		return lxdServiceDelegate.getSnapshots(container);
-	}
-
-	@Override
-	public Snapshot getSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException {
-		return lxdServiceDelegate.getSnapshot(containerName, snapshotName);
-	}
-
-	@Override
 	public void createSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException {
-		lxdServiceDelegate.createSnapshot(containerName, snapshotName);
+		super.createSnapshot(containerName, snapshotName); // TODO: Use lxc command
 	}
 
 	@Override
 	public void deleteSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException {
-		lxdServiceDelegate.deleteSnapshot(containerName, snapshotName);
-	}
-
-	@Override
-	public void renameSnapshot(String containerName, String snapshotName, String newSnapshotName)
-			throws IOException, InterruptedException {
-		lxdServiceDelegate.renameSnapshot(containerName, snapshotName, newSnapshotName);
+		super.deleteSnapshot(containerName, snapshotName); // TODO: Use lxc command
 	}
 
 	// ** Image Aliases **//
 	@Override
-	public Map<String, ImageAlias> loadImageAliases() throws IOException, InterruptedException {
-		return lxdServiceDelegate.loadImageAliases();
-	}
-
-	@Override
-	public List<ImageAlias> getImageAliases() throws IOException, InterruptedException {
-		return lxdServiceDelegate.getImageAliases();
-	}
-
-	@Override
 	public ImageAlias getImageAlias(String name) throws IOException, InterruptedException {
-		return lxdServiceDelegate.getImageAlias(name);
+		return super.getImageAlias(name); // TODO: Use lxc command
 	}
 
 	// ** File Ops **//
@@ -203,103 +94,41 @@ public class LxdServiceCliImpl extends AbstractLxdService implements ILxdService
 	}
 
 	@Override
-	public void setLxdApiService(ILxdApiService lxdApiService) {
-		if (lxdServiceDelegate != null) {
-			lxdServiceDelegate.setLxdApiService(lxdApiService);
-		}
-	}
-
-	@Override
-	public void reloadContainerCache() throws IOException, InterruptedException {
-		lxdServiceDelegate.reloadCertificateCache();
-	}
-
-	@Override
-	public List<Container> getContainers() {
-		return lxdServiceDelegate.getContainers();
-	}
-
-	@Override
 	public Container getContainer(String name) {
-		return lxdServiceDelegate.getContainer(name);
-	}
-
-	@Override
-	public void reloadImageCache() throws IOException, InterruptedException {
-		lxdServiceDelegate.reloadImageCache();
-	}
-
-	@Override
-	public List<Image> getImages() {
-		return lxdServiceDelegate.getImages();
+		return super.getContainer(name); // TODO: Use lxc command
 	}
 
 	@Override
 	public Image getImage(String nameOrId) {
-		return lxdServiceDelegate.getImage(nameOrId);
-	}
-
-	@Override
-	public void reloadNetworkCache() throws IOException, InterruptedException {
-		lxdServiceDelegate.reloadNetworkCache();
-	}
-
-	@Override
-	public List<Network> getNetworks() throws IOException, InterruptedException {
-		return lxdServiceDelegate.getNetworks();
+		return super.getImage(nameOrId); // TODO: Use lxc command
 	}
 
 	@Override
 	public Network getNetwork(String name) throws IOException, InterruptedException {
-		return lxdServiceDelegate.getNetwork(name);
+		return super.getNetwork(name); // TODO: Use lxc command
 	}
 
 	@Override
 	public void deleteNetwork(String name) throws IOException, InterruptedException {
-		lxdServiceDelegate.deleteNetwork(name);
-	}
-
-	@Override
-	public void reloadProfileCache() throws IOException, InterruptedException {
-		lxdServiceDelegate.reloadProfileCache();
-	}
-
-	@Override
-	public List<Profile> getProfiles() throws IOException, InterruptedException {
-		return lxdServiceDelegate.getProfiles();
+		super.deleteNetwork(name); // TODO: Use lxc command
 	}
 
 	@Override
 	public Profile getProfile(String name) throws IOException, InterruptedException {
-		return lxdServiceDelegate.getProfile(name);
+		return super.getProfile(name); // TODO: Use lxc command
 	}
 
 	@Override
 	public void deleteProfile(String name) throws IOException, InterruptedException {
-		lxdServiceDelegate.deleteProfile(name);
-	}
-
-	@Override
-	public void reloadCertificateCache() throws IOException, InterruptedException {
-		lxdServiceDelegate.reloadCertificateCache();
-	}
-
-	@Override
-	public List<Certificate> getCertificates() throws IOException, InterruptedException {
-		return lxdServiceDelegate.getCertificates();
+		super.deleteProfile(name); // TODO: Use lxc command
 	}
 
 	@Override
 	public Certificate getCertificate(String name) throws IOException, InterruptedException {
-		return lxdServiceDelegate.getCertificate(name);
+		return super.getCertificate(name); // TODO: Use lxc command
 	}
 
 	public void setLinuxCliService(ILinuxCliService linuxCliService) {
 		this.linuxCliService = linuxCliService;
-	}
-
-	@Override
-	public ILxdService clone() throws CloneNotSupportedException {
-		throw new CloneNotSupportedException();
 	}
 }

@@ -41,7 +41,6 @@ public class LxdServiceImpl extends AbstractLxdService {
 	public ILxdService clone() throws CloneNotSupportedException {
 		LxdServiceImpl newService = new LxdServiceImpl();
 		newService.setLxdApiService(lxdApiService);
-		newService.setLxdServerCredential(getLxdServerCredential());
 		return newService;
 	}
 

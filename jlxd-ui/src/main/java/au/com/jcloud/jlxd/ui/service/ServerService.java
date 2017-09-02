@@ -86,11 +86,7 @@ public class ServerService {
 		server.setName(name);
 		server.setDescription(description);
 		ILxdService service = lxdService.clone();
-		LxdServerCredential credential = service.getLxdServerCredential();
-		if (credential == null) {
-			credential = new LxdServerCredential();
-		}
-		credential.setRemoteHostAndPort(hostAndPort);
+		LxdServerCredential credential = new LxdServerCredential(hostAndPort);
 		if (StringUtils.isNotBlank(remoteCert)) {
 			credential.setRemoteCert(remoteCert);
 		}

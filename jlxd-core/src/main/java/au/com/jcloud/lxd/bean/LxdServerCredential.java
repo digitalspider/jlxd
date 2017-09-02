@@ -1,17 +1,27 @@
 package au.com.jcloud.lxd.bean;
 
-import java.io.File;
-
 import au.com.jcloud.lxd.LxdConstants;
 
 public class LxdServerCredential {
 
-	public static final String DEFAULT_FILEPATH_REMOTE_CERT = LxdConstants.USER_LXD_DIR + File.separator + "client.crt";
-	public static final String DEFAULT_FILEPATH_REMOTE_KEY = LxdConstants.USER_LXD_DIR + File.separator + "client.key";
-
 	private String remoteHostAndPort;
 	private String remoteCert;
 	private String remoteKey;
+
+	public LxdServerCredential() {
+	}
+
+	public LxdServerCredential(String remoteHostAndPort) {
+		this.remoteHostAndPort = remoteHostAndPort;
+		this.remoteCert = LxdConstants.DEFAULT_FILEPATH_REMOTE_CERT;
+		this.remoteKey = LxdConstants.DEFAULT_FILEPATH_REMOTE_KEY;
+	}
+
+	public LxdServerCredential(String remoteHostAndPort, String remoteCert, String remoteKey) {
+		this.remoteHostAndPort = remoteHostAndPort;
+		this.remoteCert = remoteCert;
+		this.remoteKey = remoteKey;
+	}
 
 	@Override
 	public String toString() {
