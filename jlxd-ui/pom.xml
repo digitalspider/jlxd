@@ -94,6 +94,14 @@
             <version>3.3.7</version>
         </dependency>
         
+		<!-- handlebars -->
+		<dependency>
+		    <groupId>org.webjars</groupId>
+		    <artifactId>handlebars</artifactId>
+		    <version>4.0.5</version>
+		</dependency>
+
+        
 		<!-- GSon library -->
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
