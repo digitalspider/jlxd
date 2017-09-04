@@ -15,6 +15,7 @@ import com.google.gson.Gson;
 
 import au.com.jcloud.lxd.LxdConstants;
 import au.com.jcloud.lxd.service.ILinuxCliService;
+import au.com.jcloud.lxd.util.ProcessWithTimeout;
 
 /**
  * Created by david.vittor on 21/08/17.
@@ -37,6 +38,11 @@ public class LinuxCliServiceImpl implements ILinuxCliService {
 			else {
 				String[] cmdArray = { "/bin/sh", "-c", cmd };
 				process = Runtime.getRuntime().exec(cmdArray);
+			}
+			ProcessWithTimeout processWithTimeout = new ProcessWithTimeout(process);
+			int exitCode = processWithTimeout.waitForProcess(LxdConstants.JLXD_EXEC_TIMEOUT);
+			if (exitCode == Integer.MIN_VALUE) {
+				throw new InterruptedException("Timeout occured in command: " + cmd);
 			}
 			in = new BufferedReader(new InputStreamReader(process.getInputStream()));
 			String line;

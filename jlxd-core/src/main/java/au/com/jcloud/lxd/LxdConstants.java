@@ -7,6 +7,8 @@ public class LxdConstants {
 	public static final String USER_DIR = System.getProperty("user.dir");
 	public static final String TEMP_DIR = System.getProperty("java.io.tmpdir");
 
+	public static final int JLXD_EXEC_TIMEOUT = Integer.parseInt(System.getProperty("jlxd.timeout", "5000"));
+
 	public static final String USER_LXD_DIR = LxdConstants.USER_DIR + File.separator + ".lxd";
 
 	public static final boolean IS_WINDOWS = OS_NAME.toLowerCase().startsWith("win");
