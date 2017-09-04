@@ -54,11 +54,11 @@ public class ServerService {
 				Server testServer = createNewServer(serverName, serverDesc, serverHost, remoteCert, remoteKey);
 				serverMap.put(serverName, testServer);
 
-				serverName = "odr2";
+				serverName = "vm";
 				serverDesc = "description";
-				serverHost = "192.168.1.112";
-				remoteCert = "C:/apps/lxd/client.crt";
-				remoteKey = "C:/apps/lxd/client.key";
+				serverHost = "192.168.56.101";
+				remoteCert = "C:/code/jlxd/client.crt";
+				remoteKey = "C:/code/jlxd/client.key";
 				testServer = createNewServer(serverName, serverDesc, serverHost, remoteCert, remoteKey);
 				serverMap.put(serverName, testServer);
 			} catch (Exception e) {

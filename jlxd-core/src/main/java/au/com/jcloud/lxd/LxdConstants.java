@@ -11,8 +11,9 @@ public class LxdConstants {
 
 	public static final boolean IS_WINDOWS = OS_NAME.toLowerCase().startsWith("win");
 
-	public static final String DEFAULT_FILEPATH_REMOTE_CERT = LxdConstants.USER_LXD_DIR + File.separator + "client.crt";
-	public static final String DEFAULT_FILEPATH_REMOTE_KEY = LxdConstants.USER_LXD_DIR + File.separator + "client.key";
+	public static final String DEFAULT_FILEPATH_USER_CONFIG_LXD = LxdConstants.USER_LXD_DIR + File.separator + ".config" + File.separator + "lxc";
+	public static final String DEFAULT_FILEPATH_REMOTE_CERT = LxdConstants.DEFAULT_FILEPATH_USER_CONFIG_LXD + File.separator + "client.crt";
+	public static final String DEFAULT_FILEPATH_REMOTE_KEY = LxdConstants.DEFAULT_FILEPATH_USER_CONFIG_LXD + File.separator + "client.key";
 
 	public static final String COLON = ":";
 }
