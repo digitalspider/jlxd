@@ -5,8 +5,10 @@ $(document).ready(function () {
         event.preventDefault();
         var placeholderEle = $("#containers");
         var postUrl = "/container/search/"+$("#searchTerm").val();
-        var templatePath = "template/handlebars/container.html"
-        fire_ajax_submit(postUrl, templatePath, placeholderEle);
+        var templatePath = "template/handlebars/container.html";
+        var jsonData = "";
+
+        fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
     });
     
     // Add Server Form
@@ -19,8 +21,9 @@ $(document).ready(function () {
 
 	    var placeholderEle = $("#servers");
 	    var templatePath = "template/handlebars/server.html";
+	    var jsonData = "";
 
-		fire_ajax_submit(postUrl, templatePath, placeholderEle);
+		fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
 	});
 	
     // initialise the page

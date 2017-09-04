@@ -3,40 +3,50 @@ function getAllServers() {
     var placeholderEle = $("#servers");
     var postUrl = "/server";
     var templatePath = "template/handlebars/server.html";
+    var jsonData = "";
 
-	fire_ajax_submit(postUrl, templatePath, placeholderEle);
+	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
 }
 
 function reloadContainers() {
     var placeholderEle = $("#containers");
     var postUrl = "/container/search";
     var templatePath = "template/handlebars/container.html";
+    var jsonData = "";
 
-	fire_ajax_submit(postUrl, templatePath, placeholderEle);
+	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
 }
 
 function reloadImages() {
     var placeholderEle = $("#images");
     var postUrl = "/image/search";
     var templatePath = "template/handlebars/image.html";
+    var search = {};
+    search["searchTerm"] = $("#searchTerm").val();
+    var jsonData = JSON.stringify(search);
 
-	fire_ajax_submit(postUrl, templatePath, placeholderEle);
+	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
 }
 
 function reloadProfiles() {
     var placeholderEle = $("#profiles");
     var postUrl = "/profile/search";
     var templatePath = "template/handlebars/profile.html";
+    var search = {};
+    search["searchTerm"] = $("#searchTerm").val();
+    var jsonData = JSON.stringify(search);
 
-	fire_ajax_submit(postUrl, templatePath, placeholderEle);
+
+	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
 }
 
 function selectServer(name) {
     var placeholderEle = $("#servers");
     var postUrl = "/server/"+name;
     var templatePath = "template/handlebars/server.html";
+    var jsonData = "";
 
-	fire_ajax_submit(postUrl, templatePath, placeholderEle);
+	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
 	reloadContainers();
 }
 
@@ -44,8 +54,9 @@ function removeServer(name) {
     var placeholderEle = $("#servers");
     var postUrl = "/server/delete/"+name;
     var templatePath = "template/handlebars/server.html";
+    var jsonData = "";
 
-	fire_ajax_submit(postUrl, templatePath, placeholderEle);
+	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
 	return false;
 }
 
@@ -66,7 +77,7 @@ function ajaxPost(postUrl) {
     });
 }
 
-function fire_ajax_submit(postUrl, templatePath, placeholderEle) {
+function fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle) {
     placeholderEle.html("");
 	$("#feedback").html("");
     $("#btn-search").prop("disabled", true);
@@ -75,6 +86,7 @@ function fire_ajax_submit(postUrl, templatePath, placeholderEle) {
         type: "POST",
         contentType: "application/json",
         url: postUrl,
+        data: jsonData,
         dataType: 'json',
         cache: false,
         timeout: 60000,
