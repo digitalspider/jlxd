@@ -2,6 +2,7 @@ package au.com.jcloud.lxd.service.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,7 +32,7 @@ public class LxdApiServiceImpl implements ILxdApiService {
 	public static final Logger LOG = Logger.getLogger(LxdApiServiceImpl.class);
 
 	private ILinuxCliService linuxCliService;
-	
+
 	/**
 	 * Execute the curl command to get a single "LXD Object" e.g. Container, Image,
 	 * Profile, etc
@@ -59,7 +60,8 @@ public class LxdApiServiceImpl implements ILxdApiService {
 		}
 		if (lxdCall.equals(LxdCall.GET_STATE)) {
 			url = getParameterisedUrl(url, id);
-		} else {
+		}
+		else {
 			if (StringUtils.isNotBlank(id)) {
 				url += "/" + id;
 			}
@@ -122,7 +124,8 @@ public class LxdApiServiceImpl implements ILxdApiService {
 					for (List<String> values : responses.values()) {
 						stringNames.addAll(values);
 					}
-				} else {
+				}
+				else {
 					stringNames = (List<String>) response.getMetadata();
 					if (stringNames == null) {
 						stringNames = new ArrayList<String>();
@@ -136,7 +139,8 @@ public class LxdApiServiceImpl implements ILxdApiService {
 						results.put(id, instance);
 					}
 				}
-			} else {
+			}
+			else {
 				LOG.warn("Invalid Response! response=" + response + " url=" + url);
 			}
 		}
@@ -154,16 +158,17 @@ public class LxdApiServiceImpl implements ILxdApiService {
 	@Override
 	public void executeCurlPostOrPutCmd(LxdServerCredential credential, LxdCall lxdCall, String containerName, String... additionalParams)
 			throws IOException, InterruptedException {
-		
-		if (lxdCall==null || (!lxdCall.equals(LxdCall.PUT_STATE_START) && !lxdCall.equals(LxdCall.PUT_STATE_STOP)
-				&& !lxdCall.equals(LxdCall.POST_CONTAINER_CREATE) && !lxdCall.equals(LxdCall.POST_CONTAINER_DELETE)
+
+		if (lxdCall == null || (!lxdCall.equals(LxdCall.PUT_STATE_START) && !lxdCall.equals(LxdCall.PUT_STATE_STOP)
+				&& !lxdCall.equals(LxdCall.POST_CONTAINER_CREATE_LOCAL) && !lxdCall.equals(LxdCall.POST_CONTAINER_CREATE_REMOTE)
+				&& !lxdCall.equals(LxdCall.POST_CONTAINER_DELETE)
 				&& !lxdCall.equals(LxdCall.POST_IMAGE_DELETE) && !lxdCall.equals(LxdCall.POST_CONTAINER_RENAME))) {
 			throw new IOException("This call is not implemented! " + lxdCall);
 		}
-		
+
 		String url = getBaseUrl(credential) + lxdCall.getCommand();
 		url = getParameterisedUrl(url, containerName);
-		if (lxdCall.equals(LxdCall.POST_CONTAINER_RENAME) && additionalParams.length>0) {
+		if (lxdCall.equals(LxdCall.POST_CONTAINER_RENAME) && additionalParams.length > 0) {
 			url = url.replace("${NEWNAME}", additionalParams[0]);
 		}
 
@@ -182,15 +187,15 @@ public class LxdApiServiceImpl implements ILxdApiService {
 	public void executeCurlPostOrPutCmdForExec(LxdServerCredential credential, LxdCall lxdCall,
 			String containerName, String[] commandAndArgs, String env, Boolean waitForSocket) throws IOException, InterruptedException {
 
-		if (lxdCall==null || !lxdCall.equals(LxdCall.POST_CONTAINER_EXEC)) {
+		if (lxdCall == null || !lxdCall.equals(LxdCall.POST_CONTAINER_EXEC)) {
 			throw new IOException("This call is not implemented! " + lxdCall);
 		}
-		
+
 		String url = getBaseUrl(credential) + lxdCall.getCommand();
 		url = getParameterisedUrl(url, containerName);
 		url = url.replace("${CMD}", StringUtils.join(commandAndArgs, ","));
 		url = url.replace("${ENV}", env != null ? env : StringUtils.EMPTY);
-		url = url.replace("${WAIT}", waitForSocket != null ? waitForSocket.toString() : "false");
+		url = url.replace("${WAIT}", waitForSocket != null ? waitForSocket.toString() : Boolean.FALSE.toString());
 		LOG.debug("url=" + url);
 		AbstractResponse response = linuxCliService.executeLinuxCmdWithResultJsonObject(url, lxdCall.getClassType());
 		LOG.info("repsonse=" + response);
@@ -206,15 +211,15 @@ public class LxdApiServiceImpl implements ILxdApiService {
 	public void executeCurlPostOrPutCmdForSnapshot(LxdServerCredential credential, LxdCall lxdCall,
 			String containerName, String snapshotName, String... additionalParams) throws IOException, InterruptedException {
 
-		if (lxdCall==null || (!lxdCall.equals(LxdCall.POST_SNAPSHOT_CREATE) && !lxdCall.equals(LxdCall.POST_SNAPSHOT_DELETE) &&
+		if (lxdCall == null || (!lxdCall.equals(LxdCall.POST_SNAPSHOT_CREATE) && !lxdCall.equals(LxdCall.POST_SNAPSHOT_DELETE) &&
 				!lxdCall.equals(LxdCall.POST_SNAPSHOT_RENAME))) {
 			throw new IOException("This call is not implemented! " + lxdCall);
 		}
-		
+
 		String url = getBaseUrl(credential) + lxdCall.getCommand();
 		url = getParameterisedUrl(url, containerName);
 		url = url.replace("${SNAPNAME}", snapshotName);
-		if (lxdCall.equals(LxdCall.POST_SNAPSHOT_RENAME) && additionalParams.length>0) {
+		if (lxdCall.equals(LxdCall.POST_SNAPSHOT_RENAME) && additionalParams.length > 0) {
 			url = url.replace("${NEWNAME}", additionalParams[0]);
 		}
 		LOG.debug("url=" + url);
@@ -228,7 +233,6 @@ public class LxdApiServiceImpl implements ILxdApiService {
 		}
 	}
 
-
 	/**
 	 * Execute the curl command to start, stop, create or delete a container
 	 * 
@@ -238,17 +242,35 @@ public class LxdApiServiceImpl implements ILxdApiService {
 	 *            the type of operation to perform
 	 */
 	@Override
-	public void executeCurlPostCmdToCreateNewContainerFromImage(LxdServerCredential credential, RemoteServer remoteServer,
+	public void executeCurlPostCmdToCreateNewContainerFromImage(LxdServerCredential credential, LxdCall lxdCall, RemoteServer remoteServer,
 			String containerName, String imageAlias) throws IOException, InterruptedException {
+		executeCurlPostCmdToCreateNewContainerFromImage(credential, lxdCall, remoteServer, containerName, imageAlias, null, null, null, null);
+	}
+
+	@Override
+	public void executeCurlPostCmdToCreateNewContainerFromImage(LxdServerCredential credential, LxdCall lxdCall, RemoteServer remoteServer, String containerName, String imageAlias, Boolean ephemeral, String architecture, Collection<String> profiles, String config)
+			throws IOException, InterruptedException {
 		if (remoteServer == null) {
 			throw new IOException("Cannot create a container without a remoteServer.");
 		}
-		LxdCall lxdCall = LxdCall.POST_CONTAINER_CREATE;
 		String url = getBaseUrl(credential) + lxdCall.getCommand();
 		url = getParameterisedUrl(url, containerName);
 		url = url.replace("${ALIAS}", imageAlias);
 		url = url.replace("${PROTOCOL}", remoteServer.getProtocol());
 		url = url.replace("${SERVERURL}", remoteServer.getUrl());
+		if (ephemeral != null) {
+			url = url.replace("${EPHEMERAL}", "\"ephemeral\": " + String.valueOf(ephemeral) + ", ");
+		}
+		if (StringUtils.isNotBlank(architecture)) {
+			url = url.replace("${ARCHITECTURE}", "\"architecture\": \"" + architecture + "\", ");
+		}
+		if (profiles != null && !profiles.isEmpty()) {
+			String profilesValue = StringUtils.join(profiles, ",");
+			url = url.replace("${PROFILES}", "\"profile\": \"[" + profilesValue + "]\", ");
+		}
+		if (StringUtils.isNotBlank(config)) {
+			url = url.replace("${CONFIG}", "\"config\": \"" + config + "\", ");
+		}
 
 		LOG.debug("url=" + url);
 		AbstractResponse response = linuxCliService.executeLinuxCmdWithResultJsonObject(url, lxdCall.getClassType());
@@ -260,15 +282,15 @@ public class LxdApiServiceImpl implements ILxdApiService {
 			}
 		}
 	}
-	
+
 	@Override
-	public void executeCurlPostCmdToCopyContainer(LxdServerCredential credential, String existingContainerName, 
+	public void executeCurlPostCmdToCopyContainer(LxdServerCredential credential, String existingContainerName,
 			String newContainerName, Boolean containerOnly) throws IOException, InterruptedException {
 
 		LxdCall lxdCall = LxdCall.POST_CONTAINER_COPY;
 		String url = getBaseUrl(credential) + lxdCall.getCommand();
 		url = getParameterisedUrl(url, newContainerName);
-		url = url.replace("${CONTAINERONLY}", containerOnly==null ? "true" : containerOnly.toString().toLowerCase());
+		url = url.replace("${CONTAINERONLY}", containerOnly == null ? Boolean.TRUE.toString() : containerOnly.toString().toLowerCase());
 		url = url.replace("${CONTAINER}", existingContainerName);
 
 		LOG.debug("url=" + url);
@@ -281,7 +303,6 @@ public class LxdApiServiceImpl implements ILxdApiService {
 			}
 		}
 	}
-
 
 	/**
 	 * Perform a replace all on the url replacing ${ID}.
@@ -320,16 +341,18 @@ public class LxdApiServiceImpl implements ILxdApiService {
 			}
 			url = CURL_URL_BASE_REMOTE.replace("${HOSTANDPORT}", remoteHostAndPort);
 			if (StringUtils.isNotBlank(credential.getRemoteCert())) {
-				url = url.replace("${KEYPATHCERT}", "--cert "+credential.getRemoteCert());
-			} else {
+				url = url.replace("${KEYPATHCERT}", "--cert " + credential.getRemoteCert());
+			}
+			else {
 				url = url.replace("${KEYPATHCERT}", StringUtils.EMPTY);
 			}
 			if (StringUtils.isNotBlank(credential.getRemoteKey())) {
-				url = url.replace("${KEYPATHKEY}", "--key "+credential.getRemoteKey());
-			} else {
+				url = url.replace("${KEYPATHKEY}", "--key " + credential.getRemoteKey());
+			}
+			else {
 				url = url.replace("${KEYPATHKEY}", StringUtils.EMPTY);
 			}
-			
+
 		}
 		return url;
 	}

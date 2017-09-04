@@ -1,7 +1,10 @@
 package au.com.jcloud.lxd.service.impl;
 
+import static au.com.jcloud.lxd.LxdConstants.COLON;
+
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -127,25 +130,30 @@ public class LxdServiceImpl extends AbstractLxdService {
 
 	@Override
 	public void createContainer(String newContainerName, String imageAlias) throws IOException, InterruptedException {
+		createContainer(newContainerName, imageAlias, null, null, null, null);
+	}
+
+	@Override
+	public void createContainer(String newContainerName, String imageAlias, Boolean ephemeral, String architecture, Collection<String> profiles, String config) throws IOException, InterruptedException {
 		if (StringUtils.isBlank(imageAlias)) {
 			throw new IllegalArgumentException("Cannot create container where imageAlias is blank");
 		}
 		if (StringUtils.isBlank(newContainerName)) {
 			throw new IllegalArgumentException("Cannot create container where newContainerName is blank");
 		}
-		if (!imageAlias.contains(":")) {
+		if (!imageAlias.contains(COLON)) {
 			Image image = getImage(imageAlias);
 			if (image == null) {
 				throw new IOException("Could not find local image with alias: " + imageAlias);
 			}
-			lxdApiService.executeCurlPostCmdToCreateNewContainerFromImage(credential, RemoteServer.LOCAL, newContainerName, imageAlias);
+			lxdApiService.executeCurlPostCmdToCreateNewContainerFromImage(credential, LxdCall.POST_CONTAINER_CREATE_LOCAL, RemoteServer.LOCAL, newContainerName, image.getFingerprint(), ephemeral, architecture, profiles, config);
 		}
 		else {
 			boolean found = false;
 			for (RemoteServer remoteServer : RemoteServer.values()) {
-				if (remoteServer != RemoteServer.LOCAL && imageAlias.startsWith(remoteServer.getName() + ":")) {
-					imageAlias = imageAlias.substring((remoteServer.getName() + ":").length());
-					lxdApiService.executeCurlPostCmdToCreateNewContainerFromImage(credential, remoteServer, newContainerName, imageAlias);
+				if (remoteServer != RemoteServer.LOCAL && imageAlias.startsWith(remoteServer.getName() + COLON)) {
+					imageAlias = imageAlias.substring((remoteServer.getName() + COLON).length());
+					lxdApiService.executeCurlPostCmdToCreateNewContainerFromImage(credential, LxdCall.POST_CONTAINER_CREATE_REMOTE, remoteServer, newContainerName, imageAlias, ephemeral, architecture, profiles, config);
 					found = true;
 					break;
 				}

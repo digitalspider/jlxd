@@ -12,7 +12,8 @@ import static au.com.jcloud.lxd.service.ILxdApiService.URL_GET_SERVERINFO;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_GET_SNAPSHOTS;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_GET_STATE;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_COPY;
-import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_CREATE;
+import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_CREATE_LOCAL;
+import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_CREATE_REMOTE;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_DELETE;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_EXEC;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_FILES;
@@ -43,17 +44,18 @@ public enum LxdCall {
 	GET_SERVERINFO(URL_GET_SERVERINFO, ServerInfoResponse.class),
 	GET_CONTAINER(URL_GET_CONTAINER, ContainerResponse.class),
 	GET_IMAGE(URL_GET_IMAGE, ImageResponse.class),
-    GET_IMAGEALIAS(URL_GET_IMAGEALIAS, ImageAliasResponse.class),
+	GET_IMAGEALIAS(URL_GET_IMAGEALIAS, ImageAliasResponse.class),
 	GET_CERTIFICATE(URL_GET_CERTIFICATE, CertificateResponse.class),
 	GET_NETWORK(URL_GET_NETWORK, NetworkResponse.class),
 	GET_OPERATION(URL_GET_OPERATION, OperationResponse.class),
 	GET_PROFILE(URL_GET_PROFILE, ProfileResponse.class),
 	GET_STATE(URL_GET_STATE, StateResponse.class),
-    GET_SNAPSHOTS(URL_GET_SNAPSHOTS, SnapshotResponse.class),
-    GET_FILE(URL_GET_FILE, FileResponse.class),
+	GET_SNAPSHOTS(URL_GET_SNAPSHOTS, SnapshotResponse.class),
+	GET_FILE(URL_GET_FILE, FileResponse.class),
 	PUT_STATE_START(URL_PUT_STATE_START, OperationResponse.class),
 	PUT_STATE_STOP(URL_PUT_STATE_STOP, OperationResponse.class),
-	POST_CONTAINER_CREATE(URL_POST_CONTAINER_CREATE, OperationResponse.class),
+	POST_CONTAINER_CREATE_REMOTE(URL_POST_CONTAINER_CREATE_REMOTE, OperationResponse.class),
+	POST_CONTAINER_CREATE_LOCAL(URL_POST_CONTAINER_CREATE_LOCAL, OperationResponse.class),
 	POST_CONTAINER_COPY(URL_POST_CONTAINER_COPY, OperationResponse.class),
 	POST_CONTAINER_DELETE(URL_POST_CONTAINER_DELETE, OperationResponse.class),
 	POST_CONTAINER_RENAME(URL_POST_CONTAINER_RENAME, OperationResponse.class),
@@ -73,9 +75,11 @@ public enum LxdCall {
 
 	private String command;
 	private Class<? extends AbstractResponse> classType;
+
 	public String getCommand() {
 		return command;
 	}
+
 	public Class<? extends AbstractResponse> getClassType() {
 		return classType;
 	}

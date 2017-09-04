@@ -1,6 +1,7 @@
 package au.com.jcloud.lxd.service;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.Map;
 
 import au.com.jcloud.lxd.bean.LxdServerCredential;
@@ -19,36 +20,36 @@ public interface ILxdApiService {
 	public static final String URL_GET_SERVERINFO = "/1.0";
 	public static final String URL_GET_CONTAINER = "/1.0/containers";
 	public static final String URL_GET_IMAGE = "/1.0/images";
-    public static final String URL_GET_IMAGEALIAS = URL_GET_IMAGE + "/aliases";
+	public static final String URL_GET_IMAGEALIAS = URL_GET_IMAGE + "/aliases";
 	public static final String URL_GET_CERTIFICATE = "/1.0/certificates";
 	public static final String URL_GET_NETWORK = "/1.0/networks";
 	public static final String URL_GET_OPERATION = "/1.0/operations";
 	public static final String URL_GET_PROFILE = "/1.0/profiles";
 	public static final String URL_GET_STATE = "/1.0/containers/${ID}/state";
-    public static final String URL_GET_LOGS = "/1.0/containers/${ID}/logs";
-    public static final String URL_GET_SNAPSHOTS = "/1.0/containers/${ID}/snapshots";
-    public static final String URL_GET_FILE = "/1.0/containers/${ID}/files?path=${PATH}";
- 
+	public static final String URL_GET_LOGS = "/1.0/containers/${ID}/logs";
+	public static final String URL_GET_SNAPSHOTS = "/1.0/containers/${ID}/snapshots";
+	public static final String URL_GET_FILE = "/1.0/containers/${ID}/files?path=${PATH}";
 
 	// Post Commands
 	public static final String URL_PUT_STATE_STOP = URL_GET_STATE + " -X PUT -d '{\"action\": \"stop\", \"force\": true}'";
 	public static final String URL_PUT_STATE_START = URL_GET_STATE + " -X PUT -d '{\"action\": \"start\"}'";
-	public static final String URL_POST_CONTAINER_CREATE = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", \"source\": {\"type\": \"image\", \"protocol\": \"${PROTOCOL}\", \"server\": \"${SERVERURL}\", \"alias\": \"${ALIAS}\"}}'";
-	public static final String URL_POST_CONTAINER_COPY = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", \"source\": {\"type\": \"copy\", \"container_only\": \"${CONTAINERONLY}\", \"source\": \"${CONTAINER}\"}}'";
+	public static final String URL_POST_CONTAINER_CREATE_REMOTE = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", ${EPHEMERAL} ${ARCHITECTURE} ${CONFIG} ${PROFILES} \"source\": {\"type\": \"image\", \"protocol\": \"${PROTOCOL}\", \"server\": \"${SERVERURL}\", \"alias\": \"${ALIAS}\"}}'";
+	public static final String URL_POST_CONTAINER_CREATE_LOCAL = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", ${EPHEMERAL} ${ARCHITECTURE} ${CONFIG} ${PROFILES} \"source\": {\"type\": \"image\", \"fingerprint\": \"${ALIAS}\"";
+	public static final String URL_POST_CONTAINER_COPY = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", ${EPHEMERAL} ${ARCHITECTURE} ${CONFIG} ${PROFILES} \"source\": {\"type\": \"copy\", \"container_only\": \"${CONTAINERONLY}\", \"source\": \"${CONTAINER}\"}}'";
 	public static final String URL_POST_CONTAINER_DELETE = URL_GET_CONTAINER + "/${ID} -X DELETE";
-    public static final String URL_POST_CONTAINER_RENAME = URL_GET_CONTAINER + "/${ID} -X POST -d { \"name\": \"${NEWNAME}\" }";
-    public static final String URL_POST_CONTAINER_FILES = URL_GET_CONTAINER + "/${ID}/files?path=${PATH} -X POST";
-    public static final String URL_POST_CONTAINER_EXEC = URL_GET_CONTAINER + "/${ID}/exec -X POST -d { \"command\": [\"${CMD}\"], \"environment\": {${ENV}}, \"wait-for-websocket\": ${WAIT}, \"interactive\": false }";
+	public static final String URL_POST_CONTAINER_RENAME = URL_GET_CONTAINER + "/${ID} -X POST -d { \"name\": \"${NEWNAME}\" }";
+	public static final String URL_POST_CONTAINER_FILES = URL_GET_CONTAINER + "/${ID}/files?path=${PATH} -X POST";
+	public static final String URL_POST_CONTAINER_EXEC = URL_GET_CONTAINER + "/${ID}/exec -X POST -d { \"command\": [\"${CMD}\"], \"environment\": {${ENV}}, \"wait-for-websocket\": ${WAIT}, \"interactive\": false }";
 	public static final String URL_POST_SNAPSHOT_CREATE = URL_GET_SNAPSHOTS + "-X POST -d '{\"name\": \"${SNAPNAME}\", \"stateful\": \"${STATEFULE}\"}'";
 	public static final String URL_POST_SNAPSHOT_DELETE = URL_GET_SNAPSHOTS + "/${SNAPNAME} -X DELETE";
-    public static final String URL_POST_SNAPSHOT_RENAME = URL_GET_SNAPSHOTS + "/${SNAPNAME} -X POST -d { \"name\": \"${NEWNAME}\" }";
+	public static final String URL_POST_SNAPSHOT_RENAME = URL_GET_SNAPSHOTS + "/${SNAPNAME} -X POST -d { \"name\": \"${NEWNAME}\" }";
 	public static final String URL_POST_IMAGE_DELETE = URL_GET_IMAGE + "/${ID} -X DELETE";
 	public static final String URL_POST_PROFILE_DELETE = URL_GET_PROFILE + "/${ID} -X DELETE";
 	public static final String URL_POST_NETWORK_DELETE = URL_GET_NETWORK + "/${ID} -X DELETE";
 
-    /**
-     * Set the linuxCliService used by this lxdApiService
-     */
+	/**
+	 * Set the linuxCliService used by this lxdApiService
+	 */
 	void setLinuxCliService(ILinuxCliService linuxCliService);
 
 	/**
@@ -66,8 +67,8 @@ public interface ILxdApiService {
 	 * 
 	 * @param credential the remote server credentials, or null for local
 	 * @param lxdCall the type of operation to perform
-     */
-	<T> Map<String,T> executeCurlGetListCmd(LxdServerCredential credential, LxdCall lxdCall) throws IOException, InterruptedException;
+	 */
+	<T> Map<String, T> executeCurlGetListCmd(LxdServerCredential credential, LxdCall lxdCall) throws IOException, InterruptedException;
 
 	/**
 	 * Execute the base curl command to get a list of "LXD Objects" e.g. Containers, Images, Profiles, etc
@@ -75,7 +76,7 @@ public interface ILxdApiService {
 	 * @param credential the remote server credentials, or null for local
 	 * @param lxdCall the type of operation to perform
 	 */
-	<T> Map<String,T> executeCurlGetListCmd(LxdServerCredential credential, LxdCall lxdCall, String containerName) throws IOException, InterruptedException;
+	<T> Map<String, T> executeCurlGetListCmd(LxdServerCredential credential, LxdCall lxdCall, String containerName) throws IOException, InterruptedException;
 
 	/**
 	 * Execute the curl command to start, stop, create or delete a container
@@ -116,7 +117,15 @@ public interface ILxdApiService {
 	 * @param credential the remote server credentials, or null for local
 	 * @param lxdCall the type of operation to perform
 	 */
-	void executeCurlPostCmdToCreateNewContainerFromImage(LxdServerCredential credential, RemoteServer remoteServer, String containerName, String imageAlias) throws IOException, InterruptedException;
+	void executeCurlPostCmdToCreateNewContainerFromImage(LxdServerCredential credential, LxdCall lxdCall, RemoteServer remoteServer, String containerName, String imageAlias) throws IOException, InterruptedException;
+
+	/**
+	 * Execute the curl command to start, stop, create or delete a container
+	 * 
+	 * @param credential the remote server credentials, or null for local
+	 * @param lxdCall the type of operation to perform
+	 */
+	void executeCurlPostCmdToCreateNewContainerFromImage(LxdServerCredential credential, LxdCall lxdCall, RemoteServer remoteServer, String containerName, String imageAlias, Boolean ephemeral, String architecture, Collection<String> profiles, String config) throws IOException, InterruptedException;
 
 	/**
 	 * Execute the curl command to copy a container
@@ -136,9 +145,9 @@ public interface ILxdApiService {
 	 * @return the parameterised url
 	 */
 	String getParameterisedUrl(String url, String id);
-	
+
 	/**
-	 * The default base url is {@link #CURL_URL_BASE_LOCAL}, but if remoteHostAndPort is 
+	 * The default base url is {@link #CURL_URL_BASE_LOCAL}, but if remoteHostAndPort is
 	 * provided will use the base url {@link #CURL_URL_BASE_REMOTE}
 	 * 
 	 * @param remoteHostAndPort format should be <host>:<port>, if no port provided will default to 8443
@@ -147,4 +156,3 @@ public interface ILxdApiService {
 	 */
 	String getBaseUrl(LxdServerCredential credential);
 }
-

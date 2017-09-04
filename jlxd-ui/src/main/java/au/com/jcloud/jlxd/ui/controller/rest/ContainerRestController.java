@@ -2,6 +2,7 @@ package au.com.jcloud.jlxd.ui.controller.rest;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -187,8 +188,10 @@ public class ContainerRestController {
 		return lxdService;
 	}
 
-	@PostMapping("/create/{newContainerName}/{imageName}")
-	public ResponseEntity<?> createNew(HttpServletRequest request, @PathVariable String newContainerName, @PathVariable String imageName) {
+	@PostMapping("/create/{newContainerName}/{imageAlias}/{ephemeral}/{profile}/{config}")
+	public ResponseEntity<?> createNew(HttpServletRequest request, @PathVariable String newContainerName,
+			@PathVariable String imageAlias, @PathVariable String ephemeral, @PathVariable String profile,
+			@PathVariable String config) {
 
 		AjaxResponseBody<Container> result = new AjaxResponseBody<>();
 
@@ -196,12 +199,21 @@ public class ContainerRestController {
 			if (StringUtils.isBlank(newContainerName)) {
 				throw new IllegalArgumentException("Cannot create new container if newContainerName is blank");
 			}
-			if (StringUtils.isBlank(imageName)) {
+			if (StringUtils.isBlank(imageAlias)) {
 				throw new IllegalArgumentException("Cannot create new container if imageName is blank");
 			}
-			getLxdService(request).createContainer(newContainerName, imageName);
-			Container container = getLxdService(request).getContainer(newContainerName);
+			ILxdService lxdService = getLxdService(request);
+			Boolean ephemeralValue = null;
+			if (StringUtils.isNotBlank(ephemeral)) {
+				ephemeralValue = Boolean.valueOf(ephemeral);
+			}
+			String architecture = null;
+			List<String> profilesList = Arrays.asList(profile.split(","));
+			lxdService.createContainer(newContainerName, imageAlias, ephemeralValue, architecture, profilesList, config);
+			Container container = lxdService.getContainer(newContainerName);
 			if (container != null) {
+				State state = lxdService.getContainerState(container.getName());
+				container.setState(state);
 				result.setResult(new ArrayList<Container>());
 				result.getResult().add(container);
 			}

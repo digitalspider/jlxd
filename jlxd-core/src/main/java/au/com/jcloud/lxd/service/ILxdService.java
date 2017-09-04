@@ -1,6 +1,7 @@
 package au.com.jcloud.lxd.service;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
@@ -65,6 +66,8 @@ public interface ILxdService {
 	void deleteContainer(String name) throws IOException, InterruptedException;
 
 	void createContainer(String newContainerName, String imageAlias) throws IOException, InterruptedException;
+
+	void createContainer(String newContainerName, String imageAlias, Boolean ephemeral, String architecture, Collection<String> profiles, String config) throws IOException, InterruptedException;
 
 	void renameContainer(String name, String newContainerName) throws IOException, InterruptedException;
 
