@@ -265,8 +265,14 @@ public class LxdApiServiceImpl implements ILxdApiService {
 			url = url.replace("${ARCHITECTURE}", "\"architecture\": \"" + architecture + "\", ");
 		}
 		if (profiles != null && !profiles.isEmpty()) {
-			String profilesValue = StringUtils.join(profiles, ",");
-			url = url.replace("${PROFILES}", "\"profile\": \"[" + profilesValue + "]\", ");
+			StringBuilder profileValue = new StringBuilder();
+			for (String profile : profiles) {
+				if (profileValue.length() > 0) {
+					profileValue.append(",");
+				}
+				profileValue.append("\"").append(profile).append("\"");
+			}
+			url = url.replace("${PROFILES}", "\"profile\": [" + profileValue.toString() + "], ");
 		}
 		if (StringUtils.isNotBlank(config)) {
 			url = url.replace("${CONFIG}", "\"config\": \"" + config + "\", ");
