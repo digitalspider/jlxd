@@ -5,6 +5,7 @@
 			<td>Name</td>
 			<td>Status</td>
 			<td>PID</td>
+			<td>IP</td>
 			<td>Start</td>
 			<td>Stop</td>
 		</tr>
@@ -15,6 +16,7 @@
 			<td id="name"><b>{{name}}</b></td>
 			<td id="status">{{status}}</td>
 			<td id="pid">{{state.pid}}</td>
+			<td id="ip">{{state.network}}</td>
 			<td id="startContainer"><a href="#" onclick="ajaxPost('/container/start/{{name}}')">START</a></td>
 			<td id="stopContainer"><a href="#" onclick="ajaxPost('/container/stop/{{name}}')">STOP</a></td>
 		</tr>

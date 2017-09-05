@@ -65,7 +65,7 @@ public class ProfileRestController {
 				profiles.put(p.getType(), p);
 			}
 			else {
-				profiles = lxdService.loadProfiles();
+				profiles = lxdService.getProfileMap();
 			}
 
 			String searchTerm = search.getSearchTerm();

@@ -358,18 +358,6 @@ public class LxdServiceImpl extends AbstractLxdService {
 		return aliases;
 	}
 
-	@Override
-	public List<ImageAlias> getImageAliases() throws IOException, InterruptedException {
-		Map<String, ImageAlias> aliases = loadImageAliases();
-		return new ArrayList<>(aliases.values());
-	}
-
-	@Override
-	public ImageAlias getImageAlias(String name) throws IOException, InterruptedException {
-		ImageAlias alias = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_IMAGEALIAS, name);
-		return alias;
-	}
-
 	// ** File Ops **//
 	@Override
 	public String getFile(String containerName, String filepath) throws IOException, InterruptedException {

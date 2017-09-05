@@ -73,7 +73,7 @@ public class ImageRestController {
 				images.put(image2.getFingerprint(), image2);
 			}
 			else {
-				images = lxdService.loadImages();
+				images = lxdService.getImageMap();
 			}
 
 			String searchTerm = search.getSearchTerm();

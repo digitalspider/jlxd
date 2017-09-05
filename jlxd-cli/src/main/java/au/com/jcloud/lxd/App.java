@@ -1,6 +1,6 @@
 package au.com.jcloud.lxd;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -53,7 +53,7 @@ public class App {
 				else if (args[i].equals("c")) {
 					LOG.info("");
 					if (args.length - 1 == i || args[i + 1].equals("o") || args[i + 1].equals("i") || args[i + 1].equals("s")) {
-						List<Container> containers = service.getContainers();
+						Collection<Container> containers = service.getContainerMap().values();
 						LOG.info("containers=" + containers.size());
 						for (Container container : containers) {
 							LOG.info("container=" + container);
@@ -112,7 +112,7 @@ public class App {
 				}
 				else if (args[i].equals("i")) {
 					LOG.info("");
-					Map<String, Image> images = service.loadImages();
+					Map<String, Image> images = service.getImageMap();
 					if (args.length - 1 == i || args[i + 1].equals("o") || args[i + 1].equals("c") || args[i + 1].equals("s")) {
 						LOG.info("images=" + images.size());
 						for (Image image : images.values()) {
@@ -132,7 +132,7 @@ public class App {
 				else if (args[i].equals("o")) {
 					LOG.info("");
 					if (args.length - 1 == i || args[i + 1].equals("i") || args[i + 1].equals("c") || args[i + 1].equals("s")) {
-						List<Operation> operations = service.getOperations();
+						Collection<Operation> operations = service.getOperations();
 						LOG.info("operations=" + operations.size());
 						for (Operation operation : operations) {
 							LOG.info("operation=" + operation);

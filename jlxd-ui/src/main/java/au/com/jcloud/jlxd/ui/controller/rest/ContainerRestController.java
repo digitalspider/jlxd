@@ -138,7 +138,7 @@ public class ContainerRestController {
 			containers.put(c2.getName(), c2);
 		}
 		else {
-			containers = lxdService.loadContainers();
+			containers = lxdService.getContainerMap();
 			for (Container container : containers.values()) {
 				State state = lxdService.getContainerState(container.getName());
 				container.setState(state);

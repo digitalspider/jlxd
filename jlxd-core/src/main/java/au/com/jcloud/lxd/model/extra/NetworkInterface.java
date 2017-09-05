@@ -3,6 +3,8 @@ package au.com.jcloud.lxd.model.extra;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * Created by david.vittor on 12/07/16.
  *
@@ -47,7 +49,7 @@ public class NetworkInterface {
 	}
 
 	public String getIp4Address() {
-		return getAddressDataMap().get(IPType.IP4) != null ? getAddressDataMap().get(IPType.IP4).getAddress() : "";
+		return getAddressDataMap().get(IPType.IP4) != null ? getAddressDataMap().get(IPType.IP4).getAddress() : StringUtils.EMPTY;
 	}
 
 	enum IPType {

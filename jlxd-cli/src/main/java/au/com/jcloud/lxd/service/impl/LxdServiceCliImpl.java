@@ -82,7 +82,7 @@ public class LxdServiceCliImpl extends LxdServiceImpl implements ILxdService {
 
 	// ** Image Aliases **//
 	@Override
-	public ImageAlias getImageAlias(String name) throws IOException, InterruptedException {
+	public ImageAlias getImageAlias(String name) {
 		return super.getImageAlias(name); // TODO: Use lxc command
 	}
 
@@ -104,7 +104,7 @@ public class LxdServiceCliImpl extends LxdServiceImpl implements ILxdService {
 	}
 
 	@Override
-	public Network getNetwork(String name) throws IOException, InterruptedException {
+	public Network getNetwork(String name) {
 		return super.getNetwork(name); // TODO: Use lxc command
 	}
 
@@ -114,7 +114,7 @@ public class LxdServiceCliImpl extends LxdServiceImpl implements ILxdService {
 	}
 
 	@Override
-	public Profile getProfile(String name) throws IOException, InterruptedException {
+	public Profile getProfile(String name) {
 		return super.getProfile(name); // TODO: Use lxc command
 	}
 
@@ -124,7 +124,7 @@ public class LxdServiceCliImpl extends LxdServiceImpl implements ILxdService {
 	}
 
 	@Override
-	public Certificate getCertificate(String name) throws IOException, InterruptedException {
+	public Certificate getCertificate(String name) {
 		return super.getCertificate(name); // TODO: Use lxc command
 	}
 

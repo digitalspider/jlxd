@@ -7,8 +7,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
 import java.io.IOException;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
@@ -45,8 +45,8 @@ public class AbstractLxdServiceTest {
 		Container container = mock(Container.class);
 		containerMap.put("test", container);
 		doReturn(containerMap).when(service).loadContainers();
-		List<Container> result = service.getContainers();
-		assertEquals(container, result.get(0));
+		Collection<Container> result = service.getContainers();
+		assertEquals(container, result.iterator().next());
 		assertEquals(container, service.getContainer("test"));
 	}
 
@@ -56,7 +56,7 @@ public class AbstractLxdServiceTest {
 		Container container = mock(Container.class);
 		containerMap.put("test", container);
 		doThrow(new RuntimeException("error")).when(service).loadContainers();
-		List<Container> result = service.getContainers();
+		Collection<Container> result = service.getContainers();
 		assertEquals(0, result.size());
 	}
 
@@ -66,8 +66,8 @@ public class AbstractLxdServiceTest {
 		Image image = mock(Image.class);
 		imageMap.put("test", image);
 		doReturn(imageMap).when(service).loadImages();
-		List<Image> result = service.getImages();
-		assertEquals(image, result.get(0));
+		Collection<Image> result = service.getImages();
+		assertEquals(image, result.iterator().next());
 		assertEquals(image, service.getImage("test"));
 	}
 
@@ -77,7 +77,7 @@ public class AbstractLxdServiceTest {
 		Image image = mock(Image.class);
 		imageMap.put("test", image);
 		doThrow(new RuntimeException("error")).when(service).loadImages();
-		List<Image> result = service.getImages();
+		Collection<Image> result = service.getImages();
 		assertEquals(0, result.size());
 	}
 
@@ -87,8 +87,8 @@ public class AbstractLxdServiceTest {
 		Network network = mock(Network.class);
 		networkMap.put("test", network);
 		doReturn(networkMap).when(service).loadNetworks();
-		List<Network> result = service.getNetworks();
-		assertEquals(network, result.get(0));
+		Collection<Network> result = service.getNetworks();
+		assertEquals(network, result.iterator().next());
 		assertEquals(network, service.getNetwork("test"));
 	}
 
@@ -98,7 +98,7 @@ public class AbstractLxdServiceTest {
 		Network network = mock(Network.class);
 		networkMap.put("test", network);
 		doThrow(new RuntimeException("error")).when(service).loadNetworks();
-		List<Network> result = service.getNetworks();
+		Collection<Network> result = service.getNetworks();
 		assertEquals(0, result.size());
 	}
 
@@ -108,8 +108,8 @@ public class AbstractLxdServiceTest {
 		Profile profile = mock(Profile.class);
 		profileMap.put("test", profile);
 		doReturn(profileMap).when(service).loadProfiles();
-		List<Profile> result = service.getProfiles();
-		assertEquals(profile, result.get(0));
+		Collection<Profile> result = service.getProfiles();
+		assertEquals(profile, result.iterator().next());
 		assertEquals(profile, service.getProfile("test"));
 	}
 
@@ -119,7 +119,7 @@ public class AbstractLxdServiceTest {
 		Profile profile = mock(Profile.class);
 		profileMap.put("test", profile);
 		doThrow(new RuntimeException("error")).when(service).loadProfiles();
-		List<Profile> result = service.getProfiles();
+		Collection<Profile> result = service.getProfiles();
 		assertEquals(0, result.size());
 	}
 
@@ -129,8 +129,8 @@ public class AbstractLxdServiceTest {
 		Certificate certificate = mock(Certificate.class);
 		certificateMap.put("test", certificate);
 		doReturn(certificateMap).when(service).loadCertificates();
-		List<Certificate> result = service.getCertificates();
-		assertEquals(certificate, result.get(0));
+		Collection<Certificate> result = service.getCertificates();
+		assertEquals(certificate, result.iterator().next());
 		assertEquals(certificate, service.getCertificate("test"));
 	}
 
@@ -140,7 +140,7 @@ public class AbstractLxdServiceTest {
 		Certificate certificate = mock(Certificate.class);
 		certificateMap.put("test", certificate);
 		doThrow(new RuntimeException("error")).when(service).loadCertificates();
-		List<Certificate> result = service.getCertificates();
+		Collection<Certificate> result = service.getCertificates();
 		assertEquals(0, result.size());
 	}
 }

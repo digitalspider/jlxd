@@ -1,7 +1,7 @@
 package au.com.jcloud.lxd.service;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Collection;
 import java.util.Map;
 
 import au.com.jcloud.lxd.bean.ImageConfig;
@@ -37,24 +37,24 @@ public interface ILxdService {
 	ServerInfo getServerInfo() throws IOException, InterruptedException;
 
 	// Containers
-	Map<String, Container> loadContainers() throws IOException, InterruptedException;
+	void reloadContainerCache();
 
-	void reloadContainerCache() throws IOException, InterruptedException;
+	Map<String, Container> getContainerMap();
 
-	List<Container> getContainers();
+	Collection<Container> getContainers();
 
-	Container getContainer(String name);
+	Container getContainer(String name) throws IOException, InterruptedException;
 
 	State getContainerState(String name) throws IOException, InterruptedException;
 
 	// Images
-	Map<String, Image> loadImages() throws IOException, InterruptedException;
+	void reloadImageCache();
 
-	void reloadImageCache() throws IOException, InterruptedException;
+	Map<String, Image> getImageMap();
 
-	List<Image> getImages();
+	Collection<Image> getImages();
 
-	Image getImage(String nameOrId);
+	Image getImage(String nameOrId) throws IOException, InterruptedException;
 
 	void deleteImage(String nameOrId) throws IOException, InterruptedException;
 
@@ -76,49 +76,45 @@ public interface ILxdService {
 	void execOnContainer(String name, String[] commandAndArgs, String env, Boolean waitForSocket) throws IOException, InterruptedException;
 
 	// Operations
-	Map<String, Operation> loadOperations() throws IOException, InterruptedException;
-
-	List<Operation> getOperations() throws IOException, InterruptedException;
+	Collection<Operation> getOperations() throws IOException, InterruptedException;
 
 	Operation getOperation(String name) throws IOException, InterruptedException;
 
 	// Networks
-	Map<String, Network> loadNetworks() throws IOException, InterruptedException;
+	void reloadNetworkCache();
 
-	void reloadNetworkCache() throws IOException, InterruptedException;
+	Map<String, Network> getNetworkMap();
 
-	List<Network> getNetworks() throws IOException, InterruptedException;
+	Collection<Network> getNetworks();
 
 	Network getNetwork(String name) throws IOException, InterruptedException;
 
-	List<Container> getContainersUsedByNetwork(Network network) throws IOException, InterruptedException;
+	Collection<Container> getContainersUsedByNetwork(Network network) throws IOException, InterruptedException;
 
 	void deleteNetwork(String name) throws IOException, InterruptedException;
 
 	// Profiles
-	Map<String, Profile> loadProfiles() throws IOException, InterruptedException;
+	void reloadProfileCache();
 
-	void reloadProfileCache() throws IOException, InterruptedException;
+	Map<String, Profile> getProfileMap();
 
-	List<Profile> getProfiles() throws IOException, InterruptedException;
+	Collection<Profile> getProfiles();
 
 	Profile getProfile(String name) throws IOException, InterruptedException;
 
 	void deleteProfile(String name) throws IOException, InterruptedException;
 
 	// Certificates
-	Map<String, Certificate> loadCertificates() throws IOException, InterruptedException;
+	void reloadCertificateCache();
 
-	void reloadCertificateCache() throws IOException, InterruptedException;
+	Map<String, Certificate> getCertificateMap();
 
-	List<Certificate> getCertificates() throws IOException, InterruptedException;
+	Collection<Certificate> getCertificates();
 
 	Certificate getCertificate(String name) throws IOException, InterruptedException;
 
 	// Snapshots
-	Map<String, Snapshot> loadSnapshots(Container container) throws IOException, InterruptedException;
-
-	List<Snapshot> getSnapshots(Container container) throws IOException, InterruptedException;
+	Collection<Snapshot> getSnapshots(Container container) throws IOException, InterruptedException;
 
 	Snapshot getSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException;
 
@@ -129,9 +125,11 @@ public interface ILxdService {
 	void deleteSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException;
 
 	// Image Aliases
-	Map<String, ImageAlias> loadImageAliases() throws IOException, InterruptedException;
+	void reloadImageAliasCache();
 
-	List<ImageAlias> getImageAliases() throws IOException, InterruptedException;
+	Map<String, ImageAlias> getImageAliasMap();
+
+	Collection<ImageAlias> getImageAliases();
 
 	ImageAlias getImageAlias(String name) throws IOException, InterruptedException;
 
