@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import au.com.jcloud.jlxd.ui.bean.AddContainerInput;
 import au.com.jcloud.jlxd.ui.model.Server;
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
 import au.com.jcloud.jlxd.ui.service.ServerService;
@@ -193,8 +194,11 @@ public class ContainerRestController {
 
 	@PostMapping("/create")
 	public ResponseEntity<?> createNewFromForm(HttpServletRequest request,
-			@RequestBody ImageConfig imageConfig, Errors errors) {
+			@RequestBody AddContainerInput addContainerInput, Errors errors) {
 		AjaxResponseBody<Container> result = new AjaxResponseBody<>();
+
+		// TODO: x
+
 		return ResponseEntity.ok(result);
 	}
 

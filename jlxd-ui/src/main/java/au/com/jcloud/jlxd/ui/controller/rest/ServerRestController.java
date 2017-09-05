@@ -12,12 +12,15 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import au.com.jcloud.jlxd.ui.bean.AddServerInput;
 import au.com.jcloud.jlxd.ui.model.Server;
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
 import au.com.jcloud.jlxd.ui.service.ServerService;
@@ -72,7 +75,17 @@ public class ServerRestController {
 		}
 	}
 
-	@PostMapping("/add/{name}/{remoteHostAndPort}/{description}")
+	@PostMapping("/create")
+	public ResponseEntity<?> createNewFromForm(HttpServletRequest request,
+			@RequestBody AddServerInput addServerInput, Errors errors) {
+		AjaxResponseBody<Server> result = new AjaxResponseBody<>();
+
+		// TODO: x
+
+		return ResponseEntity.ok(result);
+	}
+
+	@PostMapping("/create/{name}/{remoteHostAndPort}/{description}")
 	public ResponseEntity<?> addServer(HttpServletRequest request, HttpServletResponse response, ModelMap model,
 			@PathVariable String name, @PathVariable String remoteHostAndPort, @PathVariable String description)
 			throws IOException, ServletException, CloneNotSupportedException {

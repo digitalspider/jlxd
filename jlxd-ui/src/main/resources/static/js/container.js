@@ -17,7 +17,7 @@ $(document).ready(function () {
 	    var name = $("#addServerForm #name").val();
 	    var hostAndPort = $("#addServerForm #hostAndPort").val();
 	    var description = $("#addServerForm #description").val();
-	    var postUrl = "/server/add/"+name+"/"+hostAndPort+"/"+description;
+	    var postUrl = "/server/create/"+name+"/"+hostAndPort+"/"+description;
 
 	    var placeholderEle = $("#servers");
 	    var templatePath = "template/handlebars/server.html";
