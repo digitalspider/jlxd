@@ -25,7 +25,23 @@ $(document).ready(function () {
 
 		fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
 	});
-	
+
+	$("#addContainerButton").click(function (event) {
+		event.preventDefault();
+	    var name = $("#addContainerForm #name").val();
+	    var imageAlias = encodeURIComponent($("#addContainerForm #imageAlias").val());
+	    var profile = $("#addContainerForm #profile").val();
+	    var config = $("#addContainerForm #config").val();
+	    var ephemeral = $("#addContainerForm #ephemeral").val();
+	    var postUrl = "/container/create/"+name+"/"+imageAlias+"/"+ephemeral+"/"+profile+"/"+config;
+
+	    var placeholderEle = $("#containers");
+	    var templatePath = "template/handlebars/container.html";
+	    var jsonData = "";
+
+		fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
+	});
+
     // initialise the page
 	getAllServers();
 	reloadContainers();

@@ -156,6 +156,7 @@ public class ContainerRestController {
 				throw new IllegalArgumentException("Cannot start container if containerName is blank");
 			}
 			getLxdService(request).startContainer(containerName);
+			result.setResult(loadContainersForLxdService(getLxdService(request)).values());
 			result.setMsg("container started: " + containerName);
 		} catch (Exception e) {
 			LOG.error(e, e);
@@ -174,6 +175,7 @@ public class ContainerRestController {
 				throw new IllegalArgumentException("Cannot start container if containerName is blank");
 			}
 			getLxdService(request).stopContainer(containerName);
+			result.setResult(loadContainersForLxdService(getLxdService(request)).values());
 			result.setMsg("container stopped: " + containerName);
 		} catch (Exception e) {
 			LOG.error(e, e);
@@ -197,8 +199,16 @@ public class ContainerRestController {
 			@RequestBody AddContainerInput addContainerInput, Errors errors) {
 		AjaxResponseBody<Container> result = new AjaxResponseBody<>();
 
-		// TODO: x
-
+		try {
+			String containerName = addContainerInput.getName();
+			getLxdService(request).createContainer(addContainerInput.getName(), addContainerInput.getImageOrAlias(), addContainerInput);
+			result.setResult(loadContainersForLxdService(getLxdService(request)).values());
+			result.setMsg("container created: " + containerName);
+		} catch (Exception e) {
+			LOG.error(e, e);
+			result.setMsg(e.getMessage());
+			return ResponseEntity.badRequest().body(result);
+		}
 		return ResponseEntity.ok(result);
 	}
 
@@ -206,7 +216,6 @@ public class ContainerRestController {
 	public ResponseEntity<?> createNew(HttpServletRequest request, @PathVariable String newContainerName,
 			@PathVariable String imageAlias, @PathVariable String ephemeral, @PathVariable String profile,
 			@PathVariable String config) {
-		// @RequestBody ImageConfig imageConfig, Errors errors
 
 		AjaxResponseBody<Container> result = new AjaxResponseBody<>();
 
@@ -227,12 +236,11 @@ public class ContainerRestController {
 			ImageConfig imageConfig = new ImageConfig(ephemeralValue, architecture, profilesList, config);
 			lxdService.createContainer(newContainerName, imageAlias, imageConfig);
 			Container container = lxdService.getContainer(newContainerName);
-			if (container != null) {
-				State state = lxdService.getContainerState(container.getName());
-				container.setState(state);
-				result.setResult(new ArrayList<Container>());
-				result.getResult().add(container);
+			if (container == null) {
+				throw new Exception("Could not get newly created container. " + newContainerName);
 			}
+			result.setMsg("container created: " + container.getName());
+			result.setResult(loadContainersForLxdService(getLxdService(request)).values());
 		} catch (Exception e) {
 			LOG.error(e, e);
 			result.setMsg(e.getMessage());
