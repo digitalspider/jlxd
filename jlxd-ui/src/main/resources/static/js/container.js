@@ -30,3 +30,12 @@ $(document).ready(function () {
 	getAllServers();
 	reloadContainers();
 });
+
+function reloadContainers() {
+    var placeholderEle = $("#containers");
+    var postUrl = "/container/search";
+    var templatePath = "template/handlebars/container.html";
+    var jsonData = "";
+
+	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
+}

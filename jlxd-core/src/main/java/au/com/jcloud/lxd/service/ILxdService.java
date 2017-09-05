@@ -1,10 +1,10 @@
 package au.com.jcloud.lxd.service;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import au.com.jcloud.lxd.bean.ImageConfig;
 import au.com.jcloud.lxd.bean.LxdServerCredential;
 import au.com.jcloud.lxd.model.Certificate;
 import au.com.jcloud.lxd.model.Container;
@@ -67,7 +67,7 @@ public interface ILxdService {
 
 	void createContainer(String newContainerName, String imageAlias) throws IOException, InterruptedException;
 
-	void createContainer(String newContainerName, String imageAlias, Boolean ephemeral, String architecture, Collection<String> profiles, String config) throws IOException, InterruptedException;
+	void createContainer(String newContainerName, String imageAlias, ImageConfig imageConfig) throws IOException, InterruptedException;
 
 	void renameContainer(String name, String newContainerName) throws IOException, InterruptedException;
 

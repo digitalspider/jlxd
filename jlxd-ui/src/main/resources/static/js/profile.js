@@ -16,3 +16,15 @@ $(document).ready(function () {
 	getAllServers();
 	reloadProfiles();
 });
+
+function reloadProfiles() {
+    var placeholderEle = $("#profiles");
+    var postUrl = "/profile/search";
+    var templatePath = "template/handlebars/profile.html";
+    var search = {};
+    search["searchTerm"] = $("#searchTerm").val();
+    var jsonData = JSON.stringify(search);
+
+
+	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
+}

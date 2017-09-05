@@ -14,8 +14,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +26,7 @@ import au.com.jcloud.jlxd.ui.model.Server;
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
 import au.com.jcloud.jlxd.ui.service.ServerService;
 import au.com.jcloud.lxd.LxdConstants;
+import au.com.jcloud.lxd.bean.ImageConfig;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.State;
 import au.com.jcloud.lxd.model.StatusCode;
@@ -188,10 +191,18 @@ public class ContainerRestController {
 		return lxdService;
 	}
 
+	@PostMapping("/create")
+	public ResponseEntity<?> createNewFromForm(HttpServletRequest request,
+			@RequestBody ImageConfig imageConfig, Errors errors) {
+		AjaxResponseBody<Container> result = new AjaxResponseBody<>();
+		return ResponseEntity.ok(result);
+	}
+
 	@PostMapping("/create/{newContainerName}/{imageAlias}/{ephemeral}/{profile}/{config}")
 	public ResponseEntity<?> createNew(HttpServletRequest request, @PathVariable String newContainerName,
 			@PathVariable String imageAlias, @PathVariable String ephemeral, @PathVariable String profile,
 			@PathVariable String config) {
+		// @RequestBody ImageConfig imageConfig, Errors errors
 
 		AjaxResponseBody<Container> result = new AjaxResponseBody<>();
 
@@ -209,7 +220,8 @@ public class ContainerRestController {
 			}
 			String architecture = null;
 			List<String> profilesList = Arrays.asList(profile.split(","));
-			lxdService.createContainer(newContainerName, imageAlias, ephemeralValue, architecture, profilesList, config);
+			ImageConfig imageConfig = new ImageConfig(ephemeralValue, architecture, profilesList, config);
+			lxdService.createContainer(newContainerName, imageAlias, imageConfig);
 			Container container = lxdService.getContainer(newContainerName);
 			if (container != null) {
 				State state = lxdService.getContainerState(container.getName());

@@ -49,7 +49,7 @@
 
 </div>
 
-<!-- Modal -->
+<!-- Modal for Add Server -->
 <div id="addServer" class="modal fade" role="dialog">
   <div class="modal-dialog">
 
@@ -61,9 +61,22 @@
       </div>
       <div class="modal-body">
 		<form id="addServerForm" action="#">
-			<label for="name">Name:</label><input type="text" id="name" name="name"></input><br/>
-			<label for="hostAndPort">HostAndPort:</label><input type="text" id="hostAndPort" name="hostAndPort"></input><br/>
-			<label for="descrption">Description:</label><input type="text" id="description" name="description"></input><br/>
+			<table id="addServerTable" class="table table-striped">
+				<tbody id="addServerTableData">
+				<tr>
+					<td><label for="name">Name:</label></td>
+					<td><input type="text" id="name" name="name"></input></td>
+				</tr>
+				<tr>
+					<td><label for="hostAndPort">HostAndPort:</label></td>
+					<td><input type="text" id="hostAndPort" name="hostAndPort"></input></td>
+				</tr>
+				<tr>
+					<td><label for="descrption">Description:</label></td>
+					<td><input type="text" id="description" name="description"></input></td>
+				</tr>
+				</tbody>
+			</table>
 		</form>
       </div>
       <div class="modal-footer">
@@ -75,7 +88,7 @@
   </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal for Add Container -->
 <div id="addContainer" class="modal fade" role="dialog">
   <div class="modal-dialog">
 
@@ -86,12 +99,31 @@
         <h4 class="modal-title">Add Container</h4>
       </div>
       <div class="modal-body">
-		<form id="addContainerForm" action="#">
-			<label for="name">Name:</label><input type="text" id="name" name="name"></input><br/>
-			<label for="imageAlias">Image Id or Name:</label><input type="text" id="imageAlias" name="imageAlias"></input><br/>
-			<label for="profile">Profile:</label><input type="text" id="profile" name="profile"></input><br/>
-			<label for="config">Config:</label><input type="text" id="config" name="config"></input><br/>
-			<label for="ephemeral">Ephemeral:</label><input type="text" id="ephemeral" name="ephemeral"></input><br/>
+		<form id="addContainerForm" action="/container/create" method="POSt">
+				<table id="addContainerTable" class="table table-striped">
+				<tbody id="addContainerTableData">
+				<tr>
+					<td><label for="name">Name:</label></td>
+					<td><input type="text" id="name" name="name"></input></td>
+				</tr>
+				<tr>
+					<td><label for="imageAlias">Image Id or Name:</label></td>
+					<td><input type="text" id="imageAlias" name="imageAlias"></input></td>
+				</tr>
+				<tr>
+					<td><label for="profile">Profile:</label></td>
+					<td><input type="text" id="profile" name="profile"></input></td>
+				</tr>
+				<tr>
+					<td><label for="config">Config:</label></td>
+					<td><input type="text" id="config" name="config"></input></td>
+				</tr>
+				<tr>
+					<td><label for="ephemeral">Ephemeral:</label></td>
+					<td><input type="checkbox" id="ephemeral" name="ephemeral"></input></td>
+				</tr>
+				</tbody>
+			</table>
 		</form>
       </div>
       <div class="modal-footer">

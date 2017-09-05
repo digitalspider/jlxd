@@ -16,3 +16,14 @@ $(document).ready(function () {
 	getAllServers();
 	reloadImages();
 });
+
+function reloadImages() {
+    var placeholderEle = $("#images");
+    var postUrl = "/image/search";
+    var templatePath = "template/handlebars/image.html";
+    var search = {};
+    search["searchTerm"] = $("#searchTerm").val();
+    var jsonData = JSON.stringify(search);
+
+	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
+}

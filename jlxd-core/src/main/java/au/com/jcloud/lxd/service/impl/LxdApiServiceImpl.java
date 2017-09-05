@@ -13,6 +13,7 @@ import javax.inject.Named;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
+import au.com.jcloud.lxd.bean.ImageConfig;
 import au.com.jcloud.lxd.bean.LxdServerCredential;
 import au.com.jcloud.lxd.enums.LxdCall;
 import au.com.jcloud.lxd.enums.RemoteServer;
@@ -244,11 +245,11 @@ public class LxdApiServiceImpl implements ILxdApiService {
 	@Override
 	public void executeCurlPostCmdToCreateNewContainerFromImage(LxdServerCredential credential, LxdCall lxdCall, RemoteServer remoteServer,
 			String containerName, String imageAlias) throws IOException, InterruptedException {
-		executeCurlPostCmdToCreateNewContainerFromImage(credential, lxdCall, remoteServer, containerName, imageAlias, null, null, null, null);
+		executeCurlPostCmdToCreateNewContainerFromImage(credential, lxdCall, remoteServer, containerName, imageAlias, null);
 	}
 
 	@Override
-	public void executeCurlPostCmdToCreateNewContainerFromImage(LxdServerCredential credential, LxdCall lxdCall, RemoteServer remoteServer, String containerName, String imageAlias, Boolean ephemeral, String architecture, Collection<String> profiles, String config)
+	public void executeCurlPostCmdToCreateNewContainerFromImage(LxdServerCredential credential, LxdCall lxdCall, RemoteServer remoteServer, String containerName, String imageAlias, ImageConfig imageConfig)
 			throws IOException, InterruptedException {
 		if (remoteServer == null) {
 			throw new IOException("Cannot create a container without a remoteServer.");
@@ -258,24 +259,30 @@ public class LxdApiServiceImpl implements ILxdApiService {
 		url = url.replace("${ALIAS}", imageAlias);
 		url = url.replace("${PROTOCOL}", remoteServer.getProtocol());
 		url = url.replace("${SERVERURL}", remoteServer.getUrl());
-		if (ephemeral != null) {
-			url = url.replace("${EPHEMERAL}", "\"ephemeral\": " + String.valueOf(ephemeral) + ", ");
-		}
-		if (StringUtils.isNotBlank(architecture)) {
-			url = url.replace("${ARCHITECTURE}", "\"architecture\": \"" + architecture + "\", ");
-		}
-		if (profiles != null && !profiles.isEmpty()) {
-			StringBuilder profileValue = new StringBuilder();
-			for (String profile : profiles) {
-				if (profileValue.length() > 0) {
-					profileValue.append(",");
-				}
-				profileValue.append("\"").append(profile).append("\"");
+		if (imageConfig != null) {
+			Boolean ephemeral = imageConfig.getEphemeral();
+			if (ephemeral != null) {
+				url = url.replace("${EPHEMERAL}", "\"ephemeral\": " + String.valueOf(ephemeral) + ", ");
 			}
-			url = url.replace("${PROFILES}", "\"profile\": [" + profileValue.toString() + "], ");
-		}
-		if (StringUtils.isNotBlank(config)) {
-			url = url.replace("${CONFIG}", "\"config\": \"" + config + "\", ");
+			String architecture = imageConfig.getArchitecture();
+			if (StringUtils.isNotBlank(architecture)) {
+				url = url.replace("${ARCHITECTURE}", "\"architecture\": \"" + architecture + "\", ");
+			}
+			Collection<String> profiles = imageConfig.getProfiles();
+			if (profiles != null && !profiles.isEmpty()) {
+				StringBuilder profileValue = new StringBuilder();
+				for (String profile : profiles) {
+					if (profileValue.length() > 0) {
+						profileValue.append(",");
+					}
+					profileValue.append("\"").append(profile).append("\"");
+				}
+				url = url.replace("${PROFILES}", "\"profile\": [" + profileValue.toString() + "], ");
+			}
+			String config = imageConfig.getConfig();
+			if (StringUtils.isNotBlank(config)) {
+				url = url.replace("${CONFIG}", "\"config\": \"" + config + "\", ");
+			}
 		}
 
 		LOG.debug("url=" + url);

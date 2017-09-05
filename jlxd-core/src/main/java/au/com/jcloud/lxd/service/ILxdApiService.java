@@ -1,9 +1,9 @@
 package au.com.jcloud.lxd.service;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Map;
 
+import au.com.jcloud.lxd.bean.ImageConfig;
 import au.com.jcloud.lxd.bean.LxdServerCredential;
 import au.com.jcloud.lxd.enums.LxdCall;
 import au.com.jcloud.lxd.enums.RemoteServer;
@@ -125,7 +125,7 @@ public interface ILxdApiService {
 	 * @param credential the remote server credentials, or null for local
 	 * @param lxdCall the type of operation to perform
 	 */
-	void executeCurlPostCmdToCreateNewContainerFromImage(LxdServerCredential credential, LxdCall lxdCall, RemoteServer remoteServer, String containerName, String imageAlias, Boolean ephemeral, String architecture, Collection<String> profiles, String config) throws IOException, InterruptedException;
+	void executeCurlPostCmdToCreateNewContainerFromImage(LxdServerCredential credential, LxdCall lxdCall, RemoteServer remoteServer, String containerName, String imageAlias, ImageConfig imageConfig) throws IOException, InterruptedException;
 
 	/**
 	 * Execute the curl command to copy a container

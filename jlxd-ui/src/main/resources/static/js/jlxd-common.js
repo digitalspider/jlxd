@@ -8,38 +8,6 @@ function getAllServers() {
 	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
 }
 
-function reloadContainers() {
-    var placeholderEle = $("#containers");
-    var postUrl = "/container/search";
-    var templatePath = "template/handlebars/container.html";
-    var jsonData = "";
-
-	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
-}
-
-function reloadImages() {
-    var placeholderEle = $("#images");
-    var postUrl = "/image/search";
-    var templatePath = "template/handlebars/image.html";
-    var search = {};
-    search["searchTerm"] = $("#searchTerm").val();
-    var jsonData = JSON.stringify(search);
-
-	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
-}
-
-function reloadProfiles() {
-    var placeholderEle = $("#profiles");
-    var postUrl = "/profile/search";
-    var templatePath = "template/handlebars/profile.html";
-    var search = {};
-    search["searchTerm"] = $("#searchTerm").val();
-    var jsonData = JSON.stringify(search);
-
-
-	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
-}
-
 function selectServer(name) {
     var placeholderEle = $("#servers");
     var postUrl = "/server/"+name;
