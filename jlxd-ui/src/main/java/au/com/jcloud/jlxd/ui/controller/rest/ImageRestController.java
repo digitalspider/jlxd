@@ -1,14 +1,15 @@
 package au.com.jcloud.jlxd.ui.controller.rest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
@@ -25,19 +26,12 @@ import au.com.jcloud.lxd.service.ILxdService;
 
 @RequestMapping("/image")
 @RestController
-public class ImageRestController {
+public class ImageRestController extends BaseRestController<Image> {
 
 	private static final Logger LOG = Logger.getLogger(ImageRestController.class);
 
-	ILxdService lxdService;
-
-	@Autowired
-	public void setLxdService(ILxdService lxdService) {
-		this.lxdService = lxdService;
-	}
-
 	@PostMapping("/search")
-	public ResponseEntity<?> getSearchResultViaAjax(
+	public ResponseEntity<?> getSearchResultViaAjax(HttpServletRequest request,
 			@Valid @RequestBody SearchCriteria search, Errors errors) {
 
 		AjaxResponseBody<Image> result = new AjaxResponseBody<>();
@@ -56,25 +50,7 @@ public class ImageRestController {
 		}
 
 		try {
-			Map<String, Image> images = new HashMap<>();
-			if (LxdConstants.IS_WINDOWS) {
-				Image image = new Image();
-				image.setFingerprint("123");
-				image.setArchitecture("x64");
-				;
-				image.setDescription("ubuntu");
-				images.put(image.getFingerprint(), image);
-
-				Image image2 = new Image();
-				image2.setFingerprint("456");
-				image2.setArchitecture("x32");
-				;
-				image2.setDescription("windows");
-				images.put(image2.getFingerprint(), image2);
-			}
-			else {
-				images = lxdService.getImageMap();
-			}
+			Map<String, Image> images = loadEntities(getLxdService(request));
 
 			String searchTerm = search.getSearchTerm();
 			if (images.isEmpty()) {
@@ -100,5 +76,27 @@ public class ImageRestController {
 		}
 
 		return ResponseEntity.ok(result);
+	}
+
+	@Override
+	public Map<String, Image> loadEntities(ILxdService lxdService) throws IOException, InterruptedException {
+		Map<String, Image> images = new HashMap<>();
+		if (LxdConstants.IS_WINDOWS && StringUtils.isEmpty(lxdService.getLxdServerCredential().getRemoteHostAndPort())) {
+			Image image = new Image();
+			image.setFingerprint("123");
+			image.setArchitecture("x64");
+			image.setDescription("ubuntu");
+			images.put(image.getFingerprint(), image);
+
+			Image image2 = new Image();
+			image2.setFingerprint("456");
+			image2.setArchitecture("x32");
+			image2.setDescription("windows");
+			images.put(image2.getFingerprint(), image2);
+		}
+		else {
+			images = getLxdService().getImageMap();
+		}
+		return images;
 	}
 }

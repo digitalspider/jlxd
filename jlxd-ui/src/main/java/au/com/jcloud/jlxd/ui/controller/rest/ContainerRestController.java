@@ -13,7 +13,6 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 import au.com.jcloud.jlxd.ui.bean.AddContainerInput;
 import au.com.jcloud.jlxd.ui.model.Server;
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
-import au.com.jcloud.jlxd.ui.service.ServerService;
 import au.com.jcloud.lxd.LxdConstants;
 import au.com.jcloud.lxd.bean.ImageConfig;
 import au.com.jcloud.lxd.model.Container;
@@ -36,15 +34,9 @@ import au.com.jcloud.lxd.service.ILxdService;
 
 @RequestMapping("/container")
 @RestController
-public class ContainerRestController {
+public class ContainerRestController extends BaseRestController {
 
 	private static final Logger LOG = Logger.getLogger(ContainerRestController.class);
-
-	@Autowired
-	private ILxdService lxdService;
-
-	@Autowired
-	private ServerService serverService;
 
 	@RequestMapping(value = "/search", method = { RequestMethod.GET, RequestMethod.POST })
 	public ResponseEntity<?> getSearchResult(HttpServletRequest request) {
@@ -62,8 +54,8 @@ public class ContainerRestController {
 		int containersFound = 0;
 
 		// Get all servers
-		Map<String, Server> serverMap = serverService.getServerMap(request);
-		Server serverInRequest = serverService.getServerFromSession(request);
+		Map<String, Server> serverMap = getServerService().getServerMap(request);
+		Server serverInRequest = getServerService().getServerFromSession(request);
 		Collection<Server> serversToSearch = new ArrayList<>();
 		if (serverInRequest != null) {
 			serversToSearch.add(serverInRequest);
@@ -100,7 +92,7 @@ public class ContainerRestController {
 
 	private List<Container> findContainersForLxdService(ILxdService lxdService, String searchTerm) throws IOException, InterruptedException {
 		List<Container> result = new ArrayList<>();
-		Map<String, Container> containers = loadContainersForLxdService(lxdService);
+		Map<String, Container> containers = loadEntities(lxdService);
 		if (containers.isEmpty()) {
 			return result;
 		}
@@ -113,7 +105,8 @@ public class ContainerRestController {
 		return result;
 	}
 
-	private Map<String, Container> loadContainersForLxdService(ILxdService lxdService) throws IOException, InterruptedException {
+	@Override
+	public Map<String, Container> loadEntities(ILxdService lxdService) throws IOException, InterruptedException {
 		Map<String, Container> containers = new HashMap<>();
 		if (LxdConstants.IS_WINDOWS && StringUtils.isEmpty(lxdService.getLxdServerCredential().getRemoteHostAndPort())) {
 			Container c = new Container();
@@ -157,7 +150,7 @@ public class ContainerRestController {
 				throw new IllegalArgumentException("Cannot start container if containerName is blank");
 			}
 			getLxdService(request).startContainer(containerName);
-			result.setResult(loadContainersForLxdService(getLxdService(request)).values());
+			result.setResult(loadEntities(getLxdService(request)).values());
 			result.setMsg("container started: " + containerName);
 		} catch (Exception e) {
 			LOG.error(e, e);
@@ -176,7 +169,7 @@ public class ContainerRestController {
 				throw new IllegalArgumentException("Cannot start container if containerName is blank");
 			}
 			getLxdService(request).stopContainer(containerName);
-			result.setResult(loadContainersForLxdService(getLxdService(request)).values());
+			result.setResult(loadEntities(getLxdService(request)).values());
 			result.setMsg("container stopped: " + containerName);
 		} catch (Exception e) {
 			LOG.error(e, e);
@@ -184,15 +177,6 @@ public class ContainerRestController {
 			return ResponseEntity.badRequest().body(result);
 		}
 		return ResponseEntity.ok(result);
-	}
-
-	private ILxdService getLxdService(HttpServletRequest request) {
-		ILxdService lxdService = this.lxdService;
-		Server lxdServer = serverService.getServerFromSession(request);
-		if (lxdServer != null) {
-			lxdService = lxdServer.getLxdService();
-		}
-		return lxdService;
 	}
 
 	@PostMapping("/create")
@@ -209,7 +193,7 @@ public class ContainerRestController {
 		try {
 			String containerName = addContainerInput.getName();
 			getLxdService(request).createContainer(addContainerInput.getName(), addContainerInput.getImageAlias(), addContainerInput);
-			result.setResult(loadContainersForLxdService(getLxdService(request)).values());
+			result.setResult(loadEntities(getLxdService(request)).values());
 			result.setMsg("container created: " + containerName);
 		} catch (Exception e) {
 			LOG.error(e, e);
@@ -247,20 +231,12 @@ public class ContainerRestController {
 				throw new Exception("Could not get newly created container. " + newContainerName);
 			}
 			result.setMsg("container created: " + container.getName());
-			result.setResult(loadContainersForLxdService(getLxdService(request)).values());
+			result.setResult(loadEntities(getLxdService(request)).values());
 		} catch (Exception e) {
 			LOG.error(e, e);
 			result.setMsg(e.getMessage());
 			return ResponseEntity.badRequest().body(result);
 		}
 		return ResponseEntity.ok(result);
-	}
-
-	public void setLxdService(ILxdService lxdService) {
-		this.lxdService = lxdService;
-	}
-
-	public void setServerService(ServerService serverService) {
-		this.serverService = serverService;
 	}
 }

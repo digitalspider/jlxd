@@ -1,14 +1,15 @@
 package au.com.jcloud.jlxd.ui.controller.rest;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ObjectError;
@@ -25,19 +26,12 @@ import au.com.jcloud.lxd.service.ILxdService;
 
 @RequestMapping("/profile")
 @RestController
-public class ProfileRestController {
+public class ProfileRestController extends BaseRestController<Profile> {
 
 	private static final Logger LOG = Logger.getLogger(ProfileRestController.class);
 
-	ILxdService lxdService;
-
-	@Autowired
-	public void setLxdService(ILxdService lxdService) {
-		this.lxdService = lxdService;
-	}
-
 	@PostMapping("/search")
-	public ResponseEntity<?> getSearchResultViaAjax(
+	public ResponseEntity<?> getSearchResultViaAjax(HttpServletRequest request,
 			@Valid @RequestBody SearchCriteria search, Errors errors) {
 
 		AjaxResponseBody<Profile> result = new AjaxResponseBody<>();
@@ -56,17 +50,7 @@ public class ProfileRestController {
 		}
 
 		try {
-			Map<String, Profile> profiles = new HashMap<>();
-			if (LxdConstants.IS_WINDOWS) {
-				Profile p = new Profile();
-				p.setStatus("status");
-				p.setStatusCode("statusCode");
-				p.setType("type");
-				profiles.put(p.getType(), p);
-			}
-			else {
-				profiles = lxdService.getProfileMap();
-			}
+			Map<String, Profile> profiles = loadEntities(getLxdService(request));
 
 			String searchTerm = search.getSearchTerm();
 			if (profiles.isEmpty()) {
@@ -92,5 +76,22 @@ public class ProfileRestController {
 		}
 
 		return ResponseEntity.ok(result);
+	}
+
+	@Override
+	public Map<String, Profile> loadEntities(ILxdService lxdService) throws IOException, InterruptedException {
+		Map<String, Profile> profiles = new HashMap<>();
+		if (LxdConstants.IS_WINDOWS && StringUtils.isEmpty(lxdService.getLxdServerCredential().getRemoteHostAndPort())) {
+			Profile p = new Profile();
+			p.setStatus("status");
+			p.setStatusCode("statusCode");
+			p.setType("type");
+			profiles.put(p.getType(), p);
+		}
+		else {
+			profiles = lxdService.getProfileMap();
+		}
+
+		return profiles;
 	}
 }
