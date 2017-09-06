@@ -33,7 +33,13 @@ $(document).ready(function () {
 	    var profile = $("#addContainerForm #profile").val();
 	    var config = $("#addContainerForm #config").val();
 	    var ephemeral = $("#addContainerForm #ephemeral").val();
-	    var postUrl = "/container/create;
+	    if ("on" == ephemeral) {
+	    	ephemeral = "true";
+	    } else {
+	    	ephemeral = "false";
+	    }
+	    var architecture = $("#addContainerForm #architecture").val();
+	    var postUrl = "/container/create";
         var addContainerInput = {};
         addContainerInput["name"] = name;
         addContainerInput["imageAlias"] = imageAlias;
