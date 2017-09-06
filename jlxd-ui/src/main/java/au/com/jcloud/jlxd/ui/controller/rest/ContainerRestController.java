@@ -34,7 +34,7 @@ import au.com.jcloud.lxd.service.ILxdService;
 
 @RequestMapping("/container")
 @RestController
-public class ContainerRestController extends BaseRestController {
+public class ContainerRestController extends BaseRestController<Container> {
 
 	private static final Logger LOG = Logger.getLogger(ContainerRestController.class);
 
