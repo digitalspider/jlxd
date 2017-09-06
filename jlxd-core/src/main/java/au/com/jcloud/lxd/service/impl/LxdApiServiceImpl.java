@@ -284,6 +284,10 @@ public class LxdApiServiceImpl implements ILxdApiService {
 				url = url.replace("${CONFIG}", "\"config\": \"" + config + "\", ");
 			}
 		}
+		url = url.replace("${CONFIG}", StringUtils.EMPTY);
+		url = url.replace("${PROFILES}", StringUtils.EMPTY);
+		url = url.replace("${EPHEMERAL}", StringUtils.EMPTY);
+		url = url.replace("${ARCHITECTURE}", StringUtils.EMPTY);
 
 		LOG.debug("url=" + url);
 		AbstractResponse response = linuxCliService.executeLinuxCmdWithResultJsonObject(url, lxdCall.getClassType());
