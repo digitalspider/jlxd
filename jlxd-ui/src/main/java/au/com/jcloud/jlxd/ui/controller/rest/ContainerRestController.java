@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -196,12 +197,18 @@ public class ContainerRestController {
 
 	@PostMapping("/create")
 	public ResponseEntity<?> createNewFromForm(HttpServletRequest request,
-			@RequestBody AddContainerInput addContainerInput, Errors errors) {
+			@Valid @RequestBody AddContainerInput addContainerInput, Errors errors) {
 		AjaxResponseBody<Container> result = new AjaxResponseBody<>();
+
+		// If validation errors, just return a 400 bad request, along with the error message
+		if (errors.hasErrors()) {
+			result.setMsg(StringUtils.join(errors.getAllErrors(), ","));
+			return ResponseEntity.badRequest().body(result);
+		}
 
 		try {
 			String containerName = addContainerInput.getName();
-			getLxdService(request).createContainer(addContainerInput.getName(), addContainerInput.getImageOrAlias(), addContainerInput);
+			getLxdService(request).createContainer(addContainerInput.getName(), addContainerInput.getImageAlias(), addContainerInput);
 			result.setResult(loadContainersForLxdService(getLxdService(request)).values());
 			result.setMsg("container created: " + containerName);
 		} catch (Exception e) {

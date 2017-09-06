@@ -1,14 +1,20 @@
 package au.com.jcloud.jlxd.ui.bean;
 
+import org.hibernate.validator.constraints.NotBlank;
+
 import au.com.jcloud.lxd.bean.ImageConfig;
 
 public class AddContainerInput extends ImageConfig {
+
+	@NotBlank(message = "new container name can't empty!")
 	private String name;
-	private String imageOrAlias;
+
+	@NotBlank(message = "imageAlias can't empty!")
+	private String imageAlias;
 
 	@Override
 	public String toString() {
-		return "AddContainerData [name=" + name + ", imageOrAlias=" + imageOrAlias + " super=" + super.toString() + "]";
+		return "AddContainerData [name=" + name + ", imageOrAlias=" + imageAlias + " super=" + super.toString() + "]";
 	}
 
 	public String getName() {
@@ -19,12 +25,12 @@ public class AddContainerInput extends ImageConfig {
 		this.name = name;
 	}
 
-	public String getImageOrAlias() {
-		return imageOrAlias;
+	public String getImageAlias() {
+		return imageAlias;
 	}
 
-	public void setImageOrAlias(String imageOrAlias) {
-		this.imageOrAlias = imageOrAlias;
+	public void setImageAlias(String imageAlias) {
+		this.imageAlias = imageAlias;
 	}
 
 }

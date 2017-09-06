@@ -14,10 +14,10 @@ $(document).ready(function () {
     // Add Server Form
 	$("#addServerButton").click(function (event) {
 		event.preventDefault();
-	    var name = $("#addServerForm #name").val();
+		var name = $("#addContainerForm #name").val();
 	    var hostAndPort = $("#addServerForm #hostAndPort").val();
 	    var description = $("#addServerForm #description").val();
-	    var postUrl = "/server/create/"+name+"/"+hostAndPort+"/"+description;
+	    var postUrl = "/server/create/"+encodeURIComponent(name)+"/"+hostAndPort+"/"+description;
 
 	    var placeholderEle = $("#servers");
 	    var templatePath = "template/handlebars/server.html";
@@ -29,15 +29,22 @@ $(document).ready(function () {
 	$("#addContainerButton").click(function (event) {
 		event.preventDefault();
 	    var name = $("#addContainerForm #name").val();
-	    var imageAlias = encodeURIComponent($("#addContainerForm #imageAlias").val());
+	    var imageAlias = $("#addContainerForm #imageAlias").val();
 	    var profile = $("#addContainerForm #profile").val();
 	    var config = $("#addContainerForm #config").val();
 	    var ephemeral = $("#addContainerForm #ephemeral").val();
-	    var postUrl = "/container/create/"+name+"/"+imageAlias+"/"+ephemeral+"/"+profile+"/"+config;
+	    var postUrl = "/container/create;
+        var addContainerInput = {};
+        addContainerInput["name"] = name;
+        addContainerInput["imageAlias"] = imageAlias;
+        addContainerInput["profile"] = profile;
+        addContainerInput["config"] = config;
+        addContainerInput["ephemeral"] = ephemeral;
+        addContainerInput["architecture"] = architecture;
 
 	    var placeholderEle = $("#containers");
 	    var templatePath = "template/handlebars/container.html";
-	    var jsonData = "";
+	    var jsonData = JSON.stringify(addContainerInput);
 
 		fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
 	});
