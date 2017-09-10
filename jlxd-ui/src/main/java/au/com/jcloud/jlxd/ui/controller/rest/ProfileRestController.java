@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
 import au.com.jcloud.jlxd.ui.search.SearchCriteria;
-import au.com.jcloud.lxd.LxdConstants;
 import au.com.jcloud.lxd.model.Profile;
 import au.com.jcloud.lxd.service.ICachingLxdService;
 
@@ -81,7 +80,7 @@ public class ProfileRestController extends BaseRestController<Profile> {
 	@Override
 	public Map<String, Profile> loadEntities(ICachingLxdService lxdService) throws IOException, InterruptedException {
 		Map<String, Profile> profiles = new HashMap<>();
-		if (LxdConstants.IS_WINDOWS && StringUtils.isEmpty(lxdService.getLxdServerCredential().getRemoteHostAndPort())) {
+		if (isDefaultServerAndWindowsOs(lxdService)) {
 			Profile p = new Profile();
 			p.setStatus("status");
 			p.setStatusCode("statusCode");

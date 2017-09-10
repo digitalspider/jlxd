@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 import au.com.jcloud.jlxd.ui.bean.AddContainerInput;
 import au.com.jcloud.jlxd.ui.model.Server;
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
-import au.com.jcloud.lxd.LxdConstants;
 import au.com.jcloud.lxd.bean.ImageConfig;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.State;
@@ -108,7 +107,7 @@ public class ContainerRestController extends BaseRestController<Container> {
 	@Override
 	public Map<String, Container> loadEntities(ICachingLxdService lxdService) throws IOException, InterruptedException {
 		Map<String, Container> containers = new HashMap<>();
-		if (LxdConstants.IS_WINDOWS && StringUtils.isEmpty(lxdService.getLxdServerCredential().getRemoteHostAndPort())) {
+		if (isDefaultServerAndWindowsOs(lxdService)) {
 			Container c = new Container();
 			c.setName("david");
 			c.setStatus("Running");

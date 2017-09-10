@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import au.com.jcloud.jlxd.ui.model.Server;
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
 import au.com.jcloud.jlxd.ui.service.ServerService;
+import au.com.jcloud.lxd.LxdConstants;
 import au.com.jcloud.lxd.service.ICachingLxdService;
+import au.com.jcloud.lxd.service.ILxdService;
 
 public abstract class BaseRestController<T> {
 
@@ -39,16 +42,28 @@ public abstract class BaseRestController<T> {
 	public ResponseEntity<?> reload(HttpServletRequest request, Class<T> classType) {
 		AjaxResponseBody<T> result = new AjaxResponseBody<>();
 		try {
-			getLxdService(request).reloadContainerCache();
+			if (isDefaultServerAndWindowsOs(lxdService)) {
+				getLxdService(request).reloadContainerCache();
+			}
 			Collection<T> entities = loadEntities(getLxdService(request)).values();
 			result.setResult(entities);
-			result.setMsg(classType.getSimpleName() + " reloaded");
+			if (classType==null && entities!=null && !entities.isEmpty()) {
+				T entity = entities.iterator().next();
+				if (entity !=null) {
+					classType = (Class<T>) entity.getClass();
+				}
+			}
+			result.setMsg((classType!=null? classType.getSimpleName() : StringUtils.EMPTY) + " reloaded");
 		} catch (Exception e) {
 			LOG.error(e, e);
 			result.setMsg(e.getMessage());
 			return ResponseEntity.badRequest().body(result);
 		}
 		return ResponseEntity.ok(result);
+	}
+
+	protected boolean isDefaultServerAndWindowsOs(ILxdService lxdService) {
+		return LxdConstants.IS_WINDOWS && lxdService.getLxdServerCredential()!=null && StringUtils.isEmpty(lxdService.getLxdServerCredential().getRemoteHostAndPort());
 	}
 
 	public abstract Map<String, T> loadEntities(ICachingLxdService lxdService) throws IOException, InterruptedException;
