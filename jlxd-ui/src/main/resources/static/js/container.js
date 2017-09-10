@@ -62,7 +62,7 @@ $(document).ready(function () {
 
 function reloadContainers() {
     var placeholderEle = $("#containers");
-    var postUrl = "/container/search";
+    var postUrl = "/container/reload";
     var templatePath = "template/handlebars/container.html";
     var jsonData = "";
 

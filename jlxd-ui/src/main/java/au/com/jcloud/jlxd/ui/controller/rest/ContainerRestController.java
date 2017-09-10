@@ -30,7 +30,7 @@ import au.com.jcloud.lxd.bean.ImageConfig;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.State;
 import au.com.jcloud.lxd.model.StatusCode;
-import au.com.jcloud.lxd.service.ILxdService;
+import au.com.jcloud.lxd.service.ICachingLxdService;
 
 @RequestMapping("/container")
 @RestController
@@ -90,7 +90,7 @@ public class ContainerRestController extends BaseRestController<Container> {
 		return ResponseEntity.ok(result);
 	}
 
-	private List<Container> findContainersForLxdService(ILxdService lxdService, String searchTerm) throws IOException, InterruptedException {
+	private List<Container> findContainersForLxdService(ICachingLxdService lxdService, String searchTerm) throws IOException, InterruptedException {
 		List<Container> result = new ArrayList<>();
 		Map<String, Container> containers = loadEntities(lxdService);
 		if (containers.isEmpty()) {
@@ -106,7 +106,7 @@ public class ContainerRestController extends BaseRestController<Container> {
 	}
 
 	@Override
-	public Map<String, Container> loadEntities(ILxdService lxdService) throws IOException, InterruptedException {
+	public Map<String, Container> loadEntities(ICachingLxdService lxdService) throws IOException, InterruptedException {
 		Map<String, Container> containers = new HashMap<>();
 		if (LxdConstants.IS_WINDOWS && StringUtils.isEmpty(lxdService.getLxdServerCredential().getRemoteHostAndPort())) {
 			Container c = new Container();
@@ -217,7 +217,7 @@ public class ContainerRestController extends BaseRestController<Container> {
 			if (StringUtils.isBlank(imageAlias)) {
 				throw new IllegalArgumentException("Cannot create new container if imageName is blank");
 			}
-			ILxdService lxdService = getLxdService(request);
+			ICachingLxdService lxdService = getLxdService(request);
 			Boolean ephemeralValue = null;
 			if (StringUtils.isNotBlank(ephemeral)) {
 				ephemeralValue = Boolean.valueOf(ephemeral);

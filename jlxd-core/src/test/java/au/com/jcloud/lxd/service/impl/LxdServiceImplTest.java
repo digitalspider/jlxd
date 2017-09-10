@@ -39,7 +39,7 @@ public class LxdServiceImplTest {
 		ListResponse response = new ListResponse();
 		response.setStatusCode("200");
 		Mockito.doReturn(response).when(linuxCliService).executeLinuxCmdWithResultJsonObject("curl -s --unix-socket /var/lib/lxd/unix.socket a/1.0/containers", ListResponse.class);
-		Map<String, Container> containers = service.loadContainers();
+		Map<String, Container> containers = service.loadContainerMap();
 		assertEquals(0, containers.size());
 	}
 	
@@ -63,7 +63,7 @@ public class LxdServiceImplTest {
 		response2.setMetadata(mock(Container.class));
 		Mockito.doReturn(response2).when(linuxCliService).executeLinuxCmdWithResultJsonObject("curl -s --unix-socket /var/lib/lxd/unix.socket a/1.0/containers/test2", ContainerResponse.class);
 		
-		Map<String, Container> containers = service.loadContainers();
+		Map<String, Container> containers = service.loadContainerMap();
 		assertEquals(2, containers.size());
 	}
 

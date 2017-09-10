@@ -15,6 +15,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 
 import au.com.jcloud.lxd.bean.ImageConfig;
+import au.com.jcloud.lxd.bean.LxdServerCredential;
 import au.com.jcloud.lxd.enums.LxdCall;
 import au.com.jcloud.lxd.enums.RemoteServer;
 import au.com.jcloud.lxd.model.Certificate;
@@ -34,11 +35,13 @@ import au.com.jcloud.lxd.service.ILxdService;
  * Created by david.vittor on 12/07/16.
  */
 @Named
-public class LxdServiceImpl extends AbstractLxdService {
+public class LxdServiceImpl implements ILxdService {
 
 	private static final Logger LOG = Logger.getLogger(LxdServiceImpl.class);
 
-	private ILxdApiService lxdApiService;
+	protected LxdServerCredential credential;
+
+	protected ILxdApiService lxdApiService;
 
 	@Override
 	public ILxdService clone() throws CloneNotSupportedException {
@@ -49,21 +52,28 @@ public class LxdServiceImpl extends AbstractLxdService {
 
 	// ** ServerInfo **//
 	@Override
-	public ServerInfo getServerInfo() throws IOException, InterruptedException {
+	public ServerInfo loadServerInfo() throws IOException, InterruptedException {
 		ServerInfo serverInfo = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_SERVERINFO, null);
 		return serverInfo;
 	}
 
 	// ** Containers **//
 	@Override
-	public Map<String, Container> loadContainers() throws IOException, InterruptedException {
+	public Map<String, Container> loadContainerMap() throws IOException, InterruptedException {
 		Map<String, Container> containers = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_CONTAINER);
 		return containers;
 	}
+	
+	
+	@Override
+	public Container loadContainer(String name) throws IOException, InterruptedException {
+		Container container = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_CONTAINER, name);
+		return container;
+	}
 
 	@Override
-	public State getContainerState(String name) throws IOException, InterruptedException {
-		Container container = getContainer(name);
+	public State loadContainerState(String name) throws IOException, InterruptedException {
+		Container container = loadContainer(name);
 		if (container != null) {
 			State state = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_STATE, name);
 			return state;
@@ -73,7 +83,7 @@ public class LxdServiceImpl extends AbstractLxdService {
 
 	// ** Images **//
 	@Override
-	public Map<String, Image> loadImages() throws IOException, InterruptedException {
+	public Map<String, Image> loadImageMap() throws IOException, InterruptedException {
 		Map<String, Image> images = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_IMAGE);
 		Map<String, Image> imageAliasMap = new HashMap<>();
 		for (Image image : images.values()) {
@@ -91,21 +101,26 @@ public class LxdServiceImpl extends AbstractLxdService {
 		images.putAll(imageAliasMap);
 		return images;
 	}
+	
+	@Override
+	public Image loadImage(String nameOrId) throws IOException, InterruptedException {
+		Image image = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_IMAGE, nameOrId);
+		return image;
+	}
 
 	@Override
 	public void deleteImage(String imageNameOrId) throws IOException, InterruptedException {
-		Image image = getImage(imageNameOrId);
+		Image image = loadImage(imageNameOrId);
 		if (image == null) {
 			throw new IllegalArgumentException("Cannot find image with name or id: " + imageNameOrId);
 		}
 		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.POST_IMAGE_DELETE, image.getFingerprint());
-		reloadImageCache();
 	}
 
 	// ** Container operations **//
 	@Override
 	public void startContainer(String name) throws IOException, InterruptedException {
-		State state = getContainerState(name);
+		State state = loadContainerState(name);
 		if (state == null) {
 			throw new IllegalArgumentException("container: " + name + " has state null");
 		}
@@ -117,7 +132,7 @@ public class LxdServiceImpl extends AbstractLxdService {
 
 	@Override
 	public void stopContainer(String name) throws IOException, InterruptedException {
-		State state = getContainerState(name);
+		State state = loadContainerState(name);
 		LOG.info("container " + name + " has state " + state);
 		if (state == null) {
 			throw new IllegalArgumentException("container: " + name + " has state null");
@@ -142,7 +157,7 @@ public class LxdServiceImpl extends AbstractLxdService {
 			throw new IllegalArgumentException("Cannot create container where newContainerName is blank");
 		}
 		if (!imageAlias.contains(COLON)) {
-			Image image = getImage(imageAlias);
+			Image image = loadImage(imageAlias);
 			if (image == null) {
 				throw new IOException("Could not find local image with alias: " + imageAlias);
 			}
@@ -162,12 +177,11 @@ public class LxdServiceImpl extends AbstractLxdService {
 				throw new IOException("Could not find remote image server: " + imageAlias);
 			}
 		}
-		reloadContainerCache();
 	}
 
 	@Override
 	public void deleteContainer(String name) throws IOException, InterruptedException {
-		State state = getContainerState(name);
+		State state = loadContainerState(name);
 		if (state == null) {
 			throw new IllegalArgumentException("Cannot find a valid state for container name: " + name);
 		}
@@ -176,7 +190,6 @@ public class LxdServiceImpl extends AbstractLxdService {
 			throw new IOException("Cannot delete a container that is not stopped. Container=" + name + " status=" + state);
 		}
 		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.POST_CONTAINER_DELETE, name);
-		reloadContainerCache();
 	}
 
 	@Override
@@ -188,9 +201,9 @@ public class LxdServiceImpl extends AbstractLxdService {
 			throw new IllegalArgumentException("Cannot rename container where newContainerName is blank");
 		}
 		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.POST_CONTAINER_RENAME, name, newContainerName);
-		Container container = getContainerMap().remove(name);
+		Container container = loadContainerMap().remove(name);
 		if (container != null) {
-			getContainerMap().put(newContainerName, container);
+			loadContainerMap().put(newContainerName, container);
 		}
 	}
 
@@ -203,12 +216,11 @@ public class LxdServiceImpl extends AbstractLxdService {
 			throw new IllegalArgumentException("Cannot copy container where newContainerName is blank");
 		}
 
-		Container container = getContainer(name);
+		Container container = loadContainer(name);
 		if (container == null) {
 			throw new IOException("Could not find existing container with name: " + name);
 		}
 		lxdApiService.executeCurlPostCmdToCopyContainer(credential, name, newContainerName, containerOnly);
-		reloadContainerCache();
 	}
 
 	@Override
@@ -221,7 +233,7 @@ public class LxdServiceImpl extends AbstractLxdService {
 			throw new IllegalArgumentException("Cannot execute empty command on container: " + name);
 		}
 
-		Container container = getContainer(name);
+		Container container = loadContainer(name);
 		if (container == null) {
 			throw new IOException("Could not find container with name: " + name);
 		}
@@ -230,37 +242,37 @@ public class LxdServiceImpl extends AbstractLxdService {
 
 	// ** Operations **//
 	@Override
-	public Map<String, Operation> loadOperations() throws IOException, InterruptedException {
+	public Map<String, Operation> loadOperationMap() throws IOException, InterruptedException {
 		Map<String, Operation> opertaions = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_OPERATION);
 		return opertaions;
 	}
 
 	@Override
-	public List<Operation> getOperations() throws IOException, InterruptedException {
-		Map<String, Operation> opertaions = loadOperations();
-		return new ArrayList<Operation>(opertaions.values());
-	}
-
-	@Override
-	public Operation getOperation(String name) throws IOException, InterruptedException {
+	public Operation loadOperation(String name) throws IOException, InterruptedException {
 		Operation opertaion = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_OPERATION, name);
 		return opertaion;
 	}
 
 	// ** Networks **//
 	@Override
-	public Map<String, Network> loadNetworks() throws IOException, InterruptedException {
+	public Map<String, Network> loadNetworkMap() throws IOException, InterruptedException {
 		Map<String, Network> networks = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_NETWORK);
 		return networks;
 	}
+	
+	@Override
+	public Network loadNetwork(String name) throws IOException, InterruptedException {
+		Network network = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_IMAGE, name);
+		return network;
+	}
 
 	@Override
-	public List<Container> getContainersUsedByNetwork(Network network) throws IOException, InterruptedException {
+	public List<Container> loadContainersUsedByNetwork(Network network) throws IOException, InterruptedException {
 		List<Container> usedByContainers = new ArrayList<Container>();
 		String[] usedByArray = network.getMetadata().getUsedBy();
 		for (String usedByString : usedByArray) {
 			String containerName = usedByString.substring(usedByString.lastIndexOf("/"));
-			Container container = getContainer(containerName);
+			Container container = loadContainer(containerName);
 			usedByContainers.add(container);
 		}
 		return usedByContainers;
@@ -271,19 +283,24 @@ public class LxdServiceImpl extends AbstractLxdService {
 		if (StringUtils.isBlank(name)) {
 			throw new IllegalArgumentException("Cannot delete a network with an empty name");
 		}
-		Network network = getNetwork(name);
+		Network network = loadNetwork(name);
 		if (network == null) {
 			throw new IllegalArgumentException("Cannot find a network with name: " + name);
 		}
 		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.POST_NETWORK_DELETE, name);
-		reloadNetworkCache();
 	}
 
 	// ** Profiles **//
 	@Override
-	public Map<String, Profile> loadProfiles() throws IOException, InterruptedException {
+	public Map<String, Profile> loadProfileMap() throws IOException, InterruptedException {
 		Map<String, Profile> profiles = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_PROFILE);
 		return profiles;
+	}
+	
+	@Override
+	public Profile loadProfile(String name) throws IOException, InterruptedException {
+		Profile profile = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_IMAGE, name);
+		return profile;
 	}
 
 	@Override
@@ -291,37 +308,36 @@ public class LxdServiceImpl extends AbstractLxdService {
 		if (StringUtils.isBlank(name)) {
 			throw new IllegalArgumentException("Cannot delete a profile with an empty name");
 		}
-		Profile profile = getProfile(name);
+		Profile profile = loadProfile(name);
 		if (profile == null) {
 			throw new IllegalArgumentException("Cannot find a profile with name: " + name);
 		}
 		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.POST_PROFILE_DELETE, name);
-		reloadProfileCache();
 	}
 
 	// ** Certificates **//
 	@Override
-	public Map<String, Certificate> loadCertificates() throws IOException, InterruptedException {
+	public Map<String, Certificate> loadCertificateMap() throws IOException, InterruptedException {
 		Map<String, Certificate> certificates = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_CERTIFICATE);
 		return certificates;
 	}
 
+	@Override
+	public Certificate loadCertificate(String name) throws IOException, InterruptedException {
+		Certificate certificate = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_IMAGE, name);
+		return certificate;
+	}
+
 	// ** Snapshots **//
 	@Override
-	public Map<String, Snapshot> loadSnapshots(Container container) throws IOException, InterruptedException {
+	public Map<String, Snapshot> loadSnapshotMap(Container container) throws IOException, InterruptedException {
 		Map<String, Snapshot> snapshots = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_SNAPSHOTS,
 				container.getName());
 		return snapshots;
 	}
 
 	@Override
-	public List<Snapshot> getSnapshots(Container container) throws IOException, InterruptedException {
-		Map<String, Snapshot> snapshots = loadSnapshots(container);
-		return new ArrayList<>(snapshots.values());
-	}
-
-	@Override
-	public Snapshot getSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException {
+	public Snapshot loadSnapshot(String containerName, String snapshotName) throws IOException, InterruptedException {
 		Snapshot snapshot = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_SNAPSHOTS, snapshotName, containerName);
 		return snapshot;
 	}
@@ -353,14 +369,20 @@ public class LxdServiceImpl extends AbstractLxdService {
 
 	// ** Image Aliases **//
 	@Override
-	public Map<String, ImageAlias> loadImageAliases() throws IOException, InterruptedException {
+	public Map<String, ImageAlias> loadImageAliasMap() throws IOException, InterruptedException {
 		Map<String, ImageAlias> aliases = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_IMAGEALIAS);
 		return aliases;
+	}
+	
+	@Override
+	public ImageAlias loadImageAlias(String name) throws IOException, InterruptedException {
+		ImageAlias imageAlias = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_IMAGEALIAS, name);
+		return imageAlias;
 	}
 
 	// ** File Ops **//
 	@Override
-	public String getFile(String containerName, String filepath) throws IOException, InterruptedException {
+	public String loadFile(String containerName, String filepath) throws IOException, InterruptedException {
 		String response = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_FILE, null, containerName, filepath);
 		return response;
 	}
@@ -369,5 +391,15 @@ public class LxdServiceImpl extends AbstractLxdService {
 	@Inject
 	public void setLxdApiService(ILxdApiService lxdApiService) {
 		this.lxdApiService = lxdApiService;
+	}
+
+	@Override
+	public LxdServerCredential getLxdServerCredential() {
+		return credential;
+	}
+
+	@Override
+	public void setLxdServerCredential(LxdServerCredential credentials) {
+		this.credential = credentials;
 	}
 }

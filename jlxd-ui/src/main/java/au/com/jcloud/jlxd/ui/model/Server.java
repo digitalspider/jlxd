@@ -5,7 +5,7 @@ import java.util.List;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import au.com.jcloud.lxd.model.Container;
-import au.com.jcloud.lxd.service.ILxdService;
+import au.com.jcloud.lxd.service.ICachingLxdService;
 
 public class Server {
 	private String name;
@@ -14,7 +14,7 @@ public class Server {
 	private boolean active = false;
 	private List<Container> containers;
 	@JsonIgnore
-	private ILxdService lxdService;
+	private ICachingLxdService lxdService;
 
 	@Override
 	public String toString() {
@@ -53,11 +53,11 @@ public class Server {
 		this.description = description;
 	}
 
-	public ILxdService getLxdService() {
+	public ICachingLxdService getLxdService() {
 		return lxdService;
 	}
 
-	public void setLxdService(ILxdService lxdService) {
+	public void setLxdService(ICachingLxdService lxdService) {
 		this.lxdService = lxdService;
 		String remoteHostAndPort = (lxdService != null && lxdService.getLxdServerCredential() != null) ? lxdService.getLxdServerCredential().getRemoteHostAndPort() : null;
 		this.setRemoteHostAndPort(remoteHostAndPort);

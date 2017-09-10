@@ -26,8 +26,8 @@ public class LxdServiceCliImpl extends LxdServiceImpl implements ILxdService {
 
 	// ** ServerInfo **//
 	@Override
-	public ServerInfo getServerInfo() throws IOException, InterruptedException {
-		return super.getServerInfo(); // TODO: could use "lxd info", but need to do mapping
+	public ServerInfo loadServerInfo() throws IOException, InterruptedException {
+		return super.loadServerInfo(); // TODO: could use "lxd info", but need to do mapping
 	}
 
 	// ** Images **//
@@ -82,30 +82,30 @@ public class LxdServiceCliImpl extends LxdServiceImpl implements ILxdService {
 
 	// ** Image Aliases **//
 	@Override
-	public ImageAlias getImageAlias(String name) {
-		return super.getImageAlias(name); // TODO: Use lxc command
+	public ImageAlias loadImageAlias(String name) throws IOException, InterruptedException {
+		return super.loadImageAlias(name); // TODO: Use lxc command
 	}
 
 	// ** File Ops **//
 	@Override
-	public String getFile(String containerName, String filepath) throws IOException, InterruptedException {
+	public String loadFile(String containerName, String filepath) throws IOException, InterruptedException {
 		linuxCliService.executeLinuxCmd("lxc file pull " + containerName + filepath + " .");
 		return "";
 	}
 
 	@Override
-	public Container getContainer(String name) {
-		return super.getContainer(name); // TODO: Use lxc command
+	public Container loadContainer(String name) throws IOException, InterruptedException {
+		return super.loadContainer(name); // TODO: Use lxc command
 	}
 
 	@Override
-	public Image getImage(String nameOrId) {
-		return super.getImage(nameOrId); // TODO: Use lxc command
+	public Image loadImage(String nameOrId) throws IOException, InterruptedException {
+		return super.loadImage(nameOrId); // TODO: Use lxc command
 	}
 
 	@Override
-	public Network getNetwork(String name) {
-		return super.getNetwork(name); // TODO: Use lxc command
+	public Network loadNetwork(String name) throws IOException, InterruptedException {
+		return super.loadNetwork(name); // TODO: Use lxc command
 	}
 
 	@Override
@@ -114,8 +114,8 @@ public class LxdServiceCliImpl extends LxdServiceImpl implements ILxdService {
 	}
 
 	@Override
-	public Profile getProfile(String name) {
-		return super.getProfile(name); // TODO: Use lxc command
+	public Profile loadProfile(String name) throws IOException, InterruptedException {
+		return super.loadProfile(name); // TODO: Use lxc command
 	}
 
 	@Override
@@ -124,8 +124,8 @@ public class LxdServiceCliImpl extends LxdServiceImpl implements ILxdService {
 	}
 
 	@Override
-	public Certificate getCertificate(String name) {
-		return super.getCertificate(name); // TODO: Use lxc command
+	public Certificate loadCertificate(String name) throws IOException, InterruptedException {
+		return super.loadCertificate(name); // TODO: Use lxc command
 	}
 
 	public void setLinuxCliService(ILinuxCliService linuxCliService) {

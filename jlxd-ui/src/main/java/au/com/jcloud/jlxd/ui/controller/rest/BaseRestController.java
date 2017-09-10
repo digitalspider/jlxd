@@ -14,20 +14,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import au.com.jcloud.jlxd.ui.model.Server;
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
 import au.com.jcloud.jlxd.ui.service.ServerService;
-import au.com.jcloud.lxd.service.ILxdService;
+import au.com.jcloud.lxd.service.ICachingLxdService;
 
 public abstract class BaseRestController<T> {
 
 	private static final Logger LOG = Logger.getLogger(ContainerRestController.class);
 
 	@Autowired
-	private ILxdService lxdService;
+	private ICachingLxdService lxdService;
 
 	@Autowired
 	private ServerService serverService;
 
-	public ILxdService getLxdService(HttpServletRequest request) {
-		ILxdService lxdService = this.lxdService;
+	public ICachingLxdService getLxdService(HttpServletRequest request) {
+		ICachingLxdService lxdService = this.lxdService;
 		Server lxdServer = serverService.getServerFromSession(request);
 		if (lxdServer != null) {
 			lxdService = lxdServer.getLxdService();
@@ -51,13 +51,13 @@ public abstract class BaseRestController<T> {
 		return ResponseEntity.ok(result);
 	}
 
-	public abstract Map<String, T> loadEntities(ILxdService lxdService) throws IOException, InterruptedException;
+	public abstract Map<String, T> loadEntities(ICachingLxdService lxdService) throws IOException, InterruptedException;
 
-	public ILxdService getLxdService() {
+	public ICachingLxdService getLxdService() {
 		return lxdService;
 	}
 
-	public void setLxdService(ILxdService lxdService) {
+	public void setLxdService(ICachingLxdService lxdService) {
 		this.lxdService = lxdService;
 	}
 

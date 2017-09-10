@@ -48,12 +48,12 @@ public class App {
 			for (int i = 0; i < args.length; i++) {
 				if (args[i].equals("s")) {
 					LOG.info("");
-					LOG.info(service.getServerInfo());
+					LOG.info(service.loadServerInfo());
 				}
 				else if (args[i].equals("c")) {
 					LOG.info("");
 					if (args.length - 1 == i || args[i + 1].equals("o") || args[i + 1].equals("i") || args[i + 1].equals("s")) {
-						Collection<Container> containers = service.getContainerMap().values();
+						Collection<Container> containers = service.loadContainerMap().values();
 						LOG.info("containers=" + containers.size());
 						for (Container container : containers) {
 							LOG.info("container=" + container);
@@ -61,7 +61,7 @@ public class App {
 					}
 					else if (args.length > i + 1 && !args[i + 1].equals("o") && !args[i + 1].equals("i") || !args[i + 1].equals("s")) {
 						String name = args[i + 1];
-						Container container = service.getContainer(name);
+						Container container = service.loadContainer(name);
 						i++;
 						if (container == null && args.length > i + 1 && !args[i + 1].equals("create")) {
 							LOG.error("container " + name + " does not exist");
@@ -88,13 +88,13 @@ public class App {
 								break;
 							case "snaps":
 								LOG.info("Snapshots for container=" + container);
-								LOG.info(service.getSnapshots(container));
+								LOG.info(service.loadSnapshotMap(container).values());
 								break;
 							case "file":
 								if (args.length > i + 2 && !args[i + 2].equals("o") && !args[i + 2].equals("i") || !args[i + 2].equals("s")) {
 									String filepath = args[i + 2];
 									LOG.info("Getting file " + filepath + " for container=" + container);
-									LOG.info(service.getFile(container.getName(), filepath));
+									LOG.info(service.loadFile(container.getName(), filepath));
 								}
 								else {
 									LOG.warn("Cannot get file for container=" + container + ". Filepath not provided");
@@ -112,7 +112,7 @@ public class App {
 				}
 				else if (args[i].equals("i")) {
 					LOG.info("");
-					Map<String, Image> images = service.getImageMap();
+					Map<String, Image> images = service.loadImageMap();
 					if (args.length - 1 == i || args[i + 1].equals("o") || args[i + 1].equals("c") || args[i + 1].equals("s")) {
 						LOG.info("images=" + images.size());
 						for (Image image : images.values()) {
@@ -132,7 +132,7 @@ public class App {
 				else if (args[i].equals("o")) {
 					LOG.info("");
 					if (args.length - 1 == i || args[i + 1].equals("i") || args[i + 1].equals("c") || args[i + 1].equals("s")) {
-						Collection<Operation> operations = service.getOperations();
+						Collection<Operation> operations = service.loadOperationMap().values();
 						LOG.info("operations=" + operations.size());
 						for (Operation operation : operations) {
 							LOG.info("operation=" + operation);
@@ -140,7 +140,7 @@ public class App {
 					}
 					else if (args.length > i + 1 && !args[i + 1].equals("i") && !args[i + 1].equals("c") || !args[i + 1].equals("s")) {
 						String name = args[i + 1];
-						Operation operation = service.getOperation(name);
+						Operation operation = service.loadOperation(name);
 						LOG.info("operation=" + operation);
 						i++;
 					}

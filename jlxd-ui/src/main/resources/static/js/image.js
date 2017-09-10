@@ -19,7 +19,7 @@ $(document).ready(function () {
 
 function reloadImages() {
     var placeholderEle = $("#images");
-    var postUrl = "/image/search";
+    var postUrl = "/image/reload";
     var templatePath = "template/handlebars/image.html";
     var search = {};
     search["searchTerm"] = $("#searchTerm").val();

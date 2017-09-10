@@ -1,4 +1,4 @@
-package au.com.jcloud.lxd.service;
+package au.com.jcloud.lxd.service.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
@@ -7,7 +7,6 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 
 import java.io.IOException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,15 +19,14 @@ import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
 import au.com.jcloud.lxd.model.Network;
 import au.com.jcloud.lxd.model.Profile;
-import au.com.jcloud.lxd.service.impl.AbstractLxdService;
 
-public class AbstractLxdServiceTest {
+public class CachingLxdServiceImplTest {
 
-	private AbstractLxdService service;
+	private CachingLxdServiceImpl service;
 
 	@Before
 	public void setup() {
-		service = spy(AbstractLxdService.class);
+		service = spy(CachingLxdServiceImpl.class);
 	}
 
 	@Test
@@ -40,44 +38,44 @@ public class AbstractLxdServiceTest {
 	}
 
 	@Test
-	public void getContainers() throws IOException, InterruptedException {
+	public void getContainerMap() throws IOException, InterruptedException {
 		Map<String, Container> containerMap = new HashMap<>();
 		Container container = mock(Container.class);
 		containerMap.put("test", container);
-		doReturn(containerMap).when(service).loadContainers();
-		Collection<Container> result = service.getContainers();
-		assertEquals(container, result.iterator().next());
+		doReturn(containerMap).when(service).getContainerMap();
+		Map<String, Container> result = service.getContainerMap();
+		assertEquals(container, result.values().iterator().next());
 		assertEquals(container, service.getContainer("test"));
 	}
 
 	@Test
-	public void getContainers_shouldHandleException() throws IOException, InterruptedException {
+	public void getContainerMap_shouldHandleException() throws IOException, InterruptedException {
 		Map<String, Container> containerMap = new HashMap<>();
 		Container container = mock(Container.class);
 		containerMap.put("test", container);
-		doThrow(new RuntimeException("error")).when(service).loadContainers();
-		Collection<Container> result = service.getContainers();
+		doThrow(new RuntimeException("error")).when(service).loadContainerMap();
+		Map<String, Container> result = service.getContainerMap();
 		assertEquals(0, result.size());
 	}
 
 	@Test
-	public void getImages() throws IOException, InterruptedException {
+	public void getImageMap() throws IOException, InterruptedException {
 		Map<String, Image> imageMap = new HashMap<>();
 		Image image = mock(Image.class);
 		imageMap.put("test", image);
-		doReturn(imageMap).when(service).loadImages();
-		Collection<Image> result = service.getImages();
-		assertEquals(image, result.iterator().next());
+		doReturn(imageMap).when(service).getImageMap();
+		Map<String,Image> result = service.getImageMap();
+		assertEquals(image, result.values().iterator().next());
 		assertEquals(image, service.getImage("test"));
 	}
 
 	@Test
-	public void getImages_shouldHandleException() throws IOException, InterruptedException {
+	public void getImageMap_shouldHandleException() throws IOException, InterruptedException {
 		Map<String, Image> imageMap = new HashMap<>();
 		Image image = mock(Image.class);
 		imageMap.put("test", image);
-		doThrow(new RuntimeException("error")).when(service).loadImages();
-		Collection<Image> result = service.getImages();
+		doThrow(new RuntimeException("error")).when(service).loadImageMap();
+		Map<String,Image> result = service.getImageMap();
 		assertEquals(0, result.size());
 	}
 
@@ -86,9 +84,9 @@ public class AbstractLxdServiceTest {
 		Map<String, Network> networkMap = new HashMap<>();
 		Network network = mock(Network.class);
 		networkMap.put("test", network);
-		doReturn(networkMap).when(service).loadNetworks();
-		Collection<Network> result = service.getNetworks();
-		assertEquals(network, result.iterator().next());
+		doReturn(networkMap).when(service).getNetworkMap();
+		Map<String, Network> result = service.getNetworkMap();
+		assertEquals(network, result.values().iterator().next());
 		assertEquals(network, service.getNetwork("test"));
 	}
 
@@ -97,50 +95,50 @@ public class AbstractLxdServiceTest {
 		Map<String, Network> networkMap = new HashMap<>();
 		Network network = mock(Network.class);
 		networkMap.put("test", network);
-		doThrow(new RuntimeException("error")).when(service).loadNetworks();
-		Collection<Network> result = service.getNetworks();
+		doThrow(new RuntimeException("error")).when(service).loadNetworkMap();
+		Map<String, Network> result = service.getNetworkMap();
 		assertEquals(0, result.size());
 	}
 
 	@Test
-	public void getProfiles() throws IOException, InterruptedException {
+	public void getProfileMap() throws IOException, InterruptedException {
 		Map<String, Profile> profileMap = new HashMap<>();
 		Profile profile = mock(Profile.class);
 		profileMap.put("test", profile);
-		doReturn(profileMap).when(service).loadProfiles();
-		Collection<Profile> result = service.getProfiles();
-		assertEquals(profile, result.iterator().next());
+		doReturn(profileMap).when(service).getProfileMap();
+		Map<String, Profile> result = service.getProfileMap();
+		assertEquals(profile, result.values().iterator().next());
 		assertEquals(profile, service.getProfile("test"));
 	}
 
 	@Test
-	public void getProfiles_shouldHandleException() throws IOException, InterruptedException {
+	public void getProfileMap_shouldHandleException() throws IOException, InterruptedException {
 		Map<String, Profile> profileMap = new HashMap<>();
 		Profile profile = mock(Profile.class);
 		profileMap.put("test", profile);
-		doThrow(new RuntimeException("error")).when(service).loadProfiles();
-		Collection<Profile> result = service.getProfiles();
+		doThrow(new RuntimeException("error")).when(service).loadProfileMap();
+		Map<String, Profile> result = service.getProfileMap();
 		assertEquals(0, result.size());
 	}
 
 	@Test
-	public void getCertificates() throws IOException, InterruptedException {
+	public void getCertificateMap() throws IOException, InterruptedException {
 		Map<String, Certificate> certificateMap = new HashMap<>();
 		Certificate certificate = mock(Certificate.class);
 		certificateMap.put("test", certificate);
-		doReturn(certificateMap).when(service).loadCertificates();
-		Collection<Certificate> result = service.getCertificates();
-		assertEquals(certificate, result.iterator().next());
+		doReturn(certificateMap).when(service).getCertificateMap();
+		Map<String, Certificate> result = service.getCertificateMap();
+		assertEquals(certificate, result.values().iterator().next());
 		assertEquals(certificate, service.getCertificate("test"));
 	}
 
 	@Test
-	public void getCertificates_shouldHandleException() throws IOException, InterruptedException {
+	public void getCertificateMap_shouldHandleException() throws IOException, InterruptedException {
 		Map<String, Certificate> certificateMap = new HashMap<>();
 		Certificate certificate = mock(Certificate.class);
 		certificateMap.put("test", certificate);
-		doThrow(new RuntimeException("error")).when(service).loadCertificates();
-		Collection<Certificate> result = service.getCertificates();
+		doThrow(new RuntimeException("error")).when(service).loadCertificateMap();
+		Map<String, Certificate> result = service.getCertificateMap();
 		assertEquals(0, result.size());
 	}
 }

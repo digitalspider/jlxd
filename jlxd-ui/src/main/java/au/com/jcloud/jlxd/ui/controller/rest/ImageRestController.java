@@ -22,7 +22,7 @@ import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
 import au.com.jcloud.jlxd.ui.search.SearchCriteria;
 import au.com.jcloud.lxd.LxdConstants;
 import au.com.jcloud.lxd.model.Image;
-import au.com.jcloud.lxd.service.ILxdService;
+import au.com.jcloud.lxd.service.ICachingLxdService;
 
 @RequestMapping("/image")
 @RestController
@@ -79,7 +79,7 @@ public class ImageRestController extends BaseRestController<Image> {
 	}
 
 	@Override
-	public Map<String, Image> loadEntities(ILxdService lxdService) throws IOException, InterruptedException {
+	public Map<String, Image> loadEntities(ICachingLxdService lxdService) throws IOException, InterruptedException {
 		Map<String, Image> images = new HashMap<>();
 		if (LxdConstants.IS_WINDOWS && StringUtils.isEmpty(lxdService.getLxdServerCredential().getRemoteHostAndPort())) {
 			Image image = new Image();

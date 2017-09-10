@@ -19,7 +19,7 @@ $(document).ready(function () {
 
 function reloadProfiles() {
     var placeholderEle = $("#profiles");
-    var postUrl = "/profile/search";
+    var postUrl = "/profile/reload";
     var templatePath = "template/handlebars/profile.html";
     var search = {};
     search["searchTerm"] = $("#searchTerm").val();

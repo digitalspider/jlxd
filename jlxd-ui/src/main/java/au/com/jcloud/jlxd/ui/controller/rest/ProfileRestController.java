@@ -22,7 +22,7 @@ import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
 import au.com.jcloud.jlxd.ui.search.SearchCriteria;
 import au.com.jcloud.lxd.LxdConstants;
 import au.com.jcloud.lxd.model.Profile;
-import au.com.jcloud.lxd.service.ILxdService;
+import au.com.jcloud.lxd.service.ICachingLxdService;
 
 @RequestMapping("/profile")
 @RestController
@@ -79,7 +79,7 @@ public class ProfileRestController extends BaseRestController<Profile> {
 	}
 
 	@Override
-	public Map<String, Profile> loadEntities(ILxdService lxdService) throws IOException, InterruptedException {
+	public Map<String, Profile> loadEntities(ICachingLxdService lxdService) throws IOException, InterruptedException {
 		Map<String, Profile> profiles = new HashMap<>();
 		if (LxdConstants.IS_WINDOWS && StringUtils.isEmpty(lxdService.getLxdServerCredential().getRemoteHostAndPort())) {
 			Profile p = new Profile();

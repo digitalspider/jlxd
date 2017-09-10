@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import au.com.jcloud.jlxd.ui.Constants;
 import au.com.jcloud.jlxd.ui.model.Server;
 import au.com.jcloud.lxd.bean.LxdServerCredential;
-import au.com.jcloud.lxd.service.ILxdService;
+import au.com.jcloud.lxd.service.ICachingLxdService;
 
 @Service
 public class ServerService {
@@ -23,7 +23,7 @@ public class ServerService {
 	public static final String SERVER_NAME_DEFAULT = "default";
 
 	@Autowired
-	private ILxdService lxdService;
+	private ICachingLxdService lxdService;
 
 	@Autowired
 	private RequestHelperService requestHelperService;
@@ -85,7 +85,7 @@ public class ServerService {
 		Server server = new Server();
 		server.setName(name);
 		server.setDescription(description);
-		ILxdService service = lxdService.clone();
+		ICachingLxdService service = (ICachingLxdService) lxdService.clone();
 		LxdServerCredential credential = new LxdServerCredential(hostAndPort);
 		if (StringUtils.isNotBlank(remoteCert)) {
 			credential.setRemoteCert(remoteCert);
@@ -98,7 +98,7 @@ public class ServerService {
 		return server;
 	}
 
-	public void setLxdService(ILxdService lxdService) {
+	public void setLxdService(ICachingLxdService lxdService) {
 		this.lxdService = lxdService;
 	}
 }
