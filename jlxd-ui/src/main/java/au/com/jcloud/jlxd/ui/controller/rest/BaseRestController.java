@@ -5,18 +5,23 @@ import java.util.Collection;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
 import au.com.jcloud.jlxd.ui.model.Server;
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
+import au.com.jcloud.jlxd.ui.search.SearchCriteria;
 import au.com.jcloud.jlxd.ui.service.ServerService;
 import au.com.jcloud.lxd.LxdConstants;
 import au.com.jcloud.lxd.service.ICachingLxdService;
@@ -42,7 +47,7 @@ public abstract class BaseRestController<T> {
 	}
 
 	@PostMapping("/reload")
-	public ResponseEntity<?> reload(HttpServletRequest request, Class<T> classType) {
+	public ResponseEntity<?> reloadEntity(HttpServletRequest request, Class<T> classType) {
 		AjaxResponseBody<T> result = new AjaxResponseBody<>();
 		try {
 			if (isDefaultServerAndWindowsOs(lxdService)) {
@@ -66,7 +71,7 @@ public abstract class BaseRestController<T> {
 	}
 
 	@RequestMapping(value = "/view/{name}", method = { RequestMethod.GET, RequestMethod.POST })
-	public ResponseEntity<?> viewContainer(HttpServletRequest request, @PathVariable String name) {
+	public ResponseEntity<?> viewEntity(HttpServletRequest request, @PathVariable String name) {
 		try {
 			T entity = getEntity(getLxdService(request), name);
 			if (entity == null) {
@@ -79,6 +84,54 @@ public abstract class BaseRestController<T> {
 		}
 	}
 
+	@RequestMapping(value = "/search/{searchTerm}", method = { RequestMethod.GET, RequestMethod.POST })
+	public ResponseEntity<?> searchEntity(HttpServletRequest request, @PathVariable String searchTerm) {
+		SearchCriteria searchCriteria = new SearchCriteria();
+		searchCriteria.setSearchTerm(searchTerm);
+		return searchEntity(request, searchCriteria, null);
+	}
+
+	@PostMapping("/search")
+	public ResponseEntity<?> searchEntity(HttpServletRequest request,
+			@Valid @RequestBody SearchCriteria search, Errors errors) {
+
+		AjaxResponseBody<T> result = new AjaxResponseBody<>();
+
+		//If error, just return a 400 bad request, along with the error message
+		if (errors != null && errors.hasErrors()) {
+			StringBuffer errorString = new StringBuffer();
+			for (ObjectError error : errors.getAllErrors()) {
+				if (errorString.length() > 0) {
+					errorString.append(",");
+				}
+				errorString.append(error.getDefaultMessage());
+			}
+			result.setMsg(errorString.toString());
+			return ResponseEntity.badRequest().body(result);
+		}
+
+		try {
+			Map<String, T> entities = getEntities(request);
+
+			String searchTerm = search.getSearchTerm();
+			if (entities.isEmpty()) {
+				throw new Exception("no search results found!");
+			}
+			else if (StringUtils.isEmpty(searchTerm)) {
+				result.setMsg("Showing all search results!");
+				result.setResult(entities.values());
+			}
+			else {
+				performSearch(entities, search, result);
+			}
+		} catch (Exception e) {
+			LOG.error(e, e);
+			result.setMsg(e.getMessage());
+		}
+
+		return ResponseEntity.ok(result);
+	}
+
 	protected boolean isDefaultServerAndWindowsOs(ILxdService lxdService) {
 		return LxdConstants.IS_WINDOWS && lxdService.getLxdServerCredential() != null && StringUtils.isEmpty(lxdService.getLxdServerCredential().getRemoteHostAndPort());
 	}
@@ -86,6 +139,8 @@ public abstract class BaseRestController<T> {
 	public abstract T getEntity(ICachingLxdService lxdService, String name) throws IOException, InterruptedException;
 
 	public abstract Map<String, T> getEntities(ICachingLxdService lxdService) throws IOException, InterruptedException;
+
+	public abstract void performSearch(Map<String, T> entities, SearchCriteria search, AjaxResponseBody<T> result) throws Exception;
 
 	public Map<String, T> getEntities(HttpServletRequest request) throws IOException, InterruptedException {
 		return getEntities(getLxdService(request));

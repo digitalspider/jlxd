@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 import au.com.jcloud.jlxd.ui.bean.AddContainerInput;
 import au.com.jcloud.jlxd.ui.model.Server;
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
+import au.com.jcloud.jlxd.ui.search.SearchCriteria;
 import au.com.jcloud.lxd.bean.ImageConfig;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.State;
@@ -63,73 +64,6 @@ public class ContainerRestController extends BaseRestController<Container> {
 	@Override
 	public Container getEntity(ICachingLxdService lxdService, String name) {
 		return lxdService.getContainer(name);
-	}
-
-	@RequestMapping(value = "/search", method = { RequestMethod.GET, RequestMethod.POST })
-	public ResponseEntity<?> getSearchResult(HttpServletRequest request) {
-		return getSearchResult(request, StringUtils.EMPTY);
-	}
-
-	@RequestMapping(value = "/search/{searchTerm}", method = { RequestMethod.GET, RequestMethod.POST })
-	public ResponseEntity<?> getSearchResult(HttpServletRequest request, @PathVariable String searchTerm) {
-
-		AjaxResponseBody<Container> result = new AjaxResponseBody<>();
-
-		if (StringUtils.isEmpty(searchTerm)) {
-			result.setMsg("Showing all containers!");
-		}
-		int containersFound = 0;
-
-		// Get all servers
-		Map<String, Server> serverMap = getServerService().getServerMap(request);
-		Server serverInRequest = getServerService().getServerFromSession(request);
-		Collection<Server> serversToSearch = new ArrayList<>();
-		if (serverInRequest != null) {
-			serversToSearch.add(serverInRequest);
-		}
-		else {
-			serversToSearch.addAll(serverMap.values());
-		}
-
-		Collection<Container> resultContainers = new ArrayList<>();
-		StringBuilder serverString = new StringBuilder();
-		for (Server server : serversToSearch) {
-			try {
-				List<Container> containers = findContainersForLxdService(server.getLxdService(), searchTerm);
-				containersFound += containers.size();
-				LOG.debug("Fonund " + containers.size() + " containers with name: " + searchTerm);
-				server.setContainers(containers);
-				resultContainers.addAll(containers);
-				if (serverString.length() > 0) {
-					serverString.append(",");
-				}
-				serverString.append(server.getName());
-			} catch (Exception e) {
-				LOG.error(e, e);
-				result.setMsg(e.getMessage());
-				return ResponseEntity.badRequest().body(result);
-			}
-		}
-
-		result.setResult(resultContainers);
-		result.setMsg("success. found " + containersFound + " conatiners in server(s) " + serverString + " for searchTerm: " + searchTerm);
-
-		return ResponseEntity.ok(result);
-	}
-
-	private List<Container> findContainersForLxdService(ICachingLxdService lxdService, String searchTerm) throws IOException, InterruptedException {
-		List<Container> result = new ArrayList<>();
-		Map<String, Container> containers = getEntities(lxdService);
-		if (containers.isEmpty()) {
-			return result;
-		}
-		else if (StringUtils.isEmpty(searchTerm)) {
-			result.addAll(containers.values());
-		}
-		else if (containers.containsKey(searchTerm)) {
-			result.add(containers.get(searchTerm));
-		}
-		return result;
 	}
 
 	@Override
@@ -203,7 +137,7 @@ public class ContainerRestController extends BaseRestController<Container> {
 	}
 
 	@PostMapping("/create")
-	public ResponseEntity<?> createNewFromForm(HttpServletRequest request,
+	public ResponseEntity<?> createNewContainer(HttpServletRequest request,
 			@Valid @RequestBody AddContainerInput addContainerInput, Errors errors) {
 		AjaxResponseBody<Container> result = new AjaxResponseBody<>();
 
@@ -248,8 +182,9 @@ public class ContainerRestController extends BaseRestController<Container> {
 		return ResponseEntity.ok(result);
 	}
 
+	// TODO: No longer used.
 	@PostMapping("/create/{newContainerName}/{imageAlias}/{ephemeral}/{profile}/{config}")
-	public ResponseEntity<?> createNew(HttpServletRequest request, @PathVariable String newContainerName,
+	public ResponseEntity<?> createNewContainerByUrl(HttpServletRequest request, @PathVariable String newContainerName,
 			@PathVariable String imageAlias, @PathVariable String ephemeral, @PathVariable String profile,
 			@PathVariable String config) {
 
@@ -284,4 +219,73 @@ public class ContainerRestController extends BaseRestController<Container> {
 		}
 		return ResponseEntity.ok(result);
 	}
+
+	@Override
+	public void performSearch(Map<String, Container> entities, SearchCriteria search, AjaxResponseBody<Container> result) throws Exception {
+		String searchTerm = search.getSearchTerm();
+		if (entities.containsKey(searchTerm)) {
+			result.getResult().add(entities.get(searchTerm));
+			result.setMsg("success. found image: " + entities.get(searchTerm));
+		}
+		else {
+			throw new Exception("No image found with name: " + searchTerm);
+		}
+	}
+
+	private ResponseEntity<?> oldSearch(HttpServletRequest request, @PathVariable String searchTerm) {
+		AjaxResponseBody<Container> result = new AjaxResponseBody<>();
+		int containersFound = 0;
+
+		// Get all servers
+		Map<String, Server> serverMap = getServerService().getServerMap(request);
+		Server serverInRequest = getServerService().getServerFromSession(request);
+		Collection<Server> serversToSearch = new ArrayList<>();
+		if (serverInRequest != null) {
+			serversToSearch.add(serverInRequest);
+		}
+		else {
+			serversToSearch.addAll(serverMap.values());
+		}
+
+		Collection<Container> resultContainers = new ArrayList<>();
+		StringBuilder serverString = new StringBuilder();
+		for (Server server : serversToSearch) {
+			try {
+				List<Container> containers = findContainersForLxdService(server.getLxdService(), searchTerm);
+				containersFound += containers.size();
+				LOG.debug("Fonund " + containers.size() + " containers with name: " + searchTerm);
+				server.setContainers(containers);
+				resultContainers.addAll(containers);
+				if (serverString.length() > 0) {
+					serverString.append(",");
+				}
+				serverString.append(server.getName());
+			} catch (Exception e) {
+				LOG.error(e, e);
+				result.setMsg(e.getMessage());
+				return ResponseEntity.badRequest().body(result);
+			}
+		}
+
+		result.setResult(resultContainers);
+		result.setMsg("success. found " + containersFound + " conatiners in server(s) " + serverString + " for searchTerm: " + searchTerm);
+
+		return ResponseEntity.ok(result);
+	}
+
+	private List<Container> findContainersForLxdService(ICachingLxdService lxdService, String searchTerm) throws IOException, InterruptedException {
+		List<Container> result = new ArrayList<>();
+		Map<String, Container> containers = getEntities(lxdService);
+		if (containers.isEmpty()) {
+			return result;
+		}
+		else if (StringUtils.isEmpty(searchTerm)) {
+			result.addAll(containers.values());
+		}
+		else if (containers.containsKey(searchTerm)) {
+			result.add(containers.get(searchTerm));
+		}
+		return result;
+	}
+
 }

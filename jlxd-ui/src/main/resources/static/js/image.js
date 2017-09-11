@@ -1,29 +1,32 @@
 $(document).ready(function () {
-
+	// Search form
     $("#search-form").submit(function (event) {
         event.preventDefault();
-        var placeholderEle = $("#images");
-        var postUrl = "/image/search/"+$("#searchTerm").val();
-        var templatePath = "template/handlebars/image.html";
-        var search = {};
-        search["searchTerm"] = $("#searchTerm").val();
-        var jsonData = JSON.stringify(search);
-
-        fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
+        var searchTerm = $("#searchTerm").val();
+        searchImages(searchTerm);
     });
 
     // initialise the page
 	getAllServers();
-	reloadImages();
+	searchImages("");
 });
+
+function searchImages(searchTerm) {
+    var placeholderEle = $("#images");
+    var postUrl = "/image/search";
+    var templatePath = "template/handlebars/image.html";
+    var searchInput = {};
+    searchInput["searchTerm"] = searchTerm;
+    var jsonData = JSON.stringify(searchInput);
+
+	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
+}
 
 function reloadImages() {
     var placeholderEle = $("#images");
     var postUrl = "/image/reload";
     var templatePath = "template/handlebars/image.html";
-    var search = {};
-    search["searchTerm"] = $("#searchTerm").val();
-    var jsonData = JSON.stringify(search);
+    var jsonData = "";
 
 	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
 }

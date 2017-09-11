@@ -1,30 +1,32 @@
 $(document).ready(function () {
-
+	// Search form
     $("#search-form").submit(function (event) {
         event.preventDefault();
-        var placeholderEle = $("#profiles");
-        var postUrl = "/profile/search/"+$("#searchTerm").val();
-        var templatePath = "template/handlebars/profile.html";
-        var search = {};
-        search["searchTerm"] = $("#searchTerm").val();
-        var jsonData = JSON.stringify(search);
-
-        fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
+        var searchTerm = $("#searchTerm").val();
+        searchProfiles(searchTerm);
     });
 
     // initialise the page
 	getAllServers();
-	reloadProfiles();
+	searchProfiles("");
 });
+
+function searchProfiles(searchTerm) {
+    var placeholderEle = $("#profiles");
+    var postUrl = "/profile/search";
+    var templatePath = "template/handlebars/profile.html";
+    var searchInput = {};
+    searchInput["searchTerm"] = searchTerm;
+    var jsonData = JSON.stringify(searchInput);
+
+	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
+}
 
 function reloadProfiles() {
     var placeholderEle = $("#profiles");
     var postUrl = "/profile/reload";
     var templatePath = "template/handlebars/profile.html";
-    var search = {};
-    search["searchTerm"] = $("#searchTerm").val();
-    var jsonData = JSON.stringify(search);
-
+    var jsonData = "";
 
 	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
 }
