@@ -49,7 +49,7 @@ public class ImageRestController extends BaseRestController<Image> {
 		}
 
 		try {
-			Map<String, Image> images = loadEntities(getLxdService(request));
+			Map<String, Image> images = getEntities(request);
 
 			String searchTerm = search.getSearchTerm();
 			if (images.isEmpty()) {
@@ -78,7 +78,7 @@ public class ImageRestController extends BaseRestController<Image> {
 	}
 
 	@Override
-	public Map<String, Image> loadEntities(ICachingLxdService lxdService) throws IOException, InterruptedException {
+	public Map<String, Image> getEntities(ICachingLxdService lxdService) throws IOException, InterruptedException {
 		Map<String, Image> images = new HashMap<>();
 		if (isDefaultServerAndWindowsOs(lxdService)) {
 			Image image = new Image();
@@ -97,5 +97,10 @@ public class ImageRestController extends BaseRestController<Image> {
 			images = getLxdService().getImageMap();
 		}
 		return images;
+	}
+
+	@Override
+	public Image getEntity(ICachingLxdService lxdService, String name) {
+		return lxdService.getImage(name);
 	}
 }

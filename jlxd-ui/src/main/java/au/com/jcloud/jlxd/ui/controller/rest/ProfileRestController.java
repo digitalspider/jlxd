@@ -49,7 +49,7 @@ public class ProfileRestController extends BaseRestController<Profile> {
 		}
 
 		try {
-			Map<String, Profile> profiles = loadEntities(getLxdService(request));
+			Map<String, Profile> profiles = getEntities(request);
 
 			String searchTerm = search.getSearchTerm();
 			if (profiles.isEmpty()) {
@@ -78,7 +78,7 @@ public class ProfileRestController extends BaseRestController<Profile> {
 	}
 
 	@Override
-	public Map<String, Profile> loadEntities(ICachingLxdService lxdService) throws IOException, InterruptedException {
+	public Map<String, Profile> getEntities(ICachingLxdService lxdService) throws IOException, InterruptedException {
 		Map<String, Profile> profiles = new HashMap<>();
 		if (isDefaultServerAndWindowsOs(lxdService)) {
 			Profile p = new Profile();
@@ -92,5 +92,10 @@ public class ProfileRestController extends BaseRestController<Profile> {
 		}
 
 		return profiles;
+	}
+
+	@Override
+	public Profile getEntity(ICachingLxdService lxdService, String name) {
+		return lxdService.getProfile(name);
 	}
 }

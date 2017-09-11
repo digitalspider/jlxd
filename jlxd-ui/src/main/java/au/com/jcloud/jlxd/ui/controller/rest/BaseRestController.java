@@ -10,7 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 import au.com.jcloud.jlxd.ui.model.Server;
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
@@ -45,15 +48,15 @@ public abstract class BaseRestController<T> {
 			if (isDefaultServerAndWindowsOs(lxdService)) {
 				getLxdService(request).reloadContainerCache();
 			}
-			Collection<T> entities = loadEntities(getLxdService(request)).values();
+			Collection<T> entities = getEntities(getLxdService(request)).values();
 			result.setResult(entities);
-			if (classType==null && entities!=null && !entities.isEmpty()) {
+			if (classType == null && entities != null && !entities.isEmpty()) {
 				T entity = entities.iterator().next();
-				if (entity !=null) {
+				if (entity != null) {
 					classType = (Class<T>) entity.getClass();
 				}
 			}
-			result.setMsg((classType!=null? classType.getSimpleName() : StringUtils.EMPTY) + " reloaded");
+			result.setMsg((classType != null ? classType.getSimpleName() : StringUtils.EMPTY) + " reloaded");
 		} catch (Exception e) {
 			LOG.error(e, e);
 			result.setMsg(e.getMessage());
@@ -62,11 +65,31 @@ public abstract class BaseRestController<T> {
 		return ResponseEntity.ok(result);
 	}
 
-	protected boolean isDefaultServerAndWindowsOs(ILxdService lxdService) {
-		return LxdConstants.IS_WINDOWS && lxdService.getLxdServerCredential()!=null && StringUtils.isEmpty(lxdService.getLxdServerCredential().getRemoteHostAndPort());
+	@RequestMapping(value = "/view/{name}", method = { RequestMethod.GET, RequestMethod.POST })
+	public ResponseEntity<?> viewContainer(HttpServletRequest request, @PathVariable String name) {
+		try {
+			T entity = getEntity(getLxdService(request), name);
+			if (entity == null) {
+				throw new Exception(name + " could not be found");
+			}
+			return ResponseEntity.ok(entity);
+		} catch (Exception e) {
+			LOG.error(e, e);
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
 	}
 
-	public abstract Map<String, T> loadEntities(ICachingLxdService lxdService) throws IOException, InterruptedException;
+	protected boolean isDefaultServerAndWindowsOs(ILxdService lxdService) {
+		return LxdConstants.IS_WINDOWS && lxdService.getLxdServerCredential() != null && StringUtils.isEmpty(lxdService.getLxdServerCredential().getRemoteHostAndPort());
+	}
+
+	public abstract T getEntity(ICachingLxdService lxdService, String name) throws IOException, InterruptedException;
+
+	public abstract Map<String, T> getEntities(ICachingLxdService lxdService) throws IOException, InterruptedException;
+
+	public Map<String, T> getEntities(HttpServletRequest request) throws IOException, InterruptedException {
+		return getEntities(getLxdService(request));
+	}
 
 	public ICachingLxdService getLxdService() {
 		return lxdService;

@@ -37,6 +37,34 @@ public class ContainerRestController extends BaseRestController<Container> {
 
 	private static final Logger LOG = Logger.getLogger(ContainerRestController.class);
 
+	@RequestMapping(value = "/reload/state/{name}", method = { RequestMethod.GET, RequestMethod.POST })
+	public String reloadState(HttpServletRequest request, @PathVariable String name) {
+		try {
+			if (StringUtils.isBlank(name)) {
+				throw new IllegalArgumentException("Cannot start container if containerName is blank");
+			}
+			ICachingLxdService lxdService = getLxdService(request);
+			Container container = lxdService.getContainer(name);
+			if (container == null) {
+				throw new Exception("Could not find container with name: " + name);
+			}
+			State state = lxdService.loadContainerState(name);
+			if (state == null) {
+				throw new Exception("Could not find state for container with name: " + name);
+			}
+			container.setState(state);
+			return state.getStatus();
+		} catch (Exception e) {
+			LOG.error(e, e);
+			return e.getMessage();
+		}
+	}
+
+	@Override
+	public Container getEntity(ICachingLxdService lxdService, String name) {
+		return lxdService.getContainer(name);
+	}
+
 	@RequestMapping(value = "/search", method = { RequestMethod.GET, RequestMethod.POST })
 	public ResponseEntity<?> getSearchResult(HttpServletRequest request) {
 		return getSearchResult(request, StringUtils.EMPTY);
@@ -91,7 +119,7 @@ public class ContainerRestController extends BaseRestController<Container> {
 
 	private List<Container> findContainersForLxdService(ICachingLxdService lxdService, String searchTerm) throws IOException, InterruptedException {
 		List<Container> result = new ArrayList<>();
-		Map<String, Container> containers = loadEntities(lxdService);
+		Map<String, Container> containers = getEntities(lxdService);
 		if (containers.isEmpty()) {
 			return result;
 		}
@@ -105,7 +133,7 @@ public class ContainerRestController extends BaseRestController<Container> {
 	}
 
 	@Override
-	public Map<String, Container> loadEntities(ICachingLxdService lxdService) throws IOException, InterruptedException {
+	public Map<String, Container> getEntities(ICachingLxdService lxdService) throws IOException, InterruptedException {
 		Map<String, Container> containers = new HashMap<>();
 		if (isDefaultServerAndWindowsOs(lxdService)) {
 			Container c = new Container();
@@ -132,10 +160,6 @@ public class ContainerRestController extends BaseRestController<Container> {
 		}
 		else {
 			containers = lxdService.getContainerMap();
-			for (Container container : containers.values()) {
-				State state = lxdService.getContainerState(container.getName());
-				container.setState(state);
-			}
 		}
 		return containers;
 	}
@@ -149,7 +173,7 @@ public class ContainerRestController extends BaseRestController<Container> {
 				throw new IllegalArgumentException("Cannot start container if containerName is blank");
 			}
 			getLxdService(request).startContainer(containerName);
-			result.setResult(loadEntities(getLxdService(request)).values());
+			result.setResult(getEntities(request).values());
 			result.setMsg("container started: " + containerName);
 		} catch (Exception e) {
 			LOG.error(e, e);
@@ -168,7 +192,7 @@ public class ContainerRestController extends BaseRestController<Container> {
 				throw new IllegalArgumentException("Cannot start container if containerName is blank");
 			}
 			getLxdService(request).stopContainer(containerName);
-			result.setResult(loadEntities(getLxdService(request)).values());
+			result.setResult(getEntities(request).values());
 			result.setMsg("container stopped: " + containerName);
 		} catch (Exception e) {
 			LOG.error(e, e);
@@ -192,8 +216,30 @@ public class ContainerRestController extends BaseRestController<Container> {
 		try {
 			String containerName = addContainerInput.getName();
 			getLxdService(request).createContainer(addContainerInput.getName(), addContainerInput.getImageAlias(), addContainerInput);
-			result.setResult(loadEntities(getLxdService(request)).values());
+			result.setResult(getEntities(request).values());
 			result.setMsg("container created: " + containerName);
+		} catch (Exception e) {
+			LOG.error(e, e);
+			result.setMsg(e.getMessage());
+			return ResponseEntity.badRequest().body(result);
+		}
+		return ResponseEntity.ok(result);
+	}
+
+	@PostMapping("/delete/{name}")
+	public ResponseEntity<?> deleteContainer(HttpServletRequest request,
+			@PathVariable String name) {
+		AjaxResponseBody<Container> result = new AjaxResponseBody<>();
+
+		try {
+			ICachingLxdService lxdService = getLxdService(request);
+			Container container = lxdService.getContainer(name);
+			if (container == null) {
+				throw new Exception("Could not find container with name: " + name);
+			}
+			lxdService.deleteContainer(name);
+			result.setResult(getEntities(request).values());
+			result.setMsg("container deleted: " + name);
 		} catch (Exception e) {
 			LOG.error(e, e);
 			result.setMsg(e.getMessage());
@@ -230,7 +276,7 @@ public class ContainerRestController extends BaseRestController<Container> {
 				throw new Exception("Could not get newly created container. " + newContainerName);
 			}
 			result.setMsg("container created: " + container.getName());
-			result.setResult(loadEntities(getLxdService(request)).values());
+			result.setResult(getEntities(request).values());
 		} catch (Exception e) {
 			LOG.error(e, e);
 			result.setMsg(e.getMessage());
