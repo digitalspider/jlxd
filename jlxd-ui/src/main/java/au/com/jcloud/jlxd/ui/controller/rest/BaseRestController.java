@@ -135,7 +135,7 @@ public abstract class BaseRestController<T> {
 	public abstract Map<String, T> getEntities(ICachingLxdService lxdService) throws IOException, InterruptedException;
 
 	public void performSearch(Map<String, T> entities, SearchCriteria search, AjaxResponseBody<T> result) throws Exception {
-		String searchTerm = search.getSearchTerm();
+		String searchTerm = search.getSearchTerm().trim();
 		for (String name : entities.keySet()) {
 			T entity = entities.get(name);
 			if (name.toLowerCase().contains(searchTerm.toLowerCase())) {
