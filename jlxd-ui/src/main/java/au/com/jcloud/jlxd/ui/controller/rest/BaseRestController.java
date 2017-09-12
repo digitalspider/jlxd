@@ -106,7 +106,7 @@ public abstract class BaseRestController<T> {
 		try {
 			Map<String, T> entities = getEntities(request);
 
-			String searchTerm = search.getSearchTerm();
+			String searchTerm = search.getSearchTerm().trim();
 			if (entities.isEmpty()) {
 				throw new Exception("no search results found!");
 			}
