@@ -8,6 +8,7 @@
 			<td>IP</td>
 			<td>Start</td>
 			<td>Stop</td>
+			<td>Delete</td>
 		</tr>
 	</thead>
 	<tbody id="containerTableData">
@@ -19,12 +20,13 @@
 			<td id="ip">{{state.network}}</td>
 			<td id="startContainer"><a href="#" onclick="ajaxPost('/container/start/{{name}}')">START</a></td>
 			<td id="stopContainer"><a href="#" onclick="ajaxPost('/container/stop/{{name}}')">STOP</a></td>
+			<td><span id="deleteContainer" class="glyphicon glyphicon-remove" style="color: red" data-name="{{name}}" onclick="deleteContainer('{{name}}')"></span></td>
 		</tr>
 		{{else}}
-		<tr><td colspan="6">No containers found</td></tr>
+		<tr><td colspan="7">No containers found</td></tr>
 		{{/each}}
 		<tr>
-			<td colspan="6"><button type="button" class="btn btn-info" data-toggle="modal" data-target="#addContainer">Add Container</button></td>
+			<td colspan="7"><button type="button" class="btn btn-info" data-toggle="modal" data-target="#addContainer">Add Container</button></td>
 		</tr>
 	</tbody>
 </table>
