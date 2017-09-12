@@ -22,12 +22,7 @@ $(document).ready(function () {
 	    var imageAlias = $("#addContainerForm #imageAlias").val();
 	    var profile = $("#addContainerForm #profile").val();
 	    var config = $("#addContainerForm #config").val();
-	    var ephemeral = $("#addContainerForm #ephemeral").val();
-	    if ("on" == ephemeral) {
-	    	ephemeral = "true";
-	    } else {
-	    	ephemeral = "false";
-	    }
+	    var ephemeral = $("#addContainerForm #ephemeral").is(':checked');
 	    var architecture = $("#addContainerForm #architecture").val();
 	    addContainer(name, imageAlias, profile, config, ephemeral, architecture);
 	});
