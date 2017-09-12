@@ -127,7 +127,7 @@ public abstract class BaseRestController<T> {
 	}
 
 	protected boolean isDefaultServerAndWindowsOs(ILxdService lxdService) {
-		return LxdConstants.IS_WINDOWS && lxdService.getLxdServerCredential() != null && StringUtils.isEmpty(lxdService.getLxdServerCredential().getRemoteHostAndPort());
+		return LxdConstants.IS_WINDOWS && (lxdService.getLxdServerCredential() == null || StringUtils.isEmpty(lxdService.getLxdServerCredential().getRemoteHostAndPort()));
 	}
 
 	public abstract T getEntity(ICachingLxdService lxdService, String name) throws IOException, InterruptedException;
