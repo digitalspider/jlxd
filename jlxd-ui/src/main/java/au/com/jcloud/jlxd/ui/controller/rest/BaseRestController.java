@@ -50,7 +50,7 @@ public abstract class BaseRestController<T> {
 	public ResponseEntity<?> reloadEntity(HttpServletRequest request, Class<T> classType) {
 		AjaxResponseBody<T> result = new AjaxResponseBody<>();
 		try {
-			if (isDefaultServerAndWindowsOs(lxdService)) {
+			if (!isDefaultServerAndWindowsOs(lxdService)) {
 				getLxdService(request).reloadContainerCache();
 			}
 			Collection<T> entities = getEntities(getLxdService(request)).values();
