@@ -63,8 +63,7 @@ public class LxdServiceImpl implements ILxdService {
 		Map<String, Container> containers = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_CONTAINER);
 		return containers;
 	}
-	
-	
+
 	@Override
 	public Container loadContainer(String name) throws IOException, InterruptedException {
 		Container container = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_CONTAINER, name);
@@ -101,7 +100,7 @@ public class LxdServiceImpl implements ILxdService {
 		images.putAll(imageAliasMap);
 		return images;
 	}
-	
+
 	@Override
 	public Image loadImage(String nameOrId) throws IOException, InterruptedException {
 		Image image = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_IMAGE, nameOrId);
@@ -259,7 +258,7 @@ public class LxdServiceImpl implements ILxdService {
 		Map<String, Network> networks = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_NETWORK);
 		return networks;
 	}
-	
+
 	@Override
 	public Network loadNetwork(String name) throws IOException, InterruptedException {
 		Network network = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_IMAGE, name);
@@ -296,7 +295,7 @@ public class LxdServiceImpl implements ILxdService {
 		Map<String, Profile> profiles = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_PROFILE);
 		return profiles;
 	}
-	
+
 	@Override
 	public Profile loadProfile(String name) throws IOException, InterruptedException {
 		Profile profile = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_IMAGE, name);
@@ -373,11 +372,28 @@ public class LxdServiceImpl implements ILxdService {
 		Map<String, ImageAlias> aliases = lxdApiService.executeCurlGetListCmd(credential, LxdCall.GET_IMAGEALIAS);
 		return aliases;
 	}
-	
+
 	@Override
 	public ImageAlias loadImageAlias(String name) throws IOException, InterruptedException {
 		ImageAlias imageAlias = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_IMAGEALIAS, name);
 		return imageAlias;
+	}
+
+	@Override
+	public ImageAlias createImageAlias(String aliasName, String targetFingerprint) throws IOException, InterruptedException {
+		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.POST_IMAGEALIAS_CREATE, aliasName, targetFingerprint);
+		ImageAlias imageAlias = loadImageAlias(aliasName);
+		return imageAlias;
+	}
+
+	@Override
+	public void deleteImageAlias(String aliasName) throws IOException, InterruptedException {
+		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.POST_IMAGEALIAS_DELETE, aliasName);
+	}
+
+	@Override
+	public void renameImageAlias(String aliasName, String newAliasName) throws IOException, InterruptedException {
+		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.POST_IMAGEALIAS_RENAME, aliasName, newAliasName);
 	}
 
 	// ** File Ops **//

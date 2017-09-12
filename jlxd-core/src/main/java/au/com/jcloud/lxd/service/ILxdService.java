@@ -109,6 +109,12 @@ public interface ILxdService {
 
 	ImageAlias loadImageAlias(String name) throws IOException, InterruptedException;
 
+	ImageAlias createImageAlias(String aliasName, String targetFingerprint) throws IOException, InterruptedException;
+
+	void deleteImageAlias(String aliasName) throws IOException, InterruptedException;
+
+	void renameImageAlias(String aliasName, String newAliasName) throws IOException, InterruptedException;
+
 	// File Ops
 	String loadFile(String containerName, String filepath) throws IOException, InterruptedException;
 }

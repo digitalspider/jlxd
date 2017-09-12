@@ -25,7 +25,6 @@ import org.springframework.web.bind.annotation.RestController;
 import au.com.jcloud.jlxd.ui.bean.AddContainerInput;
 import au.com.jcloud.jlxd.ui.model.Server;
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
-import au.com.jcloud.jlxd.ui.search.SearchCriteria;
 import au.com.jcloud.lxd.bean.ImageConfig;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.State;
@@ -218,18 +217,6 @@ public class ContainerRestController extends BaseRestController<Container> {
 			return ResponseEntity.badRequest().body(result);
 		}
 		return ResponseEntity.ok(result);
-	}
-
-	@Override
-	public void performSearch(Map<String, Container> entities, SearchCriteria search, AjaxResponseBody<Container> result) throws Exception {
-		String searchTerm = search.getSearchTerm();
-		if (entities.containsKey(searchTerm)) {
-			result.getResult().add(entities.get(searchTerm));
-			result.setMsg("success. found image: " + entities.get(searchTerm));
-		}
-		else {
-			throw new Exception("No image found with name: " + searchTerm);
-		}
 	}
 
 	private ResponseEntity<?> oldSearch(HttpServletRequest request, @PathVariable String searchTerm) {

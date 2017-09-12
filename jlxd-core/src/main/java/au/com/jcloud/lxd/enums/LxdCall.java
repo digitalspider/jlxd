@@ -18,6 +18,9 @@ import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_DELETE
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_EXEC;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_FILES;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_CONTAINER_RENAME;
+import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_IMAGEALIAS_CREATE;
+import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_IMAGEALIAS_DELETE;
+import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_IMAGEALIAS_RENAME;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_IMAGE_DELETE;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_NETWORK_DELETE;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_PROFILE_DELETE;
@@ -65,6 +68,9 @@ public enum LxdCall {
 	POST_SNAPSHOT_DELETE(URL_POST_SNAPSHOT_DELETE, SnapshotResponse.class),
 	POST_SNAPSHOT_RENAME(URL_POST_SNAPSHOT_RENAME, SnapshotResponse.class),
 	POST_IMAGE_DELETE(URL_POST_IMAGE_DELETE, ImageResponse.class),
+	POST_IMAGEALIAS_CREATE(URL_POST_IMAGEALIAS_CREATE, ImageAliasResponse.class),
+	POST_IMAGEALIAS_DELETE(URL_POST_IMAGEALIAS_DELETE, ImageAliasResponse.class),
+	POST_IMAGEALIAS_RENAME(URL_POST_IMAGEALIAS_RENAME, ImageAliasResponse.class),
 	POST_PROFILE_DELETE(URL_POST_PROFILE_DELETE, ProfileResponse.class),
 	POST_NETWORK_DELETE(URL_POST_NETWORK_DELETE, ProfileResponse.class);
 

@@ -1,6 +1,7 @@
 package au.com.jcloud.jlxd.ui.controller.rest;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -12,7 +13,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -99,14 +99,7 @@ public abstract class BaseRestController<T> {
 
 		//If error, just return a 400 bad request, along with the error message
 		if (errors != null && errors.hasErrors()) {
-			StringBuffer errorString = new StringBuffer();
-			for (ObjectError error : errors.getAllErrors()) {
-				if (errorString.length() > 0) {
-					errorString.append(",");
-				}
-				errorString.append(error.getDefaultMessage());
-			}
-			result.setMsg(errorString.toString());
+			result.setMsg(StringUtils.join(errors.getAllErrors(), ","));
 			return ResponseEntity.badRequest().body(result);
 		}
 
@@ -122,6 +115,7 @@ public abstract class BaseRestController<T> {
 				result.setResult(entities.values());
 			}
 			else {
+				result.setResult(new ArrayList<T>());
 				performSearch(entities, search, result);
 			}
 		} catch (Exception e) {
@@ -140,7 +134,21 @@ public abstract class BaseRestController<T> {
 
 	public abstract Map<String, T> getEntities(ICachingLxdService lxdService) throws IOException, InterruptedException;
 
-	public abstract void performSearch(Map<String, T> entities, SearchCriteria search, AjaxResponseBody<T> result) throws Exception;
+	public void performSearch(Map<String, T> entities, SearchCriteria search, AjaxResponseBody<T> result) throws Exception {
+		String searchTerm = search.getSearchTerm();
+		for (String name : entities.keySet()) {
+			T entity = entities.get(name);
+			if (name.toLowerCase().contains(searchTerm.toLowerCase())) {
+				result.getResult().add(entity);
+			}
+		}
+		if (result.getResult().size() > 0) {
+			result.setMsg("success. found " + result.getResult().size() + " results for search term: " + searchTerm);
+		}
+		else {
+			throw new Exception("No results found for search term: " + searchTerm);
+		}
+	}
 
 	public Map<String, T> getEntities(HttpServletRequest request) throws IOException, InterruptedException {
 		return getEntities(getLxdService(request));
