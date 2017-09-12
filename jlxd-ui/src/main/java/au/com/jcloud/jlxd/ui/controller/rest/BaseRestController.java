@@ -108,7 +108,8 @@ public abstract class BaseRestController<T> {
 
 			String searchTerm = search.getSearchTerm().trim();
 			if (entities.isEmpty()) {
-				throw new Exception("no search results found!");
+				result.setMsg("No search results found!");
+				result.setResult(entities.values());
 			}
 			else if (StringUtils.isEmpty(searchTerm)) {
 				result.setMsg("Showing all search results!");

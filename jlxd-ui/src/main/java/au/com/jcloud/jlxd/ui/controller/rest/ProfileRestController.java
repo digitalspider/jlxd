@@ -20,14 +20,7 @@ public class ProfileRestController extends BaseRestController<Profile> {
 	@Override
 	public Map<String, Profile> getEntities(ICachingLxdService lxdService) throws IOException, InterruptedException {
 		Map<String, Profile> profiles = new HashMap<>();
-		if (isDefaultServerAndWindowsOs(lxdService)) {
-			Profile p = new Profile();
-			p.setStatus("status");
-			p.setStatusCode("statusCode");
-			p.setType("type");
-			profiles.put(p.getType(), p);
-		}
-		else {
+		if (!isDefaultServerAndWindowsOs(lxdService)) {
 			profiles = lxdService.getProfileMap();
 		}
 

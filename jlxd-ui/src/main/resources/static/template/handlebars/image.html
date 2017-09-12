@@ -11,11 +11,13 @@
 	<tbody id="imageTableData">
 		{{#each this}}
 		<tr>
-			<td id="alias">{{#each aliases}}<b>{{name}}</b><br/>{{/each}}</td>
+			<td id="alias">{{#each aliases}}<b>{{name}}</b><br/>{{else}}<button type="submit" class="btn btn-small btn-info" onclick="addAlias()">Add Alias</button>{{/each}}</td>
 			<td id="fingerprint"><b>{{fingerprint}}</b></td>
 			<td id="arch">{{architecture}}</td>
 			<td id="desc">{{description}}</td>
 		</tr>
+		{{else}}
+		<tr><td colspan="4">No images found</td></tr>
 		{{/each}}
 	</tbody>
 </table>
