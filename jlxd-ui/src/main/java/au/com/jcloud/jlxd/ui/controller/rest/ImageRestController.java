@@ -1,7 +1,9 @@
 package au.com.jcloud.jlxd.ui.controller.rest;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -32,6 +34,10 @@ public class ImageRestController extends BaseRestController<Image> {
 			image.setFingerprint("123");
 			image.setArchitecture("x64");
 			image.setDescription("ubuntu");
+			List<ImageAlias> aliases = new ArrayList<>();
+			aliases.add(new ImageAlias().name("alias1"));
+			aliases.add(new ImageAlias().name("alias2"));
+			image.setAliases(aliases);
 			images.put(image.getFingerprint(), image);
 
 			Image image2 = new Image();

@@ -14,6 +14,20 @@ public class ImageAlias {
     private String description;
     private String target;
 
+    public ImageAlias name(String name) {
+    	this.name = name;
+    	return this;
+    }
+    
+    public ImageAlias description(String description) {
+    	this.description = description;
+    	return this;
+    }
+    
+    public ImageAlias target(String target) {
+    	this.target = target;
+    	return this;
+    }
     @Override
     public String toString() {
         return name + "(" + description + ")";

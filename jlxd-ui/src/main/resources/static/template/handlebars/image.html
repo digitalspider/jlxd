@@ -2,6 +2,7 @@
 <table id="imageTable" class="table table-striped">
 	<thead id="imageTableHeader">
 		<tr>
+			<td>Aliases</td>
 			<td>Fingerprint</td>
 			<td>Architecture</td>
 			<td>Description</td>
@@ -10,6 +11,7 @@
 	<tbody id="imageTableData">
 		{{#each this}}
 		<tr>
+			<td id="alias">{{#each aliases}}<b>{{name}}</b><br/>{{/each}}</td>
 			<td id="fingerprint"><b>{{fingerprint}}</b></td>
 			<td id="arch">{{architecture}}</td>
 			<td id="desc">{{description}}</td>
