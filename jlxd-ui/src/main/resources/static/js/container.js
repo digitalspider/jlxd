@@ -61,7 +61,11 @@ function addServer(name, hostAndPort, description) {
 	var placeholderEle = $("#servers");
 	var postUrl = "/server/create/"+encodeURIComponent(name)+"/"+hostAndPort+"/"+description;
     var templatePath = "template/handlebars/server.html";
-    var jsonData = "";
+    var addServerInput = {};
+    addServerInput["name"] = name;
+    addServerInput["hostAndPort"] = hostAndPort;
+    addServerInput["description"] = description;
+    var jsonData = JSON.stringify(addServerInput);
 
 	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
 }
