@@ -47,25 +47,25 @@ public class CachingLxdServiceImpl extends LxdServiceImpl implements ICachingLxd
 	// ** Containers **//
 	@Override
 	public Map<String, Container> getContainerMap() {
-		if (containerMap!=null && !containerMap.isEmpty()) {
+		if (containerMap != null && !containerMap.isEmpty()) {
 			return containerMap;
 		}
 		reloadContainerCache();
 		return containerMap;
 	}
-	
+
 	@Override
 	public Container getContainer(String name) {
 		Container container = getContainerMap().get(name);
 		return container;
 	}
-	
+
 	@Override
 	public State getContainerState(String name) {
 		State state = getContainer(name).getState();
 		return state;
 	}
-	
+
 	@Override
 	public void reloadContainerCache() {
 		try {
@@ -79,23 +79,23 @@ public class CachingLxdServiceImpl extends LxdServiceImpl implements ICachingLxd
 			containerMap = new HashMap<>();
 		}
 	}
-	
+
 	// ** Images **//
 	@Override
 	public Map<String, Image> getImageMap() {
-		if (imageMap!=null && !imageMap.isEmpty()) {
+		if (imageMap != null && !imageMap.isEmpty()) {
 			return imageMap;
 		}
 		reloadImageCache();
 		return imageMap;
 	}
-	
+
 	@Override
 	public Image getImage(String name) {
 		Image image = getImageMap().get(name);
 		return image;
 	}
-	
+
 	@Override
 	public void reloadImageCache() {
 		try {
@@ -105,7 +105,6 @@ public class CachingLxdServiceImpl extends LxdServiceImpl implements ICachingLxd
 			imageMap = new HashMap<>();
 		}
 	}
-	
 
 	// ** Container operations **//
 	@Override
@@ -147,7 +146,7 @@ public class CachingLxdServiceImpl extends LxdServiceImpl implements ICachingLxd
 	// ** Operations **//
 	@Override
 	public Map<String, Operation> getOperationMap() {
-		if (operationMap!=null && !operationMap.isEmpty()) {
+		if (operationMap != null && !operationMap.isEmpty()) {
 			return operationMap;
 		}
 		reloadOperationCache();
@@ -159,7 +158,7 @@ public class CachingLxdServiceImpl extends LxdServiceImpl implements ICachingLxd
 		Operation operation = getOperationMap().get(name);
 		return operation;
 	}
-	
+
 	@Override
 	public void reloadOperationCache() {
 		try {
@@ -169,11 +168,11 @@ public class CachingLxdServiceImpl extends LxdServiceImpl implements ICachingLxd
 			operationMap = new HashMap<>();
 		}
 	}
-	
+
 	// ** Networks **//
 	@Override
 	public Map<String, Network> getNetworkMap() {
-		if (networkMap!=null && !networkMap.isEmpty()) {
+		if (networkMap != null && !networkMap.isEmpty()) {
 			return networkMap;
 		}
 		reloadNetworkCache();
@@ -185,7 +184,7 @@ public class CachingLxdServiceImpl extends LxdServiceImpl implements ICachingLxd
 		Network network = getNetworkMap().get(name);
 		return network;
 	}
-	
+
 	@Override
 	public void reloadNetworkCache() {
 		try {
@@ -195,23 +194,23 @@ public class CachingLxdServiceImpl extends LxdServiceImpl implements ICachingLxd
 			networkMap = new HashMap<>();
 		}
 	}
-	
+
 	// ** Profiles **//
 	@Override
 	public Map<String, Profile> getProfileMap() {
-		if (profileMap!=null && !profileMap.isEmpty()) {
+		if (profileMap != null && !profileMap.isEmpty()) {
 			return profileMap;
 		}
 		reloadProfileCache();
 		return profileMap;
 	}
-	
+
 	@Override
 	public Profile getProfile(String name) {
 		Profile profile = getProfileMap().get(name);
 		return profile;
 	}
-	
+
 	@Override
 	public void reloadProfileCache() {
 		try {
@@ -221,7 +220,7 @@ public class CachingLxdServiceImpl extends LxdServiceImpl implements ICachingLxd
 			profileMap = new HashMap<>();
 		}
 	}
-	
+
 	@Override
 	public void deleteProfile(String name) throws IOException, InterruptedException {
 		super.deleteProfile(name);
@@ -231,19 +230,19 @@ public class CachingLxdServiceImpl extends LxdServiceImpl implements ICachingLxd
 	// ** Certificates **//
 	@Override
 	public Map<String, Certificate> getCertificateMap() {
-		if (certificateMap!=null && !certificateMap.isEmpty()) {
+		if (certificateMap != null && !certificateMap.isEmpty()) {
 			return certificateMap;
 		}
 		reloadCertificateCache();
 		return certificateMap;
 	}
-	
+
 	@Override
 	public Certificate getCertificate(String name) {
 		Certificate certificate = getCertificateMap().get(name);
 		return certificate;
 	}
-	
+
 	@Override
 	public void reloadCertificateCache() {
 		try {
@@ -257,11 +256,11 @@ public class CachingLxdServiceImpl extends LxdServiceImpl implements ICachingLxd
 	// ** Snapshots **//
 	@Override
 	public Map<String, Snapshot> getSnapshotMap(Container container) {
-		if (snapshotCache!=null && !snapshotCache.isEmpty()) {
+		if (snapshotCache != null && !snapshotCache.isEmpty()) {
 			snapshotCache = new HashMap<String, Map<String, Snapshot>>();
 		}
 		Map<String, Snapshot> snapshotMap = snapshotCache.get(container.getName());
-		if (snapshotMap!=null && !snapshotMap.isEmpty()) {
+		if (snapshotMap != null && !snapshotMap.isEmpty()) {
 			return snapshotMap;
 		}
 		try {
@@ -270,7 +269,7 @@ public class CachingLxdServiceImpl extends LxdServiceImpl implements ICachingLxd
 			LOG.error(e, e);
 			snapshotMap = new HashMap<>();
 		}
-		snapshotCache.put(container.getName(),snapshotMap);
+		snapshotCache.put(container.getName(), snapshotMap);
 		return snapshotMap;
 	}
 
@@ -282,23 +281,43 @@ public class CachingLxdServiceImpl extends LxdServiceImpl implements ICachingLxd
 		return snapshot;
 	}
 
-
 	// ** Image Aliases **//
 	@Override
 	public Map<String, ImageAlias> getImageAliasMap() {
-		if (imageAliasMap!=null && !imageAliasMap.isEmpty()) {
+		if (imageAliasMap != null && !imageAliasMap.isEmpty()) {
 			return imageAliasMap;
 		}
 		reloadImageAliasCache();
 		return imageAliasMap;
 	}
-	
+
 	@Override
 	public ImageAlias getImageAlias(String name) {
 		ImageAlias imageAlias = getImageAliasMap().get(name);
 		return imageAlias;
 	}
-	
+
+	@Override
+	public void createImageAlias(String aliasName, String targetFingerprint) throws IOException, InterruptedException {
+		super.createImageAlias(aliasName, targetFingerprint);
+		reloadImageAliasCache();
+		reloadImageCache();
+	}
+
+	@Override
+	public void deleteImageAlias(String aliasName) throws IOException, InterruptedException {
+		super.deleteImageAlias(aliasName);
+		reloadImageAliasCache();
+		reloadImageCache();
+	}
+
+	@Override
+	public void renameImageAlias(String aliasName, String newAliasName) throws IOException, InterruptedException {
+		super.renameImageAlias(aliasName, newAliasName);
+		reloadImageAliasCache();
+		reloadImageCache();
+	}
+
 	@Override
 	public void reloadImageAliasCache() {
 		try {

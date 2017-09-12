@@ -109,7 +109,7 @@ public interface ILxdService {
 
 	ImageAlias loadImageAlias(String name) throws IOException, InterruptedException;
 
-	ImageAlias createImageAlias(String aliasName, String targetFingerprint) throws IOException, InterruptedException;
+	void createImageAlias(String aliasName, String targetFingerprint) throws IOException, InterruptedException;
 
 	void deleteImageAlias(String aliasName) throws IOException, InterruptedException;
 

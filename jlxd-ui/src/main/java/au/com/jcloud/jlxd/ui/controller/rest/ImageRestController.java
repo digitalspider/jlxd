@@ -51,9 +51,9 @@ public class ImageRestController extends BaseRestController<Image> {
 		return lxdService.getImage(name);
 	}
 
-	@PostMapping("/add/{imageName}/alias/{aliasName}")
-	public ResponseEntity<?> createNewContainer(HttpServletRequest request, @PathVariable String imageName,
-			@PathVariable String aliasName) {
+	@PostMapping("/alias/create/{aliasName}/{imageName}")
+	public ResponseEntity<?> createImageAlias(HttpServletRequest request, @PathVariable String aliasName,
+			@PathVariable String imageName) {
 		AjaxResponseBody<Image> result = new AjaxResponseBody<>();
 
 		try {
@@ -71,7 +71,8 @@ public class ImageRestController extends BaseRestController<Image> {
 					throw new Exception("Alias " + aliasName + " already assigned to " + alias.getTarget());
 				}
 			}
-			ImageAlias newImageAlias = lxdService.createImageAlias(aliasName, image.getFingerprint());
+			lxdService.createImageAlias(aliasName, image.getFingerprint());
+			ImageAlias newImageAlias = lxdService.getImageAlias(aliasName);
 			if (newImageAlias == null) {
 				throw new Exception("Could not create image alias: " + aliasName);
 			}
@@ -86,4 +87,52 @@ public class ImageRestController extends BaseRestController<Image> {
 		return ResponseEntity.ok(result);
 	}
 
+	@PostMapping("/alias/delete/{aliasName}")
+	public ResponseEntity<?> deleteImageAlias(HttpServletRequest request, @PathVariable String aliasName) {
+		AjaxResponseBody<Image> result = new AjaxResponseBody<>();
+
+		try {
+			ICachingLxdService lxdService = getLxdService(request);
+			ImageAlias alias = lxdService.getImageAlias(aliasName);
+			if (alias == null) {
+				throw new Exception("Alias " + aliasName + " does not exist");
+			}
+			lxdService.deleteImageAlias(aliasName);
+
+			result.setResult(getEntities(request).values());
+			result.setMsg("Deleted alias " + aliasName);
+		} catch (Exception e) {
+			LOG.error(e, e);
+			result.setMsg(e.getMessage());
+			return ResponseEntity.badRequest().body(result);
+		}
+		return ResponseEntity.ok(result);
+	}
+
+	@PostMapping("/alias/rename/{aliasName}/{newAliasName}")
+	public ResponseEntity<?> renameImageAlias(HttpServletRequest request, @PathVariable String aliasName,
+			@PathVariable String newAliasName) {
+		AjaxResponseBody<Image> result = new AjaxResponseBody<>();
+
+		try {
+			ICachingLxdService lxdService = getLxdService(request);
+			ImageAlias alias = lxdService.getImageAlias(aliasName);
+			if (alias == null) {
+				throw new Exception("Alias " + aliasName + " does not exist");
+			}
+			ImageAlias newAlias = lxdService.getImageAlias(newAliasName);
+			if (newAlias != null) {
+				throw new Exception("New Image Alias " + newAliasName + " already exists");
+			}
+			lxdService.renameImageAlias(aliasName, newAliasName);
+
+			result.setResult(getEntities(request).values());
+			result.setMsg("Renamed alias " + aliasName + " to " + newAliasName);
+		} catch (Exception e) {
+			LOG.error(e, e);
+			result.setMsg(e.getMessage());
+			return ResponseEntity.badRequest().body(result);
+		}
+		return ResponseEntity.ok(result);
+	}
 }

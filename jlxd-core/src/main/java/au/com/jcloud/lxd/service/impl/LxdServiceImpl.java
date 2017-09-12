@@ -380,10 +380,8 @@ public class LxdServiceImpl implements ILxdService {
 	}
 
 	@Override
-	public ImageAlias createImageAlias(String aliasName, String targetFingerprint) throws IOException, InterruptedException {
+	public void createImageAlias(String aliasName, String targetFingerprint) throws IOException, InterruptedException {
 		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.POST_IMAGEALIAS_CREATE, aliasName, targetFingerprint);
-		ImageAlias imageAlias = loadImageAlias(aliasName);
-		return imageAlias;
 	}
 
 	@Override
