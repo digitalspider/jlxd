@@ -6,19 +6,24 @@
 			<td>Fingerprint</td>
 			<td>Architecture</td>
 			<td>Description</td>
+			<td>Actions</td>
 		</tr>
 	</thead>
 	<tbody id="imageTableData">
 		{{#each this}}
-		<tr>
+		<tr id="row_{{fingerprint}}">
 			<td id="alias">{{#each aliases}}<b>{{name}}&nbsp;
 			<span id="deleteAlias" class="glyphicon glyphicon-remove" style="color: red" data-name="{{name}}" onclick="deleteAlias('{{name}}')"></span></b><br/>{{else}}<button type="submit" class="btn btn-small btn-info" onclick="addAlias()">Add Alias</button>{{/each}}</td>
 			<td id="fingerprint"><b>{{fingerprint}}</b></td>
 			<td id="arch">{{architecture}}</td>
 			<td id="desc">{{description}}</td>
+			<td id="actions">
+				<a href="#" id="editContainer" style="color: blue" data-name="{{name}}" onclick="toggleEditState(event, this, '{{fingerprint}}')"><span class="glyphicon glyphicon-pencil"></span>&nbsp;EDIT</a>
+				<a href="#" id="saveContainer" style="display: none; color: green" data-name="{{name}}" onclick="toggleEditState(event, this, '{{fingerprint}}')"><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;SAVE</a>
+			</td>
 		</tr>
 		{{else}}
-		<tr><td colspan="4">No images found</td></tr>
+		<tr><td colspan="5">No images found</td></tr>
 		{{/each}}
 	</tbody>
 </table>

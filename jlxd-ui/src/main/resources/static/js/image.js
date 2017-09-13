@@ -30,3 +30,20 @@ function reloadImages() {
 
 	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
 }
+
+function toggleEditState(event, element, containerName) {
+	event.preventDefault();
+	var postUrl = "/image/save/"+containerName;
+	var eleId = "#"+element.id;
+	var rowId = "#row_"+containerName;
+	console.log(eleId+" "+rowId);
+	if (eleId == "#editContainer") {
+		$(rowId).css("background-color", "lightgrey");
+		$(rowId).find("#desc").html("<input type='text' name='decription' id='editDesc' value='"+$(rowId).find("#desc").text()+"'></input>");
+	} else {
+		$(rowId).css("background-color", "");
+		$(rowId).find("#desc").text($(rowId).find("#editDesc").val());
+	}
+	$(rowId).find("#editContainer").toggle();
+	$(rowId).find("#saveContainer").toggle();
+}

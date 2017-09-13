@@ -6,27 +6,36 @@
 			<td>Status</td>
 			<td>PID</td>
 			<td>IP</td>
-			<td>Start</td>
-			<td>Stop</td>
-			<td>Delete</td>
+			<td>Actions</td>
 		</tr>
 	</thead>
 	<tbody id="containerTableData">
 		{{#each this}}
-		<tr>
+		<tr id="row_{{name}}">
 			<td id="name"><b>{{name}}</b></td>
 			<td id="status">{{status}}</td>
 			<td id="pid">{{state.pid}}</td>
 			<td id="ip">{{state.network}}</td>
-			<td id="startContainer"><a href="#" onclick="ajaxPost('/container/start/{{name}}')">START</a></td>
-			<td id="stopContainer"><a href="#" onclick="ajaxPost('/container/stop/{{name}}')">STOP</a></td>
-			<td><span id="deleteContainer" class="glyphicon glyphicon-remove" style="color: red" data-name="{{name}}" onclick="deleteContainer('{{name}}')"></span></td>
+			<td id="actions">
+				<a href="#" id="viewState_{{name}}" style="color: orange" onclick="toggleViewState(event, this,'{{name}}')"><span class="glyphicon glyphicon-menu-up"></span>&nbsp;<span id="showHide">SHOW</span></a>
+				{{#if (ifCond status '===' "Running")}}
+				<a href="#" id="stopContainer" style="color: brown" onclick="ajaxPost(event, this, '/container/stop/{{name}}')"><span class="glyphicon glyphicon-stop"></span>&nbsp;STOP</a>
+				{{else}}
+				<a href="#" id="startContainer" style="color: brown" onclick="ajaxPost(event, this, '/container/start/{{name}}')"><span class="glyphicon glyphicon-play"></span>&nbsp;START</a>
+				{{/if}}
+				<a href="#" id="editContainer" style="color: blue" data-name="{{name}}" onclick="toggleEditState(event, this, '{{name}}')"><span class="glyphicon glyphicon-pencil"></span>&nbsp;EDIT</a>
+				<a href="#" id="saveContainer" style="display: none; color: green" data-name="{{name}}" onclick="toggleEditState(event, this, '{{name}}')"><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;SAVE</a>
+				{{#if (ifCond status '===' "Stopped")}}
+				<a href="#" id="deleteContainer" style="color: red" data-name="{{name}}" onclick="deleteContainer('{{name}}')"><span class="glyphicon glyphicon-remove"></span>&nbsp;DELETE</a>
+				{{/if}}
+			</td>
 		</tr>
+		<tr id="stateRow_{{name}}" style="display: none" ><td colspan="5"><div id="stateRowContent_{{name}}"></div></td></tr>
 		{{else}}
-		<tr><td colspan="7">No containers found</td></tr>
+		<tr><td colspan="5">No containers found</td></tr>
 		{{/each}}
 		<tr>
-			<td colspan="7"><button type="button" class="btn btn-info" data-toggle="modal" data-target="#addContainer">Add Container</button></td>
+			<td colspan="5"><button type="button" class="btn btn-info" data-toggle="modal" data-target="#addContainer">Add Container</button></td>
 		</tr>
 	</tbody>
 </table>

@@ -1,3 +1,31 @@
+$(document).ready(function () {
+	Handlebars.registerHelper('ifCond', function (v1, operator, v2, options) {
+	    switch (operator) {
+	        case '==':
+	            return (v1 == v2) ? true : false;
+	        case '===':
+	            return (v1 === v2) ? true : false;
+	        case '!=':
+	            return (v1 != v2) ? true : false;
+	        case '!==':
+	            return (v1 !== v2) ? true : false;
+	        case '<':
+	            return (v1 < v2) ? true : false;
+	        case '<=':
+	            return (v1 <= v2) ? true : false;
+	        case '>':
+	            return (v1 > v2) ? true : false;
+	        case '>=':
+	            return (v1 >= v2) ? true : false;
+	        case '&&':
+	            return (v1 && v2) ? true : false;
+	        case '||':
+	            return (v1 || v2) ? true : false;
+	        default:
+	            return false;
+	    }
+	});
+});
 
 function getAllServers() {
     var placeholderEle = $("#servers");
@@ -28,7 +56,8 @@ function removeServer(name) {
 	return false;
 }
 
-function ajaxPost(postUrl) {
+function ajaxPost(event, element, postUrl) {
+	event.preventDefault();
     $.ajax({
         type: "POST",
         contentType: "application/json",
