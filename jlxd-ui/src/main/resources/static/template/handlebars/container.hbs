@@ -17,7 +17,8 @@
 			<td id="pid">{{state.pid}}</td>
 			<td id="ip">
 {{#each state.network}}
-    {{@key}}={{this.ip4Address}}<br/>
+	{{#unless @first}},{{/unless}}
+    {{@key}}={{this.ip4Address}}
 {{/each}}
 			</td>
 			<td id="actions">
