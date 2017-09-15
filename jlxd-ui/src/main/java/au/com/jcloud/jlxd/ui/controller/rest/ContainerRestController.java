@@ -92,7 +92,7 @@ public class ContainerRestController extends BaseRestController<Container> {
 
 			Container c2 = new Container();
 			c2.setName("test");
-			c2.setStatus("Frozen");
+			c2.setStatus("Stopped");
 			c2.setStatusCode(StatusCode.STOPPED.getValue());
 			State s2 = new State();
 			s2.setStatusCode(State.STATUS_CODE_STOPPED);
