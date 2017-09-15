@@ -30,9 +30,9 @@
 				{{else}}
 				<a href="#" id="startContainer" style="color: brown" onclick="ajaxPost(event, this, '/container/start/{{name}}')"><span class="glyphicon glyphicon-play"></span>&nbsp;START</a>
 				{{/if}}
+				{{#if (ifCond status '===' "Stopped")}}
 				<a href="#" id="editContainer" style="color: blue" data-name="{{name}}" onclick="toggleEditState(event, this, '{{name}}')"><span class="glyphicon glyphicon-pencil"></span>&nbsp;EDIT</a>
 				<a href="#" id="saveContainer" style="display: none; color: green" data-name="{{name}}" onclick="toggleEditState(event, this, '{{name}}')"><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;SAVE</a>
-				{{#if (ifCond status '===' "Stopped")}}
 				<a href="#" id="deleteContainer" style="color: red" data-name="{{name}}" onclick="deleteContainer('{{name}}')"><span class="glyphicon glyphicon-remove"></span>&nbsp;DELETE</a>
 				{{/if}}
 			</td>
