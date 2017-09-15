@@ -35,40 +35,40 @@ $(document).ready(function () {
 function searchContainers(searchTerm) {
     var placeholderEle = $("#containers");
     var postUrl = "/container/search";
-    var templatePath = "template/handlebars/container.html";
+    var templateName = "container";
     var searchInput = {};
     searchInput["searchTerm"] = searchTerm;
     var jsonData = JSON.stringify(searchInput);
 
-	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
+	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
 }
 
 function reloadContainers() {
     var placeholderEle = $("#containers");
     var postUrl = "/container/reload";
-    var templatePath = "template/handlebars/container.html";
+    var templateName = "container";
     var jsonData = "";
 
-	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
+	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
 }
 
 function addServer(name, hostAndPort, description) {
 	var placeholderEle = $("#servers");
 	var postUrl = "/server/create/"+encodeURIComponent(name)+"/"+hostAndPort+"/"+description;
-    var templatePath = "template/handlebars/server.html";
+    var templateName = "server";
     var addServerInput = {};
     addServerInput["name"] = name;
     addServerInput["hostAndPort"] = hostAndPort;
     addServerInput["description"] = description;
     var jsonData = JSON.stringify(addServerInput);
 
-	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
+	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
 }
 
 function addContainer(name, imageAlias, profile, config, ephemeral, architecture) {
     var placeholderEle = $("#containers");
 	var postUrl = "/container/create";
-    var templatePath = "template/handlebars/container.html";
+    var templateName = "container";
     var addContainerInput = {};
     addContainerInput["name"] = name;
     addContainerInput["imageAlias"] = imageAlias;
@@ -78,7 +78,7 @@ function addContainer(name, imageAlias, profile, config, ephemeral, architecture
     addContainerInput["architecture"] = architecture;
     var jsonData = JSON.stringify(addContainerInput);
 
-	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
+	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
 }
 
 function toggleEditState(event, element, containerName) {

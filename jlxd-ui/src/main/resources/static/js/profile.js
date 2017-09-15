@@ -14,19 +14,19 @@ $(document).ready(function () {
 function searchProfiles(searchTerm) {
     var placeholderEle = $("#profiles");
     var postUrl = "/profile/search";
-    var templatePath = "template/handlebars/profile.html";
+    var templateName = "profile";
     var searchInput = {};
     searchInput["searchTerm"] = searchTerm;
     var jsonData = JSON.stringify(searchInput);
 
-	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
+	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
 }
 
 function reloadProfiles() {
     var placeholderEle = $("#profiles");
     var postUrl = "/profile/reload";
-    var templatePath = "template/handlebars/profile.html";
+    var templateName = "profile";
     var jsonData = "";
 
-	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
+	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
 }

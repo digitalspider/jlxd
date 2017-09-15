@@ -30,29 +30,29 @@ $(document).ready(function () {
 function getAllServers() {
     var placeholderEle = $("#servers");
     var postUrl = "/server";
-    var templatePath = "template/handlebars/server.html";
+    var templateName = "server";
     var jsonData = "";
 
-	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
+	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
 }
 
 function selectServer(name) {
     var placeholderEle = $("#servers");
     var postUrl = "/server/"+name;
-    var templatePath = "template/handlebars/server.html";
+    var templateName = "server";
     var jsonData = "";
 
-	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
+	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
 	reloadContainers();
 }
 
 function removeServer(name) {
     var placeholderEle = $("#servers");
     var postUrl = "/server/delete/"+name;
-    var templatePath = "template/handlebars/server.html";
+    var templateName = "server";
     var jsonData = "";
 
-	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
+	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
 	return false;
 }
 
@@ -74,7 +74,7 @@ function ajaxPost(event, element, postUrl) {
     });
 }
 
-function fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle) {
+function fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle) {
     placeholderEle.html("");
 	$("#feedback").html("");
     $("#btn-search").prop("disabled", true);
@@ -92,7 +92,7 @@ function fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle) {
             var json = "<h4>Ajax Response</h4><pre>" + JSON.stringify(data, null, 4) + "</pre>";
             //$('#feedback').html(json);
             if (data && data.result) {
-	            injectTemplatedContent(templatePath,data.result,placeholderEle);
+	            injectTemplatedContent(templateName,data.result,placeholderEle);
             }
 
             console.log("SUCCESS : ", data);
@@ -127,12 +127,10 @@ function loadTemplatedContent(templatePath, dataUrl, placeholderEle) {
 }
 
 /**
- * Handlebars: Load the templatePath and merge in the jsonData and place the results into the placeholderEle
+ * Handlebars: Get the templateName and merge in the jsonData and place the results into the placeholderEle
  */
-function injectTemplatedContent(templatePath, jsonData, placeholderEle) {
-  $.get(templatePath, function (data) {
-    var template = Handlebars.compile(data);
+function injectTemplatedContent(templateName, jsonData, placeholderEle) {
+    var template = Handlebars.templates[templateName];
     var html = template(jsonData);
     placeholderEle.append(html);
-  });
 }

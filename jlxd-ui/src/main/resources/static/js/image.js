@@ -14,21 +14,21 @@ $(document).ready(function () {
 function searchImages(searchTerm) {
     var placeholderEle = $("#images");
     var postUrl = "/image/search";
-    var templatePath = "template/handlebars/image.html";
+    var templateName = "image";
     var searchInput = {};
     searchInput["searchTerm"] = searchTerm;
     var jsonData = JSON.stringify(searchInput);
 
-	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
+	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
 }
 
 function reloadImages() {
     var placeholderEle = $("#images");
     var postUrl = "/image/reload";
-    var templatePath = "template/handlebars/image.html";
+    var templateName = "image";
     var jsonData = "";
 
-	fire_ajax_submit(postUrl, jsonData, templatePath, placeholderEle);
+	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
 }
 
 function toggleEditState(event, element, containerName) {
