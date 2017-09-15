@@ -114,7 +114,8 @@ function fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle) {
 
 
 /**
- * Handlebars: Load both the templatePath and the dataUrl and place the results into the placeholderEle
+ * Handlebars: Load both the templatePath and the dataUrl and place the results into the placeholderEle.
+ * Not currently used. Requires the non-runtime version of handlebars to be able to use Handlebars.compile().
  */
 function loadTemplatedContent(templatePath, dataUrl, placeholderEle) {
   $.get(templatePath, function (data) {
