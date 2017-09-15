@@ -37,16 +37,16 @@ public interface ILxdApiService {
 	public static final String URL_POST_CONTAINER_CREATE_LOCAL = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", ${EPHEMERAL} ${ARCHITECTURE} ${CONFIG} ${PROFILES} \"source\": {\"type\": \"image\", \"fingerprint\": \"${ALIAS}\"";
 	public static final String URL_POST_CONTAINER_COPY = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", ${EPHEMERAL} ${ARCHITECTURE} ${CONFIG} ${PROFILES} \"source\": {\"type\": \"copy\", \"container_only\": \"${CONTAINERONLY}\", \"source\": \"${CONTAINER}\"}}'";
 	public static final String URL_POST_CONTAINER_DELETE = URL_GET_CONTAINER + "/${ID} -X DELETE";
-	public static final String URL_POST_CONTAINER_RENAME = URL_GET_CONTAINER + "/${ID} -X POST -d { \"name\": \"${NEWNAME}\" }";
+	public static final String URL_POST_CONTAINER_RENAME = URL_GET_CONTAINER + "/${ID} -X POST -d '{ \"name\": \"${NEWNAME}\" }'";
 	public static final String URL_POST_CONTAINER_FILES = URL_GET_CONTAINER + "/${ID}/files?path=${PATH} -X POST";
-	public static final String URL_POST_CONTAINER_EXEC = URL_GET_CONTAINER + "/${ID}/exec -X POST -d { \"command\": [\"${CMD}\"], \"environment\": {${ENV}}, \"wait-for-websocket\": ${WAIT}, \"interactive\": false }";
+	public static final String URL_POST_CONTAINER_EXEC = URL_GET_CONTAINER + "/${ID}/exec -X POST -d '{ \"command\": [\"${CMD}\"], \"environment\": {${ENV}}, \"wait-for-websocket\": ${WAIT}, \"interactive\": false }'";
 	public static final String URL_POST_SNAPSHOT_CREATE = URL_GET_SNAPSHOTS + "-X POST -d '{\"name\": \"${SNAPNAME}\", \"stateful\": \"${STATEFULE}\"}'";
 	public static final String URL_POST_SNAPSHOT_DELETE = URL_GET_SNAPSHOTS + "/${SNAPNAME} -X DELETE";
-	public static final String URL_POST_SNAPSHOT_RENAME = URL_GET_SNAPSHOTS + "/${SNAPNAME} -X POST -d { \"name\": \"${NEWNAME}\" }";
+	public static final String URL_POST_SNAPSHOT_RENAME = URL_GET_SNAPSHOTS + "/${SNAPNAME} -X POST -d '{ \"name\": \"${NEWNAME}\" }'";
 	public static final String URL_POST_IMAGE_DELETE = URL_GET_IMAGE + "/${ID} -X DELETE";
-	public static final String URL_POST_IMAGEALIAS_CREATE = URL_GET_IMAGEALIAS + "/${ID} -X POST -d { \"name\": \"${NEWNAME}\" }";
+	public static final String URL_POST_IMAGEALIAS_CREATE = URL_GET_IMAGEALIAS + "/${ID} -X POST -d '{ \"name\": \"${NEWNAME}\" }'";
 	public static final String URL_POST_IMAGEALIAS_DELETE = URL_GET_IMAGEALIAS + "/${ID} -X DELETE";
-	public static final String URL_POST_IMAGEALIAS_RENAME = URL_GET_IMAGEALIAS + "/${ID} -X POST -d { \"name\": \"${NEWNAME}\" }";
+	public static final String URL_POST_IMAGEALIAS_RENAME = URL_GET_IMAGEALIAS + "/${ID} -X POST -d '{ \"name\": \"${NEWNAME}\" }'";
 	public static final String URL_POST_PROFILE_DELETE = URL_GET_PROFILE + "/${ID} -X DELETE";
 	public static final String URL_POST_NETWORK_DELETE = URL_GET_NETWORK + "/${ID} -X DELETE";
 
