@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
+
 import au.com.jcloud.jlxd.ui.bean.AddContainerInput;
 import au.com.jcloud.jlxd.ui.model.Server;
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
@@ -29,6 +31,7 @@ import au.com.jcloud.lxd.bean.ImageConfig;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.State;
 import au.com.jcloud.lxd.model.StatusCode;
+import au.com.jcloud.lxd.model.extra.NetworkInterface;
 import au.com.jcloud.lxd.service.ICachingLxdService;
 
 @RequestMapping("/container")
@@ -76,6 +79,13 @@ public class ContainerRestController extends BaseRestController<Container> {
 			State s = new State();
 			s.setStatusCode(State.STATUS_CODE_RUNNING);
 			s.setPid(123);
+			Map<String,NetworkInterface> networkMap = new HashMap<>();
+			NetworkInterface netIf = new NetworkInterface();
+			Gson gson = new Gson();
+			Map<String, String> address = gson.fromJson("{\"family\":\"inet\",\"address\":\"10.1.1.23\",\"netmask\":\"24\",\"scope\":\"global\"}", Map.class);
+			netIf.setAddresses(new Map[] { address });
+			networkMap.put("eth0", netIf);
+			s.setNetwork(networkMap);
 			c.setState(s);
 			c.setArchitecture("x64");
 			containers.put(c.getName(), c);
