@@ -52,6 +52,15 @@ function reloadContainers() {
 	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
 }
 
+function deleteContainer(name) {
+    var placeholderEle = $("#containers");
+    var postUrl = "/container/delete/"+name;
+    var templateName = "container";
+    var jsonData = "";
+
+	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
+}
+
 function addServer(name, hostAndPort, description) {
 	var placeholderEle = $("#servers");
 	var postUrl = "/server/create/"+encodeURIComponent(name)+"/"+hostAndPort+"/"+description;
