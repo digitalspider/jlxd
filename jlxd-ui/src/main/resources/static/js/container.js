@@ -61,6 +61,15 @@ function deleteContainer(name) {
 	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
 }
 
+function renameContainer(name, newContainerName) {
+    var placeholderEle = $("#containers");
+    var postUrl = "/container/rename/"+name+"/"+newContainerName;
+    var templateName = "container";
+    var jsonData = "";
+
+	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
+}
+
 function addServer(name, hostAndPort, description) {
 	var placeholderEle = $("#servers");
 	var postUrl = "/server/create/"+encodeURIComponent(name)+"/"+hostAndPort+"/"+description;
@@ -98,10 +107,13 @@ function toggleEditState(event, element, containerName) {
 	console.log(eleId+" "+rowId);
 	if (eleId == "#editContainer") {
 		$(rowId).css("background-color", "lightgrey");
-		$(rowId).find("#name").html("<input type='text' name='name' value='"+containerName+"'></input>");
+		$(rowId).find("#name").html("<input type='text' id='rename' name='rename' data-oldname='"+containerName+"' value='"+containerName+"'></input>");
 	} else {
+		var newContainerName = $(rowId).find("#rename").val();
+		var oldContainerName = $(rowId).find("#rename").data("oldname");
+		renameContainer(oldContainerName, newContainerName);
 		$(rowId).css("background-color", "");
-		$(rowId).find("#name").html("<b>"+containerName+"</b>");
+		$(rowId).find("#name").html("<b>"+newContainerName+"</b>");
 	}
 	$(rowId).find("#editContainer").toggle();
 	$(rowId).find("#saveContainer").toggle();

@@ -190,6 +190,30 @@ public class ContainerRestController extends BaseRestController<Container> {
 		}
 		return ResponseEntity.ok(result);
 	}
+	
+	@RequestMapping(value = "/rename/{name}/{newContainerName}", method = { RequestMethod.GET, RequestMethod.POST })
+	public ResponseEntity<?> renameContainer(HttpServletRequest request, @PathVariable String name,
+			@PathVariable String newContainerName) {
+		AjaxResponseBody<Container> result = new AjaxResponseBody<>();
+
+		try {
+			if (StringUtils.isBlank(name)) {
+				throw new IllegalArgumentException("Cannot have oldContainerName blank");
+			}
+			if (StringUtils.isBlank(newContainerName)) {
+				throw new IllegalArgumentException("Cannot have newContainerName blank");
+			}
+			getLxdService(request).renameContainer(name, newContainerName);
+			result.setResult(getEntities(request).values());
+			result.setMsg("container renamed: " + name+"=>"+newContainerName);
+		} catch (Exception e) {
+			LOG.error(e, e);
+			result.setMsg(e.getMessage());
+			return ResponseEntity.badRequest().body(result);
+		}
+		return ResponseEntity.ok(result);
+	}
+
 
 	// TODO: No longer used.
 	@PostMapping("/create/{newContainerName}/{imageAlias}/{ephemeral}/{profile}/{config}")
