@@ -100,13 +100,12 @@ public class ServerRestController extends BaseRestController<Server> {
 		Gson gson = new Gson();
 		ServerInfo serverInfo;
 		try {
-//			if (isDefaultServerAndWindowsOs(getLxdService(request))) {
+			if (isDefaultServerAndWindowsOs(getLxdService(request))) {
 				File file = new ClassPathResource("/static/json/serverinfo.json").getFile();
 				serverInfo = gson.fromJson(new FileReader(file), ServerInfo.class);
-//			} else {
-//				// TODO: get server info
-//				serverInfo = getLxdService(request).getServerInfo();
-//			}
+			} else {
+				serverInfo = getLxdService(request).loadServerInfo();
+			}
 			result.setMsg("read serverInfo");
 			result.setResult(new ArrayList<ServerInfo>());
 			result.getResult().add(serverInfo);
