@@ -1,6 +1,9 @@
 package au.com.jcloud.jlxd.ui.controller.rest;
 
+import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
 
@@ -10,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.Errors;
@@ -20,14 +24,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
+
 import au.com.jcloud.jlxd.ui.bean.AddServerInput;
 import au.com.jcloud.jlxd.ui.model.Server;
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
 import au.com.jcloud.jlxd.ui.service.ServerService;
+import au.com.jcloud.lxd.model.ServerInfo;
+import au.com.jcloud.lxd.service.ICachingLxdService;
 
 @RequestMapping("/server")
 @RestController
-public class ServerRestController {
+public class ServerRestController extends BaseRestController<Server> {
 
 	public static final Logger LOG = Logger.getLogger(ServerRestController.class);
 
@@ -82,6 +90,31 @@ public class ServerRestController {
 
 		// TODO: x
 
+		return ResponseEntity.ok(result);
+	}
+	
+	@PostMapping("/info")
+	public ResponseEntity<?> getServerInfo(HttpServletRequest request) {
+		AjaxResponseBody<ServerInfo> result = new AjaxResponseBody<>();
+	
+		Gson gson = new Gson();
+		ServerInfo serverInfo;
+		try {
+//			if (isDefaultServerAndWindowsOs(getLxdService(request))) {
+				File file = new ClassPathResource("/static/json/serverinfo.json").getFile();
+				serverInfo = gson.fromJson(new FileReader(file), ServerInfo.class);
+//			} else {
+//				// TODO: get server info
+//				serverInfo = getLxdService(request).getServerInfo();
+//			}
+			result.setMsg("read serverInfo");
+			result.setResult(new ArrayList<ServerInfo>());
+			result.getResult().add(serverInfo);
+		} catch (Exception e) {
+			LOG.error(e, e);
+			result.setMsg(e.getMessage());
+			return ResponseEntity.badRequest().body(result);
+		}
 		return ResponseEntity.ok(result);
 	}
 
@@ -142,7 +175,20 @@ public class ServerRestController {
 		return ResponseEntity.ok(result);
 	}
 
+	@Override
 	public void setServerService(ServerService serverService) {
 		this.serverService = serverService;
+	}
+
+	@Override
+	public Server getEntity(ICachingLxdService lxdService, String name) throws IOException, InterruptedException {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<String, Server> getEntities(ICachingLxdService lxdService) throws IOException, InterruptedException {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }
