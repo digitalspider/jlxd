@@ -79,7 +79,7 @@ public class ContainerRestController extends BaseRestController<Container> {
 			State s = new State();
 			s.setStatusCode(State.STATUS_CODE_RUNNING);
 			s.setPid(123);
-			Map<String,NetworkInterface> networkMap = new HashMap<>();
+			Map<String, NetworkInterface> networkMap = new HashMap<>();
 			NetworkInterface netIf = new NetworkInterface();
 			Gson gson = new Gson();
 			Map<String, String> address = gson.fromJson("{\"family\":\"inet\",\"address\":\"10.1.1.23\",\"netmask\":\"24\",\"scope\":\"global\"}", Map.class);
@@ -190,7 +190,7 @@ public class ContainerRestController extends BaseRestController<Container> {
 		}
 		return ResponseEntity.ok(result);
 	}
-	
+
 	@RequestMapping(value = "/rename/{name}/{newContainerName}", method = { RequestMethod.GET, RequestMethod.POST })
 	public ResponseEntity<?> renameContainer(HttpServletRequest request, @PathVariable String name,
 			@PathVariable String newContainerName) {
@@ -205,7 +205,7 @@ public class ContainerRestController extends BaseRestController<Container> {
 			}
 			getLxdService(request).renameContainer(name, newContainerName);
 			result.setResult(getEntities(request).values());
-			result.setMsg("container renamed: " + name+"=>"+newContainerName);
+			result.setMsg("container renamed: " + name + "=>" + newContainerName);
 		} catch (Exception e) {
 			LOG.error(e, e);
 			result.setMsg(e.getMessage());
@@ -213,7 +213,6 @@ public class ContainerRestController extends BaseRestController<Container> {
 		}
 		return ResponseEntity.ok(result);
 	}
-
 
 	// TODO: No longer used.
 	@PostMapping("/create/{newContainerName}/{imageAlias}/{ephemeral}/{profile}/{config}")

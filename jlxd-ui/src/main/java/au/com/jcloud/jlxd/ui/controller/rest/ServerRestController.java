@@ -92,18 +92,19 @@ public class ServerRestController extends BaseRestController<Server> {
 
 		return ResponseEntity.ok(result);
 	}
-	
+
 	@PostMapping("/info")
 	public ResponseEntity<?> getServerInfo(HttpServletRequest request) {
 		AjaxResponseBody<ServerInfo> result = new AjaxResponseBody<>();
-	
+
 		Gson gson = new Gson();
 		ServerInfo serverInfo;
 		try {
 			if (isDefaultServerAndWindowsOs(getLxdService(request))) {
 				File file = new ClassPathResource("/static/json/serverinfo.json").getFile();
 				serverInfo = gson.fromJson(new FileReader(file), ServerInfo.class);
-			} else {
+			}
+			else {
 				serverInfo = getLxdService(request).loadServerInfo();
 			}
 			result.setMsg("read serverInfo");
