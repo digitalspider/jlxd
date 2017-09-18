@@ -103,6 +103,8 @@ public class ServerRestController extends BaseRestController<Server> {
 			if (isDefaultServerAndWindowsOs(getLxdService(request))) {
 				File file = new ClassPathResource("/static/json/serverinfo.json").getFile();
 				serverInfo = gson.fromJson(new FileReader(file), ServerInfo.class);
+				serverInfo.getEnvironment().put("kernel", System.getProperty("os.name"));
+				serverInfo.getEnvironment().put("kernel_version", System.getProperty("os.version"));
 			}
 			else {
 				serverInfo = getLxdService(request).loadServerInfo();
