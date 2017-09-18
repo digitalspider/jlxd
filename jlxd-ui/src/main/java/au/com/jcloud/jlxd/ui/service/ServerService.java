@@ -45,15 +45,6 @@ public class ServerService {
 				Server defaultServer = createNewServer(SERVER_NAME_DEFAULT, "Default server on host", null, null, null);
 				serverMap.put(SERVER_NAME_DEFAULT, defaultServer);
 				setServerInSession(request, defaultServer);
-
-				String serverName = "vm";
-				String serverDesc = "description";
-				String serverHost = "192.168.56.101";
-				String remoteCert = "C:/apps/lxd/client.crt";
-				String remoteKey = "C:/apps/lxd/client.key";
-				Server testServer = createNewServer(serverName, serverDesc, serverHost, remoteCert, remoteKey);
-				serverMap.put(serverName, testServer);
-
 			} catch (Exception e) {
 				LOG.error(e, e);
 			}
