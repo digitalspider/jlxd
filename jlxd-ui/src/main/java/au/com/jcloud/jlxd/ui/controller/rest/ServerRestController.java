@@ -1,8 +1,9 @@
 package au.com.jcloud.jlxd.ui.controller.rest;
 
-import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,6 +15,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.Errors;
@@ -151,11 +153,23 @@ public class ServerRestController extends BaseRestController<ServerInfo> {
 		Gson gson = new Gson();
 		ServerInfo serverInfo;
 		if (isDefaultServerAndWindowsOs(lxdService)) {
-			File file = new ClassPathResource("/static/json/serverinfo.json").getFile();
-			serverInfo = gson.fromJson(new FileReader(file), ServerInfo.class);
-			serverInfo.getEnvironment().setKernel(System.getProperty("os.name"));
-			serverInfo.getEnvironment().setKernelVersion(System.getProperty("os.version"));
-			serverInfo.getEnvironment().setKernelArchitecture(System.getProperty("os.arch"));
+			Resource resource = new ClassPathResource("/static/json/serverinfo.json");
+			Reader reader = null;
+			try {
+				try {
+					reader = new FileReader(resource.getFile());
+				} catch (Exception e) {
+					reader = new InputStreamReader(resource.getInputStream());
+				}
+				serverInfo = gson.fromJson(reader, ServerInfo.class);
+				serverInfo.getEnvironment().setKernel(System.getProperty("os.name"));
+				serverInfo.getEnvironment().setKernelVersion(System.getProperty("os.version"));
+				serverInfo.getEnvironment().setKernelArchitecture(System.getProperty("os.arch"));
+			} finally {
+				if (reader != null) {
+					reader.close();
+				}
+			}
 		}
 		else {
 			serverInfo = lxdService.loadServerInfo();
