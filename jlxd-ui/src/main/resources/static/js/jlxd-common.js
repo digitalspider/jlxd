@@ -29,7 +29,7 @@ $(document).ready(function () {
 
 function getAllServers() {
     var placeholderEle = $("#servers");
-    var postUrl = "/server";
+    var postUrl = "/server/list";
     var templateName = "server";
     var jsonData = "";
 
@@ -44,16 +44,6 @@ function selectServer(name) {
 
 	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
 	reloadContainers();
-}
-
-function removeServer(name) {
-    var placeholderEle = $("#servers");
-    var postUrl = "/server/delete/"+name;
-    var templateName = "server";
-    var jsonData = "";
-
-	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
-	return false;
 }
 
 function ajaxPost(event, element, postUrl) {

@@ -3,8 +3,8 @@ package au.com.jcloud.jlxd.ui.controller.rest;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.ServletException;
@@ -35,15 +35,15 @@ import au.com.jcloud.lxd.service.ICachingLxdService;
 
 @RequestMapping("/server")
 @RestController
-public class ServerRestController extends BaseRestController<Server> {
+public class ServerRestController extends BaseRestController<ServerInfo> {
 
 	public static final Logger LOG = Logger.getLogger(ServerRestController.class);
 
 	@Autowired
 	private ServerService serverService;
 
-	@RequestMapping(value = "", method = { RequestMethod.GET, RequestMethod.POST })
-	public ResponseEntity<?> getAllServers(HttpServletRequest request) {
+	@RequestMapping(value = "/list", method = { RequestMethod.GET, RequestMethod.POST })
+	public ResponseEntity<?> listServers(HttpServletRequest request) {
 		AjaxResponseBody<Server> result = new AjaxResponseBody<>();
 		try {
 			Collection<Server> servers = serverService.getServerMap(request).values();
@@ -84,57 +84,23 @@ public class ServerRestController extends BaseRestController<Server> {
 	}
 
 	@PostMapping("/create")
-	public ResponseEntity<?> createNewFromForm(HttpServletRequest request,
-			@RequestBody AddServerInput addServerInput, Errors errors) {
-		AjaxResponseBody<Server> result = new AjaxResponseBody<>();
-
-		// TODO: x
-
-		return ResponseEntity.ok(result);
-	}
-
-	@PostMapping("/info")
-	public ResponseEntity<?> getServerInfo(HttpServletRequest request) {
+	public ResponseEntity<?> addServer(HttpServletRequest request, HttpServletResponse response, ModelMap model,
+			@RequestBody AddServerInput addServerInput, Errors errors)
+			throws IOException, ServletException, CloneNotSupportedException, InterruptedException {
 		AjaxResponseBody<ServerInfo> result = new AjaxResponseBody<>();
 
-		Gson gson = new Gson();
-		ServerInfo serverInfo;
-		try {
-			if (isDefaultServerAndWindowsOs(getLxdService(request))) {
-				File file = new ClassPathResource("/static/json/serverinfo.json").getFile();
-				serverInfo = gson.fromJson(new FileReader(file), ServerInfo.class);
-				serverInfo.getEnvironment().put("kernel", System.getProperty("os.name"));
-				serverInfo.getEnvironment().put("kernel_version", System.getProperty("os.version"));
-			}
-			else {
-				serverInfo = getLxdService(request).loadServerInfo();
-			}
-			result.setMsg("read serverInfo");
-			result.setResult(new ArrayList<ServerInfo>());
-			result.getResult().add(serverInfo);
-		} catch (Exception e) {
-			LOG.error(e, e);
-			result.setMsg(e.getMessage());
-			return ResponseEntity.badRequest().body(result);
-		}
-		return ResponseEntity.ok(result);
-	}
-
-	@PostMapping("/create/{name}/{remoteHostAndPort}/{description}")
-	public ResponseEntity<?> addServer(HttpServletRequest request, HttpServletResponse response, ModelMap model,
-			@PathVariable String name, @PathVariable String remoteHostAndPort, @PathVariable String description)
-			throws IOException, ServletException, CloneNotSupportedException {
-		AjaxResponseBody<Server> result = new AjaxResponseBody<>();
-
 		Map<String, Server> serverMap = serverService.getServerMap(request);
+		String name = addServerInput.getName();
 		if (serverMap.containsKey(name)) {
 			throw new ServletException("The server with name: " + name + " already exists");
 		}
+		String remoteHostAndPort = addServerInput.getHostAndPort();
 		for (Server server : serverMap.values()) {
 			if (remoteHostAndPort.equalsIgnoreCase(server.getRemoteHostAndPort())) {
 				throw new ServletException("The server with remoteHostAndPort: " + remoteHostAndPort + " already exists");
 			}
 		}
+		String description = addServerInput.getDescription();
 
 		// TODO: How to upload these
 		String remoteCert = null;
@@ -150,15 +116,14 @@ public class ServerRestController extends BaseRestController<Server> {
 		currentServer.setActive(false);
 		server.setActive(true);
 
-		Collection<Server> servers = serverService.getServerMap(request).values();
-		result.setResult(servers);
+		result.setResult(getEntities(request).values());
 		return ResponseEntity.ok(result);
 	}
 
 	@PostMapping("/delete/{name}")
 	public ResponseEntity<?> deleteServer(HttpServletRequest request, HttpServletResponse response, ModelMap model,
-			@PathVariable String name) throws IOException, ServletException {
-		AjaxResponseBody<Server> result = new AjaxResponseBody<>();
+			@PathVariable String name) throws IOException, ServletException, InterruptedException {
+		AjaxResponseBody<ServerInfo> result = new AjaxResponseBody<>();
 
 		Server currentServer = serverService.getServerFromSession(request);
 		Map<String, Server> serverMap = serverService.getServerMap(request);
@@ -172,8 +137,7 @@ public class ServerRestController extends BaseRestController<Server> {
 			}
 		}
 
-		Collection<Server> servers = serverMap.values();
-		result.setResult(servers);
+		result.setResult(getEntities(request).values());
 		return ResponseEntity.ok(result);
 	}
 
@@ -183,14 +147,38 @@ public class ServerRestController extends BaseRestController<Server> {
 	}
 
 	@Override
-	public Server getEntity(ICachingLxdService lxdService, String name) throws IOException, InterruptedException {
-		// TODO Auto-generated method stub
-		return null;
+	public ServerInfo getEntity(ICachingLxdService lxdService, String name) throws IOException, InterruptedException {
+		Gson gson = new Gson();
+		ServerInfo serverInfo;
+		if (isDefaultServerAndWindowsOs(lxdService)) {
+			File file = new ClassPathResource("/static/json/serverinfo.json").getFile();
+			serverInfo = gson.fromJson(new FileReader(file), ServerInfo.class);
+			serverInfo.getEnvironment().setKernel(System.getProperty("os.name"));
+			serverInfo.getEnvironment().setKernelVersion(System.getProperty("os.version"));
+			serverInfo.getEnvironment().setKernelArchitecture(System.getProperty("os.arch"));
+		}
+		else {
+			serverInfo = lxdService.loadServerInfo();
+		}
+		if (serverInfo != null) {
+			serverInfo.setName(name);
+		}
+		return serverInfo;
 	}
 
 	@Override
-	public Map<String, Server> getEntities(ICachingLxdService lxdService) throws IOException, InterruptedException {
-		// TODO Auto-generated method stub
-		return null;
+	public Map<String, ServerInfo> getEntities(HttpServletRequest request) throws IOException, InterruptedException {
+		Map<String, Server> servers = serverService.getServerMap(request);
+		Map<String, ServerInfo> results = new HashMap<>();
+		for (String serverName : servers.keySet()) {
+			Server server = servers.get(serverName);
+			results.put(serverName, getEntity(server.getLxdService(), serverName));
+		}
+		return results;
+	}
+
+	@Override
+	public Map<String, ServerInfo> getEntities(ICachingLxdService lxdService) throws IOException, InterruptedException {
+		throw new IOException("getEntities() method not supported");
 	}
 }

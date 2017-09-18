@@ -1,10 +1,6 @@
 <h3>Servers</h3>
 <ul class="nav nav-pills">
 {{#each this}}
-<li {{#if active}}class="active"{{/if}}>
-<a href="#" onclick="selectServer('{{name}}')">{{name}} {{remoteHostAndPort}} 
-<span id="removeServer" class="glyphicon glyphicon-remove" style="color: red" data-name="{{name}}" onclick="removeServer('{{name}}')"></span></a>
-</li>
+<li {{#if active}}class="active"{{/if}}><a href="#" onclick="selectServer('{{name}}')">{{name}} {{remoteHostAndPort}}</a></li>
 {{/each}}
-<li><button type="button" class="btn btn-info" data-toggle="modal" data-target="#addServer">Add Server</button></li>
 </ul>

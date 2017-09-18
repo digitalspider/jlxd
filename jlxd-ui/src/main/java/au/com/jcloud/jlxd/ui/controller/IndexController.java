@@ -29,4 +29,9 @@ public class IndexController {
 		return "profile";
 	}
 
+	@GetMapping("/server")
+	public String server() {
+		return "server";
+	}
+
 }

@@ -7,15 +7,6 @@ $(document).ready(function () {
         searchContainers(searchTerm);
     });
     
-    // Add Server Form
-	$("#addServerButton").click(function (event) {
-		event.preventDefault();
-		var name = $("#addContainerForm #name").val();
-	    var hostAndPort = $("#addServerForm #hostAndPort").val();
-	    var description = $("#addServerForm #description").val();
-	    addServer(name, hostAndPort, description);
-	});
-
 	$("#addContainerButton").click(function (event) {
 		event.preventDefault();
 	    var name = $("#addContainerForm #name").val();
@@ -66,19 +57,6 @@ function renameContainer(name, newContainerName) {
     var postUrl = "/container/rename/"+name+"/"+newContainerName;
     var templateName = "container";
     var jsonData = "";
-
-	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
-}
-
-function addServer(name, hostAndPort, description) {
-	var placeholderEle = $("#servers");
-	var postUrl = "/server/create/"+encodeURIComponent(name)+"/"+hostAndPort+"/"+description;
-    var templateName = "server";
-    var addServerInput = {};
-    addServerInput["name"] = name;
-    addServerInput["hostAndPort"] = hostAndPort;
-    addServerInput["description"] = description;
-    var jsonData = JSON.stringify(addServerInput);
 
 	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
 }
