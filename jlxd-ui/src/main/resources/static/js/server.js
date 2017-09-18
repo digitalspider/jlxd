@@ -5,7 +5,9 @@ $(document).ready(function () {
 		var name = $("#addServerForm #name").val();
 	    var hostAndPort = $("#addServerForm #hostAndPort").val();
 	    var description = $("#addServerForm #description").val();
-	    addServer(name, hostAndPort, description);
+	    var remoteCert = $("#addServerForm #remoteCert").val();
+	    var remoteKey = $("#addServerForm #remoteKey").val();
+	    addServer(name, hostAndPort, description, remoteCert, remoteKey);
 	});
 
     // initialise the page
@@ -25,7 +27,7 @@ function searchServers(searchTerm) {
 }
 
 
-function addServer(name, hostAndPort, description) {
+function addServer(name, hostAndPort, description, remoteCert, remoteKey) {
 	var placeholderEle = $("#serverinfo");
 	var postUrl = "/server/create";
     var templateName = "serverinfo";
@@ -33,6 +35,8 @@ function addServer(name, hostAndPort, description) {
     addServerInput["name"] = name;
     addServerInput["hostAndPort"] = hostAndPort;
     addServerInput["description"] = description;
+    addServerInput["remoteCert"] = remoteCert;
+    addServerInput["remoteKey"] = remoteKey;
     var jsonData = JSON.stringify(addServerInput);
 
 	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);

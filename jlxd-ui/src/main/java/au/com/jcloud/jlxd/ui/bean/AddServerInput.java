@@ -4,6 +4,8 @@ public class AddServerInput {
 	private String name;
 	private String hostAndPort;
 	private String description;
+	private String remoteCert;
+	private String remoteKey;
 
 	@Override
 	public String toString() {
@@ -32,6 +34,22 @@ public class AddServerInput {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	public String getRemoteCert() {
+		return remoteCert;
+	}
+
+	public void setRemoteCert(String remoteCert) {
+		this.remoteCert = remoteCert;
+	}
+
+	public String getRemoteKey() {
+		return remoteKey;
+	}
+
+	public void setRemoteKey(String remoteKey) {
+		this.remoteKey = remoteKey;
 	}
 
 }

@@ -103,8 +103,8 @@ public class ServerRestController extends BaseRestController<ServerInfo> {
 		String description = addServerInput.getDescription();
 
 		// TODO: How to upload these
-		String remoteCert = null;
-		String remoteKey = null;
+		String remoteCert = addServerInput.getRemoteCert();
+		String remoteKey = addServerInput.getRemoteKey();
 		Server server = serverService.createNewServer(name, description, remoteHostAndPort, remoteCert, remoteKey);
 		if (server == null) {
 			throw new ServletException("Failed to create server with name: " + name);
