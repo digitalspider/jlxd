@@ -186,7 +186,10 @@ public class ServerRestController extends BaseRestController<ServerInfo> {
 		Map<String, ServerInfo> results = new HashMap<>();
 		for (String serverName : servers.keySet()) {
 			Server server = servers.get(serverName);
-			results.put(serverName, getEntity(server.getLxdService(), serverName));
+			ServerInfo serverInfo = getEntity(server.getLxdService(), serverName);
+			if (serverInfo != null) {
+				results.put(serverName, serverInfo);
+			}
 		}
 		return results;
 	}
