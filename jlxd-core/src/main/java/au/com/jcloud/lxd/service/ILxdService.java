@@ -6,6 +6,7 @@ import java.util.Map;
 
 import au.com.jcloud.lxd.bean.ImageConfig;
 import au.com.jcloud.lxd.bean.LxdServerCredential;
+import au.com.jcloud.lxd.enums.ContainerStateAction;
 import au.com.jcloud.lxd.model.Certificate;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.Image;
@@ -51,6 +52,8 @@ public interface ILxdService {
 	void deleteImage(String nameOrId) throws IOException, InterruptedException;
 
 	// Container operations
+	void changeContainerState(String name, ContainerStateAction action, boolean force, boolean stateful, String timeout) throws IOException, InterruptedException;
+	
 	void startContainer(String name) throws IOException, InterruptedException;
 
 	void stopContainer(String name) throws IOException, InterruptedException;

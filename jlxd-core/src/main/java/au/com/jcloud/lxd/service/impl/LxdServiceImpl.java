@@ -16,6 +16,7 @@ import org.apache.log4j.Logger;
 
 import au.com.jcloud.lxd.bean.ImageConfig;
 import au.com.jcloud.lxd.bean.LxdServerCredential;
+import au.com.jcloud.lxd.enums.ContainerStateAction;
 import au.com.jcloud.lxd.enums.LxdCall;
 import au.com.jcloud.lxd.enums.RemoteServer;
 import au.com.jcloud.lxd.model.Certificate;
@@ -118,29 +119,33 @@ public class LxdServiceImpl implements ILxdService {
 
 	// ** Container operations **//
 	@Override
-	public void startContainer(String name) throws IOException, InterruptedException {
+	public void changeContainerState(String name, ContainerStateAction action, boolean force, boolean stateful, String timeout) throws IOException, InterruptedException {
 		State state = loadContainerState(name);
 		if (state == null) {
 			throw new IllegalArgumentException("container: " + name + " has state null");
 		}
-		if (state.isRunning()) {
+		if (state.isRunning() && action.equals(ContainerStateAction.START)) {
 			throw new IllegalArgumentException("container: " + name + " has is already running");
 		}
-		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.PUT_STATE_START, name);
+		else if (!state.isRunning() && action.equals(ContainerStateAction.STOP) || action.equals(ContainerStateAction.FREEZE) || action.equals(ContainerStateAction.RESTART)) {
+			throw new IllegalArgumentException("container: " + name + " has is already running");
+		}
+		else if (!state.isFrozen() && action.equals(ContainerStateAction.UNFREEZE)) {
+			throw new IllegalArgumentException("container: " + name + " has is not frozen");
+		}
+		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.PUT_CONTAINER_STATE, name, action.name().toLowerCase(), String.valueOf(force), String.valueOf(stateful), timeout);
+	}
+	
+	@Override
+	public void startContainer(String name) throws IOException, InterruptedException {
+		changeContainerState(name, ContainerStateAction.START, false, false, null);
 	}
 
 	@Override
 	public void stopContainer(String name) throws IOException, InterruptedException {
-		State state = loadContainerState(name);
-		LOG.info("container " + name + " has state " + state);
-		if (state == null) {
-			throw new IllegalArgumentException("container: " + name + " has state null");
-		}
-		if (!state.isRunning()) {
-			throw new IllegalArgumentException("container: " + name + " has is not running");
-		}
-		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.PUT_STATE_STOP, name);
+		changeContainerState(name, ContainerStateAction.STOP, true, false, null);
 	}
+	
 
 	@Override
 	public void createContainer(String newContainerName, String imageAlias) throws IOException, InterruptedException {

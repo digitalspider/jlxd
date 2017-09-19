@@ -160,7 +160,7 @@ public class LxdApiServiceImpl implements ILxdApiService {
 	public void executeCurlPostOrPutCmd(LxdServerCredential credential, LxdCall lxdCall, String containerName, String... additionalParams)
 			throws IOException, InterruptedException {
 
-		if (lxdCall == null || (!lxdCall.equals(LxdCall.PUT_STATE_START) && !lxdCall.equals(LxdCall.PUT_STATE_STOP)
+		if (lxdCall == null || (!lxdCall.equals(LxdCall.PUT_CONTAINER_STATE)
 				&& !lxdCall.equals(LxdCall.POST_CONTAINER_CREATE_LOCAL) && !lxdCall.equals(LxdCall.POST_CONTAINER_CREATE_REMOTE)
 				&& !lxdCall.equals(LxdCall.POST_CONTAINER_DELETE)
 				&& !lxdCall.equals(LxdCall.POST_IMAGE_DELETE) && !lxdCall.equals(LxdCall.POST_CONTAINER_RENAME))) {
@@ -171,6 +171,24 @@ public class LxdApiServiceImpl implements ILxdApiService {
 		url = getParameterisedUrl(url, containerName);
 		if (lxdCall.equals(LxdCall.POST_CONTAINER_RENAME) && additionalParams.length > 0) {
 			url = url.replace("${NEWNAME}", additionalParams[0]);
+		}
+		if (lxdCall.equals(LxdCall.PUT_CONTAINER_STATE) && additionalParams.length > 0) {
+			url = url.replace("${ACTION}", additionalParams[0]);
+			boolean force = false;
+			boolean stateful = false;
+			String timeout = "";
+			if (additionalParams.length > 1) {
+				force = Boolean.parseBoolean(additionalParams[1]);
+			}
+			url = url.replace("${FORCE}", String.valueOf(force));
+			if (additionalParams.length > 2) {
+				stateful = Boolean.parseBoolean(additionalParams[2]);
+			}
+			url = url.replace("${STATEFUL}", String.valueOf(stateful));
+			if (StringUtils.isNotBlank(timeout)) {
+				url = url.replace("${TIMEOUT}", "\"timeout\": "+timeout+", ");
+			}
+			url = url.replace("${TIMEOUT}", StringUtils.EMPTY);
 		}
 
 		LOG.debug("url=" + url);

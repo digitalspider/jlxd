@@ -27,8 +27,7 @@ import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_PROFILE_DELETE;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_SNAPSHOT_CREATE;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_SNAPSHOT_DELETE;
 import static au.com.jcloud.lxd.service.ILxdApiService.URL_POST_SNAPSHOT_RENAME;
-import static au.com.jcloud.lxd.service.ILxdApiService.URL_PUT_STATE_START;
-import static au.com.jcloud.lxd.service.ILxdApiService.URL_PUT_STATE_STOP;
+import static au.com.jcloud.lxd.service.ILxdApiService.URL_PUT_CONTAINER_STATE;
 
 import au.com.jcloud.lxd.model.response.AbstractResponse;
 import au.com.jcloud.lxd.model.response.CertificateResponse;
@@ -55,8 +54,7 @@ public enum LxdCall {
 	GET_STATE(URL_GET_STATE, StateResponse.class),
 	GET_SNAPSHOTS(URL_GET_SNAPSHOTS, SnapshotResponse.class),
 	GET_FILE(URL_GET_FILE, FileResponse.class),
-	PUT_STATE_START(URL_PUT_STATE_START, OperationResponse.class),
-	PUT_STATE_STOP(URL_PUT_STATE_STOP, OperationResponse.class),
+	PUT_CONTAINER_STATE(URL_PUT_CONTAINER_STATE, OperationResponse.class),
 	POST_CONTAINER_CREATE_REMOTE(URL_POST_CONTAINER_CREATE_REMOTE, OperationResponse.class),
 	POST_CONTAINER_CREATE_LOCAL(URL_POST_CONTAINER_CREATE_LOCAL, OperationResponse.class),
 	POST_CONTAINER_COPY(URL_POST_CONTAINER_COPY, OperationResponse.class),

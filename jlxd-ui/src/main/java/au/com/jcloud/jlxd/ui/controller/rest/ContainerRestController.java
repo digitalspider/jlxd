@@ -28,6 +28,7 @@ import au.com.jcloud.jlxd.ui.bean.AddContainerInput;
 import au.com.jcloud.jlxd.ui.model.Server;
 import au.com.jcloud.jlxd.ui.search.AjaxResponseBody;
 import au.com.jcloud.lxd.bean.ImageConfig;
+import au.com.jcloud.lxd.enums.ContainerStateAction;
 import au.com.jcloud.lxd.model.Container;
 import au.com.jcloud.lxd.model.State;
 import au.com.jcloud.lxd.model.StatusCode;
@@ -135,6 +136,32 @@ public class ContainerRestController extends BaseRestController<Container> {
 				throw new IllegalArgumentException("Cannot start container if containerName is blank");
 			}
 			getLxdService(request).stopContainer(containerName);
+			result.setResult(getEntities(request).values());
+			result.setMsg("container stopped: " + containerName);
+		} catch (Exception e) {
+			LOG.error(e, e);
+			result.setMsg(e.getMessage());
+			return ResponseEntity.badRequest().body(result);
+		}
+		return ResponseEntity.ok(result);
+	}
+	
+	@RequestMapping(value = "/state/{containerName}/{action}", method = { RequestMethod.GET, RequestMethod.POST })
+	public ResponseEntity<?> changeContainerState(HttpServletRequest request, @PathVariable String containerName, @PathVariable String action) {
+		AjaxResponseBody<Container> result = new AjaxResponseBody<>();
+
+		try {
+			if (StringUtils.isBlank(containerName)) {
+				throw new IllegalArgumentException("Cannot action container if containerName is blank");
+			}
+			if (StringUtils.isBlank(action)) {
+				throw new IllegalArgumentException("Cannot action container if action is blank");
+			}
+			ContainerStateAction containerStateAction = ContainerStateAction.valueOf(action.toUpperCase());
+			if (containerStateAction==null) {
+				throw new IllegalArgumentException("Cannot action container as action="+action+" is not valid");
+			}
+			getLxdService(request).changeContainerState(containerName, containerStateAction, false, false, StringUtils.EMPTY);
 			result.setResult(getEntities(request).values());
 			result.setMsg("container stopped: " + containerName);
 		} catch (Exception e) {

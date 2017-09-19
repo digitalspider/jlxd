@@ -27,8 +27,14 @@
 				<a href="#" id="viewState_{{name}}" style="color: orange" onclick="toggleViewState(event, this,'{{name}}')"><span class="glyphicon glyphicon-menu-up"></span>&nbsp;<span id="showHide">SHOW</span></a>
 				{{#if (ifCond status '===' "Running")}}
 				<a href="#" id="stopContainer" style="color: brown" onclick="ajaxPost(event, this, '/container/stop/{{name}}')"><span class="glyphicon glyphicon-stop"></span>&nbsp;STOP</a>
+				<a href="#" id="freezeContainer" style="color: brown" onclick="ajaxPost(event, this, '/container/state/{{name}}/freeze')"><span class="glyphicon glyphicon-pause"></span>&nbsp;FREEZE</a>
+				<a href="#" id="restartContainer" style="color: brown" onclick="ajaxPost(event, this, '/container/state/{{name}}/restart')"><span class="glyphicon glyphicon-refresh"></span>&nbsp;RESTART</a>
 				{{else}}
-				<a href="#" id="startContainer" style="color: brown" onclick="ajaxPost(event, this, '/container/start/{{name}}')"><span class="glyphicon glyphicon-play"></span>&nbsp;START</a>
+					{{#if (ifCond status '===' "Frozen")}}
+					<a href="#" id="unfreezeContainer" style="color: brown" onclick="ajaxPost(event, this, '/container/state/{{name}}/unfreeze')"><span class="glyphicon glyphicon-play"></span>&nbsp;UNFREEZE</a>
+					{{else}}
+					<a href="#" id="startContainer" style="color: brown" onclick="ajaxPost(event, this, '/container/start/{{name}}')"><span class="glyphicon glyphicon-play"></span>&nbsp;START</a>
+					{{/if}}
 				{{/if}}
 				{{#if (ifCond status '===' "Stopped")}}
 				<a href="#" id="editContainer" style="color: blue" data-name="{{name}}" onclick="toggleEditState(event, this, '{{name}}')"><span class="glyphicon glyphicon-pencil"></span>&nbsp;EDIT</a>

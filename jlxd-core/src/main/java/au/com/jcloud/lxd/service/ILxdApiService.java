@@ -31,8 +31,7 @@ public interface ILxdApiService {
 	public static final String URL_GET_FILE = "/1.0/containers/${ID}/files?path=${PATH}";
 
 	// Post Commands
-	public static final String URL_PUT_STATE_STOP = URL_GET_STATE + " -X PUT -d '{\"action\": \"stop\", \"force\": true}'";
-	public static final String URL_PUT_STATE_START = URL_GET_STATE + " -X PUT -d '{\"action\": \"start\"}'";
+	public static final String URL_PUT_CONTAINER_STATE = URL_GET_STATE + " -X PUT -d '{\"action\": \"${ACTION}\", ${TIMEOUT} \"force\": ${FORCE}, \"stateful\": ${STATEFUL} }'";
 	public static final String URL_POST_CONTAINER_CREATE_REMOTE = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", ${EPHEMERAL} ${ARCHITECTURE} ${CONFIG} ${PROFILES} \"source\": {\"type\": \"image\", \"protocol\": \"${PROTOCOL}\", \"server\": \"${SERVERURL}\", \"alias\": \"${ALIAS}\"}}'";
 	public static final String URL_POST_CONTAINER_CREATE_LOCAL = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", ${EPHEMERAL} ${ARCHITECTURE} ${CONFIG} ${PROFILES} \"source\": {\"type\": \"image\", \"fingerprint\": \"${ALIAS}\"";
 	public static final String URL_POST_CONTAINER_COPY = URL_GET_CONTAINER + " -X POST -d '{\"name\": \"${ID}\", ${EPHEMERAL} ${ARCHITECTURE} ${CONFIG} ${PROFILES} \"source\": {\"type\": \"copy\", \"container_only\": \"${CONTAINERONLY}\", \"source\": \"${CONTAINER}\"}}'";

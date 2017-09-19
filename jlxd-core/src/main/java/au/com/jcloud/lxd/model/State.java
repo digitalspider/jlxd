@@ -43,6 +43,7 @@ public class State {
 
 	public static final int STATUS_CODE_RUNNING = 103;
 	public static final int STATUS_CODE_STOPPED = 102;
+	public static final int STATUS_CODE_FROZEN = 110;
 
 	private String status;
 	@SerializedName("status_code")
@@ -69,6 +70,10 @@ public class State {
 
 	public boolean isStopped() {
 		return statusCode == STATUS_CODE_STOPPED;
+	}
+	
+	public boolean isFrozen() {
+		return statusCode == STATUS_CODE_FROZEN;
 	}
 
 	public String getMemoryInMB(MemoryEnum type) {
