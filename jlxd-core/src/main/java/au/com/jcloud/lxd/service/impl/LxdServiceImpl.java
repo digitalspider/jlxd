@@ -127,11 +127,11 @@ public class LxdServiceImpl implements ILxdService {
 		if (state.isRunning() && action.equals(ContainerStateAction.START)) {
 			throw new IllegalArgumentException("container: " + name + " has is already running");
 		}
-		else if (!state.isRunning() && action.equals(ContainerStateAction.STOP) || action.equals(ContainerStateAction.FREEZE) || action.equals(ContainerStateAction.RESTART)) {
-			throw new IllegalArgumentException("container: " + name + " has is already running");
+		else if (!state.isRunning() && (action.equals(ContainerStateAction.STOP) || action.equals(ContainerStateAction.FREEZE) || action.equals(ContainerStateAction.RESTART))) {
+			throw new IllegalArgumentException("container: " + name + " is not running");
 		}
 		else if (!state.isFrozen() && action.equals(ContainerStateAction.UNFREEZE)) {
-			throw new IllegalArgumentException("container: " + name + " has is not frozen");
+			throw new IllegalArgumentException("container: " + name + " is not frozen");
 		}
 		lxdApiService.executeCurlPostOrPutCmd(credential, LxdCall.PUT_CONTAINER_STATE, name, action.name().toLowerCase(), String.valueOf(force), String.valueOf(stateful), timeout);
 	}
