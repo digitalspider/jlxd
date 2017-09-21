@@ -179,7 +179,10 @@ public class LxdApiServiceImpl implements ILxdApiService {
 		else if ((lxdCall.equals(LxdCall.POST_IMAGEALIAS_CREATE)) && additionalParams.length > 0) {
 			url = url.replace("${NEWNAME}", containerName);
 			url = url.replace("${FINGERPRINT}", additionalParams[0]);
-			url = url.replace("${DESCRIPTION}", additionalParams[1]);
+			if (additionalParams.length > 1) {
+				url = url.replace("${DESCRIPTION}", additionalParams[1]);
+			}
+			url = url.replace("${DESCRIPTION}", StringUtils.EMPTY);
 		}
 		else if (lxdCall.equals(LxdCall.PUT_CONTAINER_STATE) && additionalParams.length > 0) {
 			url = url.replace("${ACTION}", additionalParams[0]);
