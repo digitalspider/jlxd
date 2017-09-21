@@ -6,6 +6,7 @@ import java.util.Map;
 import com.google.gson.annotations.SerializedName;
 
 import au.com.jcloud.lxd.model.extra.Config;
+import au.com.jcloud.lxd.util.FormatUtils;
 
 /**
  * Created by david.vittor on 11/07/16.
@@ -92,6 +93,10 @@ public class Container {
 	private Map<String,Object> expandedDevices;
 	private State state;
 
+	public String getCreatedDateAsIsoDateTime() {
+		return FormatUtils.convertDateTimeToISO(createdDate);
+	}
+	
 	@Override
 	public String toString() {
 		return "name=" + name + " status=" + status + " statusCode=" + statusCode + " stateful=" + stateful + " date=" + createdDate + " config=" + config + " state=" + state;

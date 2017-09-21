@@ -26,7 +26,7 @@
 {{/each}}
 			</td>
 			<td id="processes">{{state.processes}}</td>
-			<td id="createdDate">{{createdDate}}</td>
+			<td id="createdDate">{{createdDateAsIsoDateTime}}</td>
 			<td id="actions">
 				<a href="#" id="viewState_{{name}}" style="color: orange" onclick="toggleViewState(event, this,'{{name}}')"><span class="glyphicon glyphicon-menu-up"></span>&nbsp;<span id="showHide">SHOW</span></a>
 				{{#if (ifCond status '===' "Running")}}

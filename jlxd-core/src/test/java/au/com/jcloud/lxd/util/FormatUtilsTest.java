@@ -2,6 +2,9 @@ package au.com.jcloud.lxd.util;
 
 import static org.junit.Assert.assertEquals;
 
+import java.text.ParseException;
+import java.util.Date;
+
 import org.junit.Test;
 
 public class FormatUtilsTest {
@@ -50,5 +53,17 @@ public class FormatUtilsTest {
 	public void convertIntegerToKB_shouldHandleRoundUp() {
 		assertEquals("0.00",FormatUtils.convertIntegerToKB(5));
 		assertEquals("0.01",FormatUtils.convertIntegerToKB(6));
+	}
+	
+	@Test
+	public void convertDateToISO_shouldWork() throws ParseException {
+		Date date = FormatUtils.DATE_FORMAT_ISO8601_SHORT.parse("20170512");
+		assertEquals("2017-05-12", FormatUtils.convertDateToISO(date));
+	}
+	
+	@Test
+	public void convertDateTimeToISO_shouldWork() throws ParseException {
+		Date date = FormatUtils.DATE_FORMAT_ISO8601_LONG.parse("20170512T1918");
+		assertEquals("2017-05-12T19:18", FormatUtils.convertDateTimeToISO(date));
 	}
 }
