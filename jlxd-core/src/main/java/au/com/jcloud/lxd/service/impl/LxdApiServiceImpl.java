@@ -173,8 +173,13 @@ public class LxdApiServiceImpl implements ILxdApiService {
 
 		String url = getBaseUrl(credential) + lxdCall.getCommand();
 		url = getParameterisedUrl(url, containerName);
-		if ((lxdCall.equals(LxdCall.POST_CONTAINER_RENAME) || lxdCall.equals(LxdCall.POST_IMAGEALIAS_CREATE)) && additionalParams.length > 0) {
+		if ((lxdCall.equals(LxdCall.POST_CONTAINER_RENAME)) && additionalParams.length > 0) {
 			url = url.replace("${NEWNAME}", additionalParams[0]);
+		}
+		else if ((lxdCall.equals(LxdCall.POST_IMAGEALIAS_CREATE)) && additionalParams.length > 0) {
+			url = url.replace("${NEWNAME}", containerName);
+			url = url.replace("${FINGERPRINT}", additionalParams[0]);
+			url = url.replace("${DESCRIPTION}", additionalParams[1]);
 		}
 		else if (lxdCall.equals(LxdCall.PUT_CONTAINER_STATE) && additionalParams.length > 0) {
 			url = url.replace("${ACTION}", additionalParams[0]);
