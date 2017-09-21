@@ -303,7 +303,7 @@ public class LxdServiceImpl implements ILxdService {
 
 	@Override
 	public Profile loadProfile(String name) throws IOException, InterruptedException {
-		Profile profile = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_IMAGE, name);
+		Profile profile = lxdApiService.executeCurlGetCmd(credential, LxdCall.GET_PROFILE, name);
 		return profile;
 	}
 
