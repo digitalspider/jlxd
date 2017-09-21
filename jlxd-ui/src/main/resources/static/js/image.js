@@ -6,6 +6,18 @@ $(document).ready(function () {
         searchImages(searchTerm);
     });
 
+    $(document).on("click", "#btnAddAlias", function () {
+    	var imageFingerprint = $(this).data('fingerprint');
+    	$(".modal-body #fingerprint").val( imageFingerprint );
+    });
+    
+	$("#addAliasButton").click(function (event) {
+		event.preventDefault();
+	    var aliasName = $("#addAliasForm #name").val();
+	    var imageAlias = $("#addAliasForm #fingerprint").val();
+	    addAlias(aliasName, imageAlias);
+	});
+
     // initialise the page
 	getAllServers();
 	searchImages("");
@@ -28,6 +40,19 @@ function reloadImages() {
     var templateName = "image";
     var jsonData = "";
 
+	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
+}
+
+function addAlias(aliasName, imageAlias) {
+    var placeholderEle = $("#images");
+	var postUrl = "/image/alias/create/"+aliasName+"/"+imageAlias;
+    var templateName = "image";
+//    var addAliasInput = {};
+//    addAliasInput["aliasName"] = aliasName;
+//    addAliasInput["imageAlias"] = imageAlias;
+//    var jsonData = JSON.stringify(addAliasInput);
+    var jsonData = "";
+    
 	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
 }
 

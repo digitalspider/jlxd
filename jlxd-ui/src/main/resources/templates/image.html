@@ -50,6 +50,41 @@
 
 </div>
 
+<!-- Modal for Add Alias -->
+<div id="addAlias" class="modal fade" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4 class="modal-title">Add Alias</h4>
+      </div>
+      <div class="modal-body">
+		<form id="addAliasForm" action="#">
+			<table id="addAliasTable" class="table table-striped">
+				<tbody id="addAliasTableData">
+				<tr>
+					<td><label for="fingerprint">Image Fingerprint:</label></td>
+					<td><input type="text" readonly="true" disabled="true" id="fingerprint" name="fingerprint"></input></td>
+				</tr>
+				<tr>
+					<td><label for="name">Name:</label></td>
+					<td><input type="text" id="name" name="name"></input></td>
+				</tr>
+				</tbody>
+			</table>
+		</form>
+      </div>
+      <div class="modal-footer">
+		<button type="button" class="btn btn-primary" id="addAliasButton" data-dismiss="modal">Add Alias</button>
+        <button type="button" class="btn btn-default" id="addAliasModalCloseButton" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
 <div class="container">
     <footer>
         <p>
