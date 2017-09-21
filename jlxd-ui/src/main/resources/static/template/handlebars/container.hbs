@@ -6,6 +6,8 @@
 			<td>Status</td>
 			<td>PID</td>
 			<td>IP</td>
+			<td>Processes</td>
+			<td>Created</td>
 			<td>Actions</td>
 		</tr>
 	</thead>
@@ -23,6 +25,8 @@
 	{{/if}}
 {{/each}}
 			</td>
+			<td id="processes">{{state.processes}}</td>
+			<td id="createdDate">{{createdDate}}</td>
 			<td id="actions">
 				<a href="#" id="viewState_{{name}}" style="color: orange" onclick="toggleViewState(event, this,'{{name}}')"><span class="glyphicon glyphicon-menu-up"></span>&nbsp;<span id="showHide">SHOW</span></a>
 				{{#if (ifCond status '===' "Running")}}
@@ -43,12 +47,16 @@
 				{{/if}}
 			</td>
 		</tr>
-		<tr id="stateRow_{{name}}" style="display: none" ><td colspan="5"><div id="stateRowContent_{{name}}"></div></td></tr>
+		<tr id="stateRow_{{name}}" style="display: none" >
+			<td colspan="7">
+				<div id="stateRowContent_{{name}}">Ephemeral={{ephemeral}}, Memory (current/peak)={{state.memoryUsageInMB}}MB/{{state.memoryPeakUsageInMB}}MB, Swap Memory (current/peak)={{state.swapMemoryUsageInMB}}MB/{{state.swapPeakMemoryUsageInMB}}MB</div>
+			</td>
+		</tr>
 		{{else}}
-		<tr><td colspan="5">No containers found</td></tr>
+		<tr><td colspan="7">No containers found</td></tr>
 		{{/each}}
 		<tr>
-			<td colspan="5"><button type="button" class="btn btn-info" data-toggle="modal" data-target="#addContainer">Add Container</button></td>
+			<td colspan="7"><button type="button" class="btn btn-info" data-toggle="modal" data-target="#addContainer">Add Container</button></td>
 		</tr>
 	</tbody>
 </table>

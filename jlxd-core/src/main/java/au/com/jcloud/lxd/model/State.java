@@ -6,6 +6,7 @@ import java.util.Map;
 import com.google.gson.annotations.SerializedName;
 
 import au.com.jcloud.lxd.model.extra.NetworkInterface;
+import au.com.jcloud.lxd.util.FormatUtils;
 
 /**
  * Created by david.vittor on 12/07/16.
@@ -57,7 +58,7 @@ public class State {
 
 	@Override
 	public String toString() {
-		return "pid=" + pid + " status="+status+"("+statusCode+") processes=" + processes + " memory=" + getMemoryInMB(MemoryEnum.USAGE) + "M/" + getMemoryInMB(MemoryEnum.USAGE_PEAK) + "M" + " swap=" + getMemoryInMB(MemoryEnum.SWAP_USAGE) + "M/" + getMemoryInMB(MemoryEnum.SWAP_USAGE_PEAK) + "M" + " network=" + network;
+		return "pid=" + pid + " status="+status+"("+statusCode+") processes=" + processes + " memory=" + getMemoryUsageInMB() + "MB/" + getMemoryPeakUsageInMB() + "MB" + " swap=" + getSwapMemoryUsageInMB() + "MB/" + getSwapMemoryPeakUsageInMB() + "MB" + " network=" + network;
 	}
 
 	enum MemoryEnum {
@@ -76,12 +77,28 @@ public class State {
 		return statusCode == STATUS_CODE_FROZEN;
 	}
 
+	public String getMemoryUsageInMB() {
+		return getMemoryInMB(MemoryEnum.USAGE);
+	}
+	
+	public String getMemoryPeakUsageInMB() {
+		return getMemoryInMB(MemoryEnum.USAGE_PEAK);
+	}
+	
+	public String getSwapMemoryUsageInMB() {
+		return getMemoryInMB(MemoryEnum.SWAP_USAGE);
+	}
+	
+	public String getSwapMemoryPeakUsageInMB() {
+		return getMemoryInMB(MemoryEnum.SWAP_USAGE_PEAK);
+	}
+	
 	public String getMemoryInMB(MemoryEnum type) {
 		getMemoryData();
 		Integer memoryValue = memoryData.get(type);
-		return (memoryValue!=null) ? String.valueOf(memoryValue / 1000 / 1000) : "0";
+		return (memoryValue!=null) ? FormatUtils.convertIntegerToMB(memoryValue) : "0";
 	}
-
+	
 	public Map<MemoryEnum, Integer> getMemoryData() {
 		if (!memoryData.isEmpty()) {
 			return memoryData;

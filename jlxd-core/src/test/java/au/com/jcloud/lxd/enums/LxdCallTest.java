@@ -1,4 +1,4 @@
-package au.com.jcloud.lxd.util;
+package au.com.jcloud.lxd.enums;
 
 import org.junit.Assert;
 import org.junit.Test;

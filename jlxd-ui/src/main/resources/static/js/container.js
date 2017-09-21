@@ -107,6 +107,6 @@ function toggleViewState(event, element, containerName) {
 	$(viewStateId).children(":first").toggleClass("glyphicon-menu-down").toggleClass("glyphicon-menu-up");
 	var text = $(viewStateId).find("#showHide").text();
 	$(viewStateId).find("#showHide").text(text=="SHOW" ? "HIDE" : "SHOW");
-	$(stateRowContentId).html("<b>state details go here</b>");
+	//$(stateRowContentId).html("<b>state details go here</b>");
 	$(stateRowId).toggle();
 }
