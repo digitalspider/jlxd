@@ -56,6 +56,15 @@ function addAlias(aliasName, imageAlias) {
 	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);
 }
 
+function deleteAlias(aliasName) {
+    var placeholderEle = $("#images");
+	var postUrl = "/image/alias/delete/"+aliasName;
+    var templateName = "image";
+    var jsonData = "";
+    
+	fire_ajax_submit(postUrl, jsonData, templateName, placeholderEle);	
+}
+
 function toggleEditState(event, element, containerName) {
 	event.preventDefault();
 	var postUrl = "/image/save/"+containerName;

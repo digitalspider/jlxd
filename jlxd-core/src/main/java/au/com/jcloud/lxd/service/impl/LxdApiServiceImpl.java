@@ -161,18 +161,22 @@ public class LxdApiServiceImpl implements ILxdApiService {
 			throws IOException, InterruptedException {
 
 		if (lxdCall == null || (!lxdCall.equals(LxdCall.PUT_CONTAINER_STATE)
-				&& !lxdCall.equals(LxdCall.POST_CONTAINER_CREATE_LOCAL) && !lxdCall.equals(LxdCall.POST_CONTAINER_CREATE_REMOTE)
+				&& !lxdCall.equals(LxdCall.POST_CONTAINER_CREATE_LOCAL) 
+				&& !lxdCall.equals(LxdCall.POST_CONTAINER_CREATE_REMOTE)
 				&& !lxdCall.equals(LxdCall.POST_CONTAINER_DELETE)
-				&& !lxdCall.equals(LxdCall.POST_IMAGE_DELETE) && !lxdCall.equals(LxdCall.POST_CONTAINER_RENAME))) {
+				&& !lxdCall.equals(LxdCall.POST_IMAGEALIAS_CREATE)
+				&& !lxdCall.equals(LxdCall.POST_IMAGEALIAS_DELETE)
+				&& !lxdCall.equals(LxdCall.POST_IMAGE_DELETE) 
+				&& !lxdCall.equals(LxdCall.POST_CONTAINER_RENAME))) {
 			throw new IOException("This call is not implemented! " + lxdCall);
 		}
 
 		String url = getBaseUrl(credential) + lxdCall.getCommand();
 		url = getParameterisedUrl(url, containerName);
-		if (lxdCall.equals(LxdCall.POST_CONTAINER_RENAME) && additionalParams.length > 0) {
+		if ((lxdCall.equals(LxdCall.POST_CONTAINER_RENAME) || lxdCall.equals(LxdCall.POST_IMAGEALIAS_CREATE)) && additionalParams.length > 0) {
 			url = url.replace("${NEWNAME}", additionalParams[0]);
 		}
-		if (lxdCall.equals(LxdCall.PUT_CONTAINER_STATE) && additionalParams.length > 0) {
+		else if (lxdCall.equals(LxdCall.PUT_CONTAINER_STATE) && additionalParams.length > 0) {
 			url = url.replace("${ACTION}", additionalParams[0]);
 			boolean force = false;
 			boolean stateful = false;

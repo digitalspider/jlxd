@@ -57,34 +57,34 @@ public class ImageRestController extends BaseRestController<Image> {
 		return lxdService.getImage(name);
 	}
 
-	@PostMapping("/alias/create/{aliasName}/{imageName}")
+	@PostMapping("/alias/create/{aliasName}/{imageFingerprint}")
 	public ResponseEntity<?> createImageAlias(HttpServletRequest request, @PathVariable String aliasName,
-			@PathVariable String imageName) {
+			@PathVariable String imageFingerprint) {
 		AjaxResponseBody<Image> result = new AjaxResponseBody<>();
 
 		try {
 			ICachingLxdService lxdService = getLxdService(request);
-			Image image = lxdService.getImage(imageName);
+			Image image = lxdService.getImage(imageFingerprint);
 			if (image == null) {
-				throw new Exception("Could not find image with name : " + imageName);
+				throw new Exception("Could not find image with fingerprint : " + imageFingerprint);
 			}
 			ImageAlias alias = lxdService.getImageAlias(aliasName);
 			if (alias != null) {
 				if (alias.getTarget().equals(image.getFingerprint())) {
-					throw new Exception("Alias " + aliasName + " already assigned to " + imageName);
+					throw new Exception("Alias " + aliasName + " already assigned to " + imageFingerprint);
 				}
 				else {
 					throw new Exception("Alias " + aliasName + " already assigned to " + alias.getTarget());
 				}
 			}
-			lxdService.createImageAlias(aliasName, image.getFingerprint());
+			lxdService.createImageAlias(aliasName, imageFingerprint);
 			ImageAlias newImageAlias = lxdService.getImageAlias(aliasName);
 			if (newImageAlias == null) {
 				throw new Exception("Could not create image alias: " + aliasName);
 			}
 
 			result.setResult(getEntities(request).values());
-			result.setMsg("New alias " + aliasName + " assigned to image: " + imageName);
+			result.setMsg("New alias " + aliasName + " assigned to image: " + imageFingerprint);
 		} catch (Exception e) {
 			LOG.error(e, e);
 			result.setMsg(e.getMessage());
