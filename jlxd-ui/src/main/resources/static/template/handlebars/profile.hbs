@@ -2,17 +2,19 @@
 <table id="profileTable" class="table table-striped">
 	<thead id="profileTableHeader">
 		<tr>
-			<td>Type</td>
-			<td>Status</td>
-			<td>StatusCode</td>
+			<td>Name</td>
+			<td>Description</td>
+			<td>Config</td>
+			<td>Devices</td>
 		</tr>
 	</thead>
 	<tbody id="profileTableData">
 		{{#each this}}
 		<tr>
-			<td id="type"><b>{{type}}</b></td>
-			<td id="status">{{status}}</td>
-			<td id="statusCode">{{statusCode}}</td>
+			<td id="name"><b>{{name}}</b></td>
+			<td id="description">{{description}}</td>
+			<td id="config">{{config.length}}</td>
+			<td id="devices">{{devices.length}}</td>
 		</tr>
 		{{else}}
 		<tr><td colspan="3">No profiles found</td></tr>
