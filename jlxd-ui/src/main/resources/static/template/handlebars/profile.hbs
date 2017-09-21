@@ -13,8 +13,8 @@
 		<tr>
 			<td id="name"><b>{{name}}</b></td>
 			<td id="description">{{description}}</td>
-			<td id="config">{{config.length}}</td>
-			<td id="devices">{{devices.length}}</td>
+			<td id="config">{{#each config}}{{@key}}: {{this}}{{/each}}</td>
+			<td id="devices">{{#each devices}}{{@key}}: {{type}}: {{name}}{{/each}}</td>
 		</tr>
 		{{else}}
 		<tr><td colspan="3">No profiles found</td></tr>
