@@ -43,7 +43,7 @@ public interface ILxdApiService {
 	public static final String URL_POST_SNAPSHOT_DELETE = URL_GET_SNAPSHOTS + "/${SNAPNAME} -X DELETE";
 	public static final String URL_POST_SNAPSHOT_RENAME = URL_GET_SNAPSHOTS + "/${SNAPNAME} -X POST -d '{ \"name\": \"${NEWNAME}\" }'";
 	public static final String URL_POST_IMAGE_DELETE = URL_GET_IMAGE + "/${ID} -X DELETE";
-	public static final String URL_POST_IMAGEALIAS_CREATE = URL_GET_IMAGEALIAS + " -X POST -d '{ \"description\": \"${DESCRIPTION}\", \"target\": \"${FINGERPRINT}\" \"name\": \"${NEWNAME}\" }'";
+	public static final String URL_POST_IMAGEALIAS_CREATE = URL_GET_IMAGEALIAS + " -X POST -d '{ \"description\": \"${DESCRIPTION}\", \"target\": \"${FINGERPRINT}\", \"name\": \"${NEWNAME}\" }'";
 	public static final String URL_POST_IMAGEALIAS_DELETE = URL_GET_IMAGEALIAS + "/${ID} -X DELETE";
 	public static final String URL_POST_IMAGEALIAS_RENAME = URL_GET_IMAGEALIAS + "/${ID} -X POST -d '{ \"name\": \"${NEWNAME}\", \"description\": \"${DESCRIPTION}\" }'";
 	public static final String URL_POST_PROFILE_DELETE = URL_GET_PROFILE + "/${ID} -X DELETE";
