@@ -1,6 +1,5 @@
 package au.com.jcloud.lxd.model.response;
 
-import au.com.jcloud.lxd.model.Network;
 import au.com.jcloud.lxd.model.Profile;
 
 /**
