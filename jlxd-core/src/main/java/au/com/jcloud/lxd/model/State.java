@@ -50,8 +50,8 @@ public class State {
 	@SerializedName("status_code")
 	private int statusCode;
 	private Map<String, Map<String, String>> disk;
-	private Map<String, Integer> memory;
-	private Map<MemoryEnum, Integer> memoryData = new HashMap<MemoryEnum, Integer>();
+	private Map<String, Long> memory;
+	private Map<MemoryEnum, Long> memoryData = new HashMap<MemoryEnum, Long>();
 	private Map<String, NetworkInterface> network;
 	int pid;
 	int processes;
@@ -95,11 +95,11 @@ public class State {
 	
 	public String getMemoryInMB(MemoryEnum type) {
 		getMemoryData();
-		Integer memoryValue = memoryData.get(type);
+		Long memoryValue = memoryData.get(type);
 		return (memoryValue!=null) ? FormatUtils.convertIntegerToMB(memoryValue) : "0";
 	}
 	
-	public Map<MemoryEnum, Integer> getMemoryData() {
+	public Map<MemoryEnum, Long> getMemoryData() {
 		if (!memoryData.isEmpty()) {
 			return memoryData;
 		}
@@ -146,11 +146,11 @@ public class State {
 		this.disk = disk;
 	}
 
-	public Map<String, Integer> getMemory() {
+	public Map<String, Long> getMemory() {
 		return memory;
 	}
 
-	public void setMemory(Map<String, Integer> memory) {
+	public void setMemory(Map<String, Long> memory) {
 		this.memory = memory;
 	}
 
